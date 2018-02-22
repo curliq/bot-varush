@@ -12,6 +12,9 @@ public class Welp extends Command {
 
     ArrayList<Command> commandsArray;
 
+    /**
+     * This command is the only one that also takes the commandsArray
+     */
     public Welp(ArrayList<Command> commandsArray) {
         setKey(KEY);
         setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + "` - get the list of all commands.");
@@ -22,6 +25,7 @@ public class Welp extends Command {
     public EmbedBuilder getReply() {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("All them commands");
+        // look through all the available commands to show them on a message
         for (Command command : commandsArray) {
             String title = command.getKey().equals(Live.KEY) ? Live.KEY + "  (coming soon)" : command.getKey();
             eb.addField("", "**" + title + "** - " + command.getDescription(), false);
