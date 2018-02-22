@@ -1,6 +1,6 @@
-# rookaanbot
+# Bot Varush
 
-A Discord bot to display Battlerite user data - using JDA.
+A Discord bot to display Battlerite user data.
 
 # Run
 1. Install java 8.
