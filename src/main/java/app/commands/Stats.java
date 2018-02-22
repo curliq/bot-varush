@@ -28,11 +28,12 @@ public class Stats extends Command {
             // fetches the user ID from the user name
             playerResponse = getBattleriteRetrofit().getUserID(getParams().get(0)).execute();
 
+            // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
                 return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "That's not a player I'm afraid");
             }
 
-            // fetches the team (solo) data from the user ID
+            // fetches the team data from the user ID
             teamStatsResponse = getBattleriteRetrofit()
                     .getPlayerStats(playerResponse.body().getData().get(0).getId(), Helper.SEASON).execute();
 
@@ -45,16 +46,27 @@ public class Stats extends Command {
             return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
         }
 
+        // get player's details/attributes
         UserPOJO.Attributes playerUser = playerResponse.body().getData().get(0).getAttributes();
+
+        // get the first team of the list of teams from the player
         TeamStatsPOJO.Attributes playerTeam = teamStatsResponse.body().getData().get(0).getAttributes();
+        // loop through the teams and check which one is the one for
+        // solo (i.e. just one member) just in case it's not the first one
         for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData()) {
             if (team.getAttributes().getStats().getMembers().size() == 1)
                 playerTeam = team.getAttributes();
         }
+
+        // get the solo team stats
         TeamStatsPOJO.Stats playerStats = playerTeam.getStats();
 
-        double winRate = ( Double.valueOf(playerStats.getWins()) / (Double.valueOf(playerStats.getWins()) + Double.valueOf(playerStats.getLosses())) ) * 100f;
+        // calculate win rate percentage and check if not NaN
+        double winRate = (Double.valueOf(playerStats.getWins())
+                / (Double.valueOf(playerStats.getWins()) + Double.valueOf(playerStats.getLosses()))) * 100f;
         String winRateString = Double.isNaN(winRate) ? "git gud" : helper.roundTwoDecimals(winRate) + "%";
+        
+        // set message's data
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(playerUser.getName());
         eb.setDescription(helper.getPlayerTitle(playerUser.getStats().gettitleID()));
