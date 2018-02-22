@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 
+import app.commands.About;
 import app.commands.Live;
 import app.commands.Stats;
 import app.commands.Welp;
@@ -13,6 +14,7 @@ public class CommandsManager {
     public void init() {
         commandsArray.add(new Stats());
         commandsArray.add(new Live());
+        commandsArray.add(new About());
         commandsArray.add(new Welp(commandsArray));
     }
 

@@ -21,10 +21,10 @@ public class Welp extends Command {
     @Override
     public EmbedBuilder getReply() {
         EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("All them commands");
         for (Command command : commandsArray) {
             String title = command.getKey().equals(Live.KEY) ? Live.KEY + "  (coming soon)" : command.getKey();
-            eb.addField(title, command.getDescription(), false);
-            eb.addBlankField(false);
+            eb.addField("", "**" + title + "** - " + command.getDescription(), false);
         }
         return eb;
     }

@@ -15,7 +15,7 @@ public class Stats extends Command {
 
     public Stats() {
         setKey(KEY);
-        setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + " playerName` - get the stats of a player.");
+        setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + " playername123` - get the stats of a player.");
     }
 
     @Override
