@@ -161,7 +161,7 @@ public class Stats extends Command {
         eb.setDescription("3v3 teams stats - " + teamsArray.size() + " teams");
         eb.setThumbnail(Helper.STATS_3V3_IMAGE);
 
-        // get the ids of the players that are in the teams
+        // get the ids of all the players that are in the teams
         String otherPlayersIds = "";
         for (TeamStatsPOJO.Attributes team : teamsArray) {
             for (Long otherPlayerID : team.getStats().getMembers()) {
@@ -181,6 +181,8 @@ public class Stats extends Command {
         }
         assert otherPlayers != null;
 
+        System.out.println(new Gson().toJson(teamsArray));
+        System.out.println("lalala");
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
             // get the ID of the other player in the team by looping to the otherPLayers list and 
@@ -192,9 +194,13 @@ public class Stats extends Command {
                 }
             }
 
-            String otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
-                    + ")";
-
+            String otherPlayersString = "";
+            try {
+                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
+                        + ")";
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
             eb.addBlankField(false);
             eb.addField(team.getName() + otherPlayersString, "————————————————————", false);
             addTeamInfo(eb, team);
@@ -231,7 +237,7 @@ public class Stats extends Command {
             public int compare(TeamStatsPOJO.Attributes o1, TeamStatsPOJO.Attributes o2) {
                 if (o1.getStats().getLeague() == o2.getStats().getLeague())
                     return 0;
-                return o1.getStats().getLeague() - o2.getStats().getLeague();
+                return o2.getStats().getLeague() - o1.getStats().getLeague();
             }
         };
 
