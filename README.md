@@ -22,5 +22,5 @@ This is the followed method: https://goo.gl/images/Su7k5k
 2. If you do weird stuff make sure to comment it
 3. PR to `develop`
 
-###### Contributors and worthy mentions
+###### Contributors and worth mentioning
 - @Bohnenkrautsaft#4768 - Help with API integration and deployment.
