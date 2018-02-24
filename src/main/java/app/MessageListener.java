@@ -11,6 +11,10 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+/**
+ * Object that listens for every message send on the discord server
+ */
+
 public class MessageListener extends ListenerAdapter {
 
     CommandsManager commandsManager;
@@ -52,21 +56,25 @@ public class MessageListener extends ListenerAdapter {
                         "That's not really a command, do `!br welp` to see all the commands"));
                 return;
             } else {
+                // sends the params to the command object to be used
                 command.setParams(params);
-                // message.delete().queue();
+                // calculate the response from the command (getReply()) and send it
                 sendMessage(event, command.getReply());
             }
         }
     }
 
+    /**
+     * send a message to the current channel the user is typing in.
+     * pass event received from the messages listener and the EmbedBuilder with the message data
+     */
     private void sendMessage(MessageReceivedEvent event, EmbedBuilder messageBuilder) {
         event.getChannel().sendMessage(baseMessage(event, messageBuilder)).queue();
     }
 
     /**
-     * Message builders
+     * base message for every message send, basically just color and footer
      */
-
     public MessageEmbed baseMessage(MessageReceivedEvent event, EmbedBuilder messageBuilder) {
 
         messageBuilder.setColor(new Color(Helper.BATTLERITE_COLOR_PRIMARY));

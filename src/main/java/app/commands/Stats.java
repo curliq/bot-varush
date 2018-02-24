@@ -39,6 +39,7 @@ public class Stats extends Command {
             // fetches the player ID from the player name
             playerResponse = getBattleriteRetrofit().getPlayerID(getParams().get(0)).execute();
 
+            // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
                 return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "That's not a player I'm afraid");
             }
@@ -71,11 +72,12 @@ public class Stats extends Command {
 
     private EmbedBuilder getSoloData() {
         TeamStatsPOJO.Attributes playerTeam = teamStatsResponse.body().getData().get(0).getAttributes();
+        // loop through the teams and check which one is the one for
+        // solo (i.e. just one member) just in case it's not the first one
         for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData()) {
             if (team.getAttributes().getStats().getMembers().size() == 1)
                 playerTeam = team.getAttributes();
         }
-
         EmbedBuilder eb = new EmbedBuilder();
 
         eb.setTitle(playerData.getAttributes().getName());

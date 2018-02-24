@@ -12,6 +12,9 @@ public class Welp extends Command {
 
     ArrayList<Command> commandsArray;
 
+    /**
+     * This command is the only one that also takes the commandsArray
+     */
     public Welp(ArrayList<Command> commandsArray) {
         setKey(KEY);
         setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + "` - get the list of all commands.");

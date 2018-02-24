@@ -6,6 +6,10 @@ import app.rest.BattleriteInterface;
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
 
+/**
+ * Base class for every command
+ */
+
 public abstract class Command {
 
     /**
