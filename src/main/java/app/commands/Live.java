@@ -22,8 +22,8 @@ public class Live extends Command {
 // 
         // EmbedBuilder eb = new EmbedBuilder();
 // 
-        // eb.setTitle(playerUser.getName() + "'s stats'");
-        // eb.setDescription(helper.getPlayerTitle(playerUser.getStats().gettitleID()));
+        // eb.setTitle(playerPlayer.getName() + "'s stats'");
+        // eb.setDescription(helper.getPlayerTitle(playerPlayer.getStats().gettitleID()));
         // eb.setThumbnail(Helper.ACCOUNT_IMAGE);
 
         return null;

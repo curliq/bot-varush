@@ -35,7 +35,7 @@ public class MessageListener extends ListenerAdapter {
             scanner.next(); //skip first word (ie !br)
             String commandKey = scanner.next().toLowerCase();
 
-            // Create arraylist with the params passed by the user, i.e. each consecutive word
+            // Create arraylist with the params passed by the player, i.e. each consecutive word
             ArrayList<String> params = new ArrayList<String>();
             while (scanner.hasNext())
                 params.add(scanner.next());
@@ -43,7 +43,7 @@ public class MessageListener extends ListenerAdapter {
             // close the scanner
             scanner.close();
 
-            // Get the command object that matches the command key sent by the user (eg "stats")
+            // Get the command object that matches the command key sent by the player (eg "stats")
             Command command = commandsManager.getCommand(commandKey);
 
             if (command == null) {

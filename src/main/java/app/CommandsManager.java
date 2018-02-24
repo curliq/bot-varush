@@ -13,7 +13,7 @@ public class CommandsManager {
 
     public void init() {
         commandsArray.add(new Stats());
-        commandsArray.add(new Live());
+        // commandsArray.add(new Live());
         commandsArray.add(new About());
         commandsArray.add(new Welp(commandsArray));
     }

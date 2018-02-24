@@ -21,11 +21,12 @@ public class Welp extends Command {
     @Override
     public EmbedBuilder getReply() {
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("All them commands");
+        eb.setTitle("All that Varush knows");
         for (Command command : commandsArray) {
             String title = command.getKey().equals(Live.KEY) ? Live.KEY + "  (coming soon)" : command.getKey();
-            eb.addField("", "**" + title + "** - " + command.getDescription(), false);
+            eb.addField("", "**" + title + "**\n" + command.getDescription(), false);
         }
+        eb.addBlankField(false);
         return eb;
     }
 

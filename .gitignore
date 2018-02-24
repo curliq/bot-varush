@@ -25,3 +25,4 @@ src/main/java/app/Auth.java
 
 src/main/java/app/utils/Auth.java
 *.lock
+*.bin

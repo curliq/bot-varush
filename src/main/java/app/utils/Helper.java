@@ -29,7 +29,9 @@ public class Helper {
     public final static String NOT_A_COMMAND = "That's not really a command lady";
     public final static int SEASON = 6;
     public final static int BATTLERITE_COLOR_PRIMARY = 0xEF7326;
-    public final static String ACCOUNT_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
+    public final static String STATS_SOLO_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
+    public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";
+    public final static String STATS_3V3_IMAGE = "https://i.imgur.com/igCOlpX.png";
 
     public Retrofit getBattleriteRetrofit() {
 
@@ -57,7 +59,7 @@ public class Helper {
         return retrofit;
     }
 
-    public String getDivision(int division) {
+    public String getLeage(int division) {
         switch (division) {
         case 0:
             return "Bronze";
@@ -103,8 +105,9 @@ public class Helper {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return "Boosted Silver";
         }
-        return "";
+        return "Boosted Silver";
     }
 
     public Double roundTwoDecimals(double d) {
