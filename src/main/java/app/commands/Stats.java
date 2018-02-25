@@ -171,7 +171,8 @@ public class Stats extends Command {
             }
         }
         // remove last comma
-        otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+        if (otherPlayersIds.length() > 0)
+            otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
 
         // get those players all in one request
         Response<PlayerPOJO> otherPlayers = null;
