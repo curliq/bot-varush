@@ -4,7 +4,7 @@ A Discord bot to display Battlerite user data.
 # Features
 - [x] solo league stats
 - [x] about command
-- [ ] 2v2 and 3v3 teams (!br 2v2 playername)
+- [x] 2v2 and 3v3 teams
 - [ ] 3 best champions on !br stats
 - [ ] player's all champions data (new command)
 - [ ] randomizer for inhouses (new command)
