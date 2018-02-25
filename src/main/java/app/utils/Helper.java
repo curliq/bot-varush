@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.io.File;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "1.2.1";
+    public final static String BOT_VERSION = "1.2.2";
     
     public final static String COMMAND_TRIGGER = "!br";
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
