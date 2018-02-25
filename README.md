@@ -9,7 +9,6 @@ A Discord bot to display Battlerite user data.
 - [ ] player's all champions data (new command)
 - [ ] randomizer for inhouses (new command)
 - [ ] get live match (new command)
-- [ ] add role based on reaction to fixed messages in welcome channel (ie: EU, NA, Contender, etc)
 
 # Run
 1. Install java 8.
