@@ -159,14 +159,15 @@ public class Stats extends Command {
         // get those players all in one request
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
         try {
-            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds).execute();
+            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
+                    .execute();
             // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
             // to 6 players max
             int i = otherPlayersIds.indexOf(',',
                     1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',',
                             1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(','))))));
-            
-                            // get players excluding the 6 first found from the teams                
+
+            // get players excluding the 6 first found from the teams                
             Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
                     .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
 
@@ -179,11 +180,12 @@ public class Stats extends Command {
 
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
-            // get the ID of the other player in the team by looping to the otherPLayers list and 
+            // get the ID of the other players in the team by looping to the otherPLayers list and 
             // get the one that this team contains
             ArrayList<String> otherPlayersNames = new ArrayList<>();
             for (PlayerPOJO.Data otherPlayer : otherPLayersList) {
-                if (team.getStats().getMembers().contains(otherPlayer.getId())) {
+                if (team.getStats().getMembers().contains(otherPlayer.getId())
+                        && !otherPlayersNames.contains(otherPlayer.getAttributes().getName())) {
                     otherPlayersNames.add(otherPlayer.getAttributes().getName());
                 }
             }
