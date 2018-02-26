@@ -105,16 +105,7 @@ public class Stats extends Command {
         eb.setThumbnail(Helper.STATS_2V2_IMAGE);
 
         // get the ids of the players that are in the teams
-        String otherPlayersIds = "";
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
-            for (Long otherPlayerID : team.getStats().getMembers()) {
-                if (!otherPlayerID.equals(playerData.getId()))
-                    otherPlayersIds += otherPlayerID + ",";
-            }
-        }
-        // remove last comma
-        if (otherPlayersIds.length() > 0)
-            otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+        String otherPlayersIds = getPlayersInTeams(teamsArray);
 
         // get those players all in one request
         Response<PlayerPOJO> otherPlayers = null;
@@ -163,34 +154,35 @@ public class Stats extends Command {
         eb.setThumbnail(Helper.STATS_3V3_IMAGE);
 
         // get the ids of all the players that are in the teams
-        String otherPlayersIds = "";
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
-            for (Long otherPlayerID : team.getStats().getMembers()) {
-                if (!otherPlayerID.equals(playerData.getId()))
-                    otherPlayersIds += otherPlayerID + ",";
-            }
-        }
-        // remove last comma
-        if (otherPlayersIds.length() > 0)
-            otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+        String otherPlayersIds = getPlayersInTeams(teamsArray);
 
         // get those players all in one request
-        Response<PlayerPOJO> otherPlayers = null;
+        ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
         try {
-            otherPlayers = getBattleriteRetrofit().getPlayersByID(otherPlayersIds).execute();
+            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds).execute();
+            // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
+            // to 6 players max
+            int i = otherPlayersIds.indexOf(',',
+                    1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',',
+                            1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(','))))));
+            
+                            // get players excluding the 6 first found from the teams                
+            Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
+                    .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
+
+            // add them all to a list
+            otherPLayersList.addAll(otherPlayersResponse.body().getData());
+            otherPLayersList.addAll(otherPlayersResponse2.body().getData());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert otherPlayers != null;
 
-        System.out.println(new Gson().toJson(teamsArray));
-        System.out.println("lalala");
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
             // get the ID of the other player in the team by looping to the otherPLayers list and 
             // get the one that this team contains
             ArrayList<String> otherPlayersNames = new ArrayList<>();
-            for (PlayerPOJO.Data otherPlayer : otherPlayers.body().getData()) {
+            for (PlayerPOJO.Data otherPlayer : otherPLayersList) {
                 if (team.getStats().getMembers().contains(otherPlayer.getId())) {
                     otherPlayersNames.add(otherPlayer.getAttributes().getName());
                 }
@@ -201,7 +193,7 @@ public class Stats extends Command {
                 otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
                         + ")";
             } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
+                System.out.println("IndexOutOfBoundsException on Stats:189");
             }
             eb.addBlankField(false);
             eb.addField(team.getName() + otherPlayersString, "————————————————————", false);
@@ -261,6 +253,25 @@ public class Stats extends Command {
 
         Collections.sort(teamsArray, byLeague.thenComparing(byDivision).thenComparing(byPoints));
 
+    }
+
+    private String getPlayersInTeams(ArrayList<Attributes> teamsArray) {
+        String otherPlayersIds = "";
+
+        // loop through all the teams
+        for (TeamStatsPOJO.Attributes team : teamsArray) {
+            // loop through all the players in each team
+            for (Long otherPlayerID : team.getStats().getMembers()) {
+                // check if player isnt the one requesting and isnt repeated
+                if (!otherPlayerID.equals(playerData.getId()))
+                    otherPlayersIds += otherPlayerID + ",";
+            }
+        }
+        // remove last comma
+        if (otherPlayersIds.length() > 0)
+            otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+
+        return otherPlayersIds;
     }
 
 }
