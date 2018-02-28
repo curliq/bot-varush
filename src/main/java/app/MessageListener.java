@@ -56,6 +56,8 @@ public class MessageListener extends ListenerAdapter {
                         "That's not really a command, do `!br welp` to see all the commands"));
                 return;
             } else {
+                // show typing indicator
+                event.getChannel().sendTyping().queue();
                 // sends the params to the command object to be used
                 command.setParams(params);
                 // calculate the response from the command (getReply()) and send it

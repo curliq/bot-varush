@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
-import com.google.gson.Gson;
 
 import app.Command;
 import app.rest.pojos.TeamStatsPOJO;
@@ -22,7 +21,7 @@ public class Stats extends Command {
 
     private Helper helper = new Helper();
     private Response<PlayerPOJO> playerResponse;
-    PlayerPOJO.Data playerData;
+    private PlayerPOJO.Data playerData;
     private Response<TeamStatsPOJO> teamStatsResponse;
 
     public Stats() {
@@ -49,7 +48,10 @@ public class Stats extends Command {
                     .getPlayerStats(playerResponse.body().getData().get(0).getId(), Helper.SEASON).execute();
 
             // return error message if something went wrong
-            if (!playerResponse.isSuccessful() || !teamStatsResponse.isSuccessful())
+            if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())
+                return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "Found the player but couldn't find any data");
+            
+            else if (!playerResponse.isSuccessful() || !teamStatsResponse.isSuccessful())
                 return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
