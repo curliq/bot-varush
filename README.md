@@ -1,5 +1,5 @@
 # Bot Varush
-A Discord bot to display Battlerite player data.
+A Discord bot to display Battlerite player data and other cool things. Everyone is welcome to integrate it on their servers, or if you don't want to host it just ask me for the discord integration link!
 
 # Features
 - [x] `!br welp` to show all the commands
