@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.0.2";
+    public final static String BOT_VERSION = "2.0.3";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
