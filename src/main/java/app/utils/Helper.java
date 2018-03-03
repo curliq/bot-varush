@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.0.0";
+    public final static String BOT_VERSION = "2.0.2";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
@@ -39,6 +39,7 @@ public class Helper {
     public final static String STATS_3V3_IMAGE = "https://i.imgur.com/igCOlpX.png";
     public final static String TWITCH_BATTLERITE_ID = "493277"; // twitch maps games by ID, and battlerite is this
     public final static String STREAMING_ROLE_NAME = "Streaming";
+    public final static String PROBATION_ROLE_NAME = "Under Probation";
 
     public static void log(Object o) {
         System.out.println(o);

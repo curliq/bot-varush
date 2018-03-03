@@ -30,7 +30,6 @@ public class StreamerRoleListener extends ListenerAdapter {
 
     public StreamerRoleListener(JDA jda) {
         this.jda = jda;
-        streamerRole = jda.getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
     }
 
     /**
@@ -40,12 +39,28 @@ public class StreamerRoleListener extends ListenerAdapter {
     public void onUserGameUpdate(UserGameUpdateEvent event) {
         super.onUserGameUpdate(event);
 
-        Helper.log("game updated for " + event.getUser().getName());
+        // stop if there is no role called Helper.SREAMING_ROLE_NAME
+        if (event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).isEmpty())
+            return;
 
-        if (isStreaming(event) && isStreamingBattlerite(event)) {
-            addStreamerRole(event);
-        } else {
+        if (userHasProbationRole(event))
+            return;
+
+        streamerRole = event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
+
+        if (!isStreaming(event))
             removeStreamerRole(event);
+        else {
+            // start a new thread to check if is streaming battlerite
+            Thread one = new Thread() {
+                public void run() {
+                    if (!isStreamingBattlerite(event))
+                        removeStreamerRole(event);
+                    else
+                        addStreamerRole(event);
+                }
+            };
+            one.start();
         }
     }
 
@@ -65,18 +80,19 @@ public class StreamerRoleListener extends ListenerAdapter {
         // wait 1 minute before cheking the game from twitch because their api takes a bit to update after changes
         // to the stream
         try {
-            TimeUnit.MINUTES.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.sleep(60000);
+        } catch (InterruptedException v) {
+            v.printStackTrace();
         }
+
         TwitchInterface api = new Helper().getTwitchRetrofit().create(TwitchInterface.class);
         String streamUrl = event.getCurrentGame().getUrl();
         String twitchUserName = streamUrl.substring(streamUrl.lastIndexOf('/') + 1);
         // call twitch api to check the user's stream game/category
         try {
             Response<StreamPOJO> response = api.getStreamByName(twitchUserName).execute();
+            // no stream found
             if (response.body().getData().isEmpty()) {
-                Helper.log("Not streaming");
                 return false;
             }
             return response.body().getData().get(0).getGameId().equals(Helper.TWITCH_BATTLERITE_ID);
@@ -94,4 +110,15 @@ public class StreamerRoleListener extends ListenerAdapter {
         event.getGuild().getController().removeSingleRoleFromMember(event.getMember(), streamerRole).queue();
     }
 
+    /**
+     * check if user has a "probation" role, if yes then dont add the Streamer role
+     */
+    private boolean userHasProbationRole(UserGameUpdateEvent event) {
+        try {
+            Role probationRole = event.getGuild().getRolesByName(Helper.PROBATION_ROLE_NAME, true).get(0);
+            return event.getMember().getRoles().contains(probationRole);
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
 }
