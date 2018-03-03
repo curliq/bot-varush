@@ -1,11 +1,13 @@
 package app.utils;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -15,27 +17,47 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Request.Builder;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "1.2.6";
-    
+    public final static String BOT_VERSION = "2.0.0";
+
     public final static String COMMAND_TRIGGER = "!br";
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
+    public final static String TWITCH_BASE_URL = "https://api.twitch.tv/";
     public final static String ERROR_TITLE = "Sorry...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String NOT_A_COMMAND = "That's not really a command lady";
-    public final static int SEASON = 6;
+    public final static int SEASON = 6; // current battlerite season to default in every request
     public final static int BATTLERITE_COLOR_PRIMARY = 0xEF7326;
     public final static String STATS_SOLO_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
     public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";
     public final static String STATS_3V3_IMAGE = "https://i.imgur.com/igCOlpX.png";
+    public final static String TWITCH_BATTLERITE_ID = "493277"; // twitch maps games by ID, and battlerite is this
+    public final static String STREAMING_ROLE_NAME = "Streaming";
+
+    public static void log(Object o) {
+        System.out.println(o);
+    }
 
     public Retrofit getBattleriteRetrofit() {
+        HashMap<String, String> headersMap = new HashMap<>();
+        headersMap.put("Authorization", Auth.BATTLERITE_TOKEN);
+        headersMap.put("Accept", "application/vnd.api+json");
+        return getRetrofit(BATTLERITE_BASE_URL, headersMap);
+    }
+   
+    public Retrofit getTwitchRetrofit() {
+        HashMap<String, String> headersMap = new HashMap<>();
+        headersMap.put("Client-ID", Auth.TWITCH_TOKEN);
+        return getRetrofit(TWITCH_BASE_URL, headersMap);
+    }
 
+    public Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -45,17 +67,23 @@ public class Helper {
             @Override
             public okhttp3.Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
-                Request request = original.newBuilder().header("Authorization", Auth.BATTLERITE_TOKEN)
-                        .header("Accept", "application/vnd.api+json").method(original.method(), original.body())
-                        .build();
-
+                Builder requestBuilder = original.newBuilder();
+                for (String header : headersMap.keySet()) {
+                    requestBuilder.addHeader(header, headersMap.get(header));
+                }
+                requestBuilder.method(original.method(), original.body());
+                
+                Request request = requestBuilder.build();
                 return chain.proceed(request);
             }
         });
 
         OkHttpClient client = httpClient.build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(BATTLERITE_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).client(client).build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
 
         return retrofit;
     }
@@ -114,6 +142,15 @@ public class Helper {
     public Double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Double.valueOf(twoDForm.format(d));
+    }
+
+    public String urlEncode(String string) {
+        try {
+            return URLEncoder.encode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return string;
+        }
     }
 
 }

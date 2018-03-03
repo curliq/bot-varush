@@ -2,7 +2,7 @@ package app;
 
 import java.util.ArrayList;
 
-import app.rest.BattleriteInterface;
+import app.rest.battlerite.BattleriteInterface;
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
 

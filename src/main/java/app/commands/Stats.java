@@ -6,9 +6,9 @@ import java.util.Comparator;
 import java.util.Collections;
 
 import app.Command;
-import app.rest.pojos.TeamStatsPOJO;
-import app.rest.pojos.TeamStatsPOJO.Attributes;
-import app.rest.pojos.PlayerPOJO;
+import app.rest.battlerite.pojos.TeamStatsPOJO;
+import app.rest.battlerite.pojos.TeamStatsPOJO.Attributes;
+import app.rest.battlerite.pojos.PlayerPOJO;
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
 import retrofit2.Response;
@@ -36,7 +36,7 @@ public class Stats extends Command {
 
         try {
             // fetches the player ID from the player name
-            playerResponse = getBattleriteRetrofit().getPlayerID(getParams().get(0)).execute();
+            playerResponse = getBattleriteRetrofit().getPlayerID(helper.urlEncode(getParams().get(0))).execute();
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
@@ -106,13 +106,18 @@ public class Stats extends Command {
         eb.setDescription("2v2 teams stats - " + teamsArray.size() + " teams");
         eb.setThumbnail(Helper.STATS_2V2_IMAGE);
 
+        if (teamsArray.isEmpty()) {
+            eb.addField("Nothing to see here", "flex dab swag turn up", true);
+            return eb;
+        }
+
         // get the ids of the players that are in the teams
         String otherPlayersIds = getPlayersInTeams(teamsArray);
 
         // get those players all in one request
         Response<PlayerPOJO> otherPlayers = null;
         try {
-            otherPlayers = getBattleriteRetrofit().getPlayersByID(otherPlayersIds).execute();
+            otherPlayers = getBattleriteRetrofit().getPlayersByID(helper.urlEncode(otherPlayersIds)).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,13 +160,18 @@ public class Stats extends Command {
         eb.setDescription("3v3 teams stats - " + teamsArray.size() + " teams");
         eb.setThumbnail(Helper.STATS_3V3_IMAGE);
 
+        if (teamsArray.isEmpty()) {
+            eb.addField("Nothing to see here", "flex dab swag turn up", true);
+            return eb;
+        }
+
         // get the ids of all the players that are in the teams
         String otherPlayersIds = getPlayersInTeams(teamsArray);
 
         // get those players all in one request
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
         try {
-            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
+            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(helper.urlEncode(otherPlayersIds))
                     .execute();
             // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
             // to 6 players max
@@ -171,7 +181,7 @@ public class Stats extends Command {
 
             // get players excluding the 6 first found from the teams                
             Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
-                    .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
+                    .getPlayersByID(helper.urlEncode(otherPlayersIds.substring(i + 1))).execute();
 
             // add them all to a list
             otherPLayersList.addAll(otherPlayersResponse.body().getData());
@@ -197,7 +207,7 @@ public class Stats extends Command {
                 otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
                         + ")";
             } catch (IndexOutOfBoundsException e) {
-                System.out.println("IndexOutOfBoundsException on Stats:189");
+                Helper.log("IndexOutOfBoundsException on Stats:189");
             }
             eb.addBlankField(false);
             eb.addField(team.getName() + otherPlayersString, "————————————————————", false);
@@ -274,6 +284,8 @@ public class Stats extends Command {
         // remove last comma
         if (otherPlayersIds.length() > 0)
             otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+
+        Helper.log(otherPlayersIds);
 
         return otherPlayersIds;
     }
