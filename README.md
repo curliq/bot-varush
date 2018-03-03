@@ -1,14 +1,16 @@
 # Bot Varush
-A Discord bot to display Battlerite user data.
+A Discord bot to display Battlerite player data.
 
 # Features
+- [x] `!br welp` to show all the commands
 - [x] solo league stats
-- [x] about command
-- [x] 2v2 and 3v3 teams
-- [ ] 3 best champions on !br stats
-- [ ] player's all champions data (new command)
-- [ ] randomizer for inhouses (new command)
-- [ ] get live match (new command)
+- [x] 2v2 and 3v3 teams stats
+- [ ] 3 best champions on (on `!br stats playername`)
+- [ ] player's all champions data
+- [ ] randomizer for inhouses - select 2/4/6 random champions, with random rites, and 1 random skill
+- [ ] get live match data
+
+To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue here on Github.
 
 # Run
 1. Install java (version 8 specifically).
