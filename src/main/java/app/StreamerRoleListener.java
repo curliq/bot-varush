@@ -26,11 +26,6 @@ import retrofit2.Response;
 public class StreamerRoleListener extends ListenerAdapter {
 
     Role streamerRole;
-    JDA jda;
-
-    public StreamerRoleListener(JDA jda) {
-        this.jda = jda;
-    }
 
     /**
      * called whenever someone in the server changes their "playing" status
@@ -48,6 +43,7 @@ public class StreamerRoleListener extends ListenerAdapter {
 
         streamerRole = event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
 
+        Helper.log(event.getUser().getName());
         if (!isStreaming(event))
             removeStreamerRole(event);
         else {
@@ -103,13 +99,17 @@ public class StreamerRoleListener extends ListenerAdapter {
     }
 
     private void addStreamerRole(UserGameUpdateEvent event) {
+        Helper.log("add role");
         event.getGuild().getController().addSingleRoleToMember(event.getMember(), streamerRole).queue();
     }
 
     private void removeStreamerRole(UserGameUpdateEvent event) {
-        event.getGuild().getController().removeSingleRoleFromMember(event.getMember(), streamerRole).queue();
+        if (event.getMember().getRoles().contains(streamerRole)) {
+            Helper.log("remove role");
+            event.getGuild().getController().removeSingleRoleFromMember(event.getMember(), streamerRole).queue();
+        }
     }
-
+    
     /**
      * check if user has a "probation" role, if yes then dont add the Streamer role
      */

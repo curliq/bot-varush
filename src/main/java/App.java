@@ -28,7 +28,7 @@ public class App {
             // set the messages listener and pass the initiated commandsManager
             jda.addEventListener(new MessageListener(commandsManager));
             // set user game listener for Streamer role, more info at StreamerRoleListener.java
-            jda.addEventListener(new StreamerRoleListener(jda));
+            jda.addEventListener(new StreamerRoleListener());
             jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
 
         } catch (InterruptedException | LoginException exception) {
