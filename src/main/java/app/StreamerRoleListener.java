@@ -76,7 +76,7 @@ public class StreamerRoleListener extends ListenerAdapter {
         // wait 1 minute before cheking the game from twitch because their api takes a bit to update after changes
         // to the stream
         try {
-            Thread.sleep(60000);
+            Thread.sleep(90000);
         } catch (InterruptedException v) {
             v.printStackTrace();
         }
