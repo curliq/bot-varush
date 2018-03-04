@@ -50,7 +50,7 @@ public class Stats extends Command {
             // return error message if something went wrong
             if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())
                 return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "Found the player but couldn't find any data");
-            
+
             else if (!playerResponse.isSuccessful() || !teamStatsResponse.isSuccessful())
                 return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
 
@@ -63,9 +63,9 @@ public class Stats extends Command {
 
         if (getParams().size() > 1)
             if (getParams().get(1).equals(PARAM_2V2))
-                return get2v2Data();
+                return getTeamsData(true);
             else if (getParams().get(1).equals(PARAM_3V3))
-                return get3v3Data();
+                return getTeamsData(false);
             else
                 return getSoloData();
         else
@@ -91,20 +91,22 @@ public class Stats extends Command {
         return eb;
     }
 
-    private EmbedBuilder get2v2Data() {
+    private EmbedBuilder getTeamsData(boolean is2v2) {
         EmbedBuilder eb = new EmbedBuilder();
         ArrayList<Attributes> teamsArray = new ArrayList<>();
 
-        // add all the 2-player teams to a list
+        // add all the teams out of placements to a list
         for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData())
-            if (team.getAttributes().getStats().getMembers().size() == 2 && !team.getAttributes().getName().isEmpty())
+            if (team.getAttributes().getStats().getMembers().size() == (is2v2 ? 2 : 3)
+                    && team.getAttributes().getStats().getPlacementGamesLeft() == 0)
                 teamsArray.add(team.getAttributes());
 
+        // order the teams by division
         orderTeams(teamsArray);
 
         eb.setTitle(playerData.getAttributes().getName());
-        eb.setDescription("2v2 teams stats - " + teamsArray.size() + " teams");
-        eb.setThumbnail(Helper.STATS_2V2_IMAGE);
+        eb.setDescription((is2v2 ? "2v2" : "3v3") + " teams stats - " + teamsArray.size() + " teams");
+        eb.setThumbnail(is2v2 ? Helper.STATS_2V2_IMAGE : Helper.STATS_3V3_IMAGE);
 
         if (teamsArray.isEmpty()) {
             eb.addField("Nothing to see here", "flex dab swag turn up", true);
@@ -114,64 +116,10 @@ public class Stats extends Command {
         // get the ids of the players that are in the teams
         String otherPlayersIds = getPlayersInTeams(teamsArray);
 
-        // get those players all in one request
-        Response<PlayerPOJO> otherPlayers = null;
-        try {
-            otherPlayers = getBattleriteRetrofit().getPlayersByID(helper.urlEncode(otherPlayersIds)).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
-
-            // get the ID of the other player in the team by looping to the otherPLayers list and 
-            // get the one that this team contains
-            assert otherPlayers != null;
-            String otherPlayerName = "";
-            for (PlayerPOJO.Data otherPlayer : otherPlayers.body().getData()) {
-                if (team.getStats().getMembers().contains(otherPlayer.getId())) {
-                    otherPlayerName = " (carried by " + otherPlayer.getAttributes().getName() + ")";
-                }
-            }
-
-            eb.addBlankField(false);
-
-            eb.addField(team.getName() + otherPlayerName, "————————————————————", false);
-            addTeamInfo(eb, team);
-        }
-
-        eb.addBlankField(false);
-
-        return eb;
-    }
-
-    private EmbedBuilder get3v3Data() {
-        EmbedBuilder eb = new EmbedBuilder();
-        ArrayList<Attributes> teamsArray = new ArrayList<>();
-
-        // add all the 3-player teams to a list
-        for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData())
-            if (team.getAttributes().getStats().getMembers().size() == 3 && !team.getAttributes().getName().isEmpty())
-                teamsArray.add(team.getAttributes());
-
-        orderTeams(teamsArray);
-
-        eb.setTitle(playerData.getAttributes().getName());
-        eb.setDescription("3v3 teams stats - " + teamsArray.size() + " teams");
-        eb.setThumbnail(Helper.STATS_3V3_IMAGE);
-
-        if (teamsArray.isEmpty()) {
-            eb.addField("Nothing to see here", "flex dab swag turn up", true);
-            return eb;
-        }
-
-        // get the ids of all the players that are in the teams
-        String otherPlayersIds = getPlayersInTeams(teamsArray);
-
-        // get those players all in one request
+        // get all the other players in the teams, divide in 2 requests because the api only returns 6 people max
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
         try {
-            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(helper.urlEncode(otherPlayersIds))
+            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
                     .execute();
             // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
             // to 6 players max
@@ -181,7 +129,7 @@ public class Stats extends Command {
 
             // get players excluding the 6 first found from the teams                
             Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
-                    .getPlayersByID(helper.urlEncode(otherPlayersIds.substring(i + 1))).execute();
+                    .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
 
             // add them all to a list
             otherPLayersList.addAll(otherPlayersResponse.body().getData());
@@ -190,10 +138,10 @@ public class Stats extends Command {
             e.printStackTrace();
         }
 
+        // build view for each team
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
-            // get the ID of the other players in the team by looping to the otherPLayers list and 
-            // get the one that this team contains
+            // create a list and add the players of this team to it
             ArrayList<String> otherPlayersNames = new ArrayList<>();
             for (PlayerPOJO.Data otherPlayer : otherPLayersList) {
                 if (team.getStats().getMembers().contains(otherPlayer.getId())
@@ -204,12 +152,17 @@ public class Stats extends Command {
 
             String otherPlayersString = "";
             try {
-                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
-                        + ")";
+                if (is2v2)
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
+                else
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
+                            + ")";
             } catch (IndexOutOfBoundsException e) {
-                Helper.log("IndexOutOfBoundsException on Stats:189");
+                e.printStackTrace();
             }
+
             eb.addBlankField(false);
+
             eb.addField(team.getName() + otherPlayersString, "————————————————————", false);
             addTeamInfo(eb, team);
         }
