@@ -5,7 +5,7 @@ A Discord bot to display Battlerite player data and other cool things. Everyone 
 - [x] `!br welp` to show all the commands
 - [x] solo league stats
 - [x] 2v2 and 3v3 teams stats
-- [x] Dynamic "Streaming" role for who's currently streaming Battlerite
+- [x] Dynamic "Streaming" role for who's currently streaming Battlerite (Idea from @Moxian#8121)
 - [ ] 3 best champions on (on `!br stats playername`)
 - [ ] player's all champions data
 - [ ] randomizer for inhouses - select 2/4/6 random champions, with random rites, and 1 random skill
