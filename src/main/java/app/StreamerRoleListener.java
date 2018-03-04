@@ -1,12 +1,12 @@
 package app;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import app.rest.twitch.TwitchInterface;
 import app.rest.twitch.pojos.StreamPOJO;
 import app.utils.Helper;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.user.UserGameUpdateEvent;
@@ -25,7 +25,10 @@ import retrofit2.Response;
  */
 public class StreamerRoleListener extends ListenerAdapter {
 
-    Role streamerRole;
+    private final int TWITCH_REQUEST_DELAY = 30 * 1000; // 30 seconds
+    private final int RECALL_TWITCH_INTERVAL = 90 * 1000; // 1:30 minutes
+
+    private Role streamerRole;
 
     /**
      * called whenever someone in the server changes their "playing" status
@@ -33,22 +36,28 @@ public class StreamerRoleListener extends ListenerAdapter {
     @Override
     public void onUserGameUpdate(UserGameUpdateEvent event) {
         super.onUserGameUpdate(event);
-
-        // stop if there is no role called Helper.SREAMING_ROLE_NAME
-        if (event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).isEmpty())
-            return;
+        Helper.log(event.getUser().getName());
 
         if (userHasProbationRole(event))
             return;
 
-        streamerRole = event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
+        // stop if there is no role called Helper.SREAMING_ROLE_NAME
+        try {
+            streamerRole = event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return;
+        }
 
-        Helper.log(event.getUser().getName());
+        runChecks(event);
+
+    }
+
+    private void runChecks(UserGameUpdateEvent event) {
         if (!isStreaming(event))
             removeStreamerRole(event);
         else {
             // start a new thread to check if is streaming battlerite
-            Thread one = new Thread() {
+            Thread newThread = new Thread() {
                 public void run() {
                     if (!isStreamingBattlerite(event))
                         removeStreamerRole(event);
@@ -56,7 +65,10 @@ public class StreamerRoleListener extends ListenerAdapter {
                         addStreamerRole(event);
                 }
             };
-            one.start();
+            newThread.start();
+
+            // is streaming so call twitch again soon
+            scheduleUpdate(event);
         }
     }
 
@@ -76,7 +88,7 @@ public class StreamerRoleListener extends ListenerAdapter {
         // wait 1 minute before cheking the game from twitch because their api takes a bit to update after changes
         // to the stream
         try {
-            Thread.sleep(90000);
+            Thread.sleep(TWITCH_REQUEST_DELAY);
         } catch (InterruptedException v) {
             v.printStackTrace();
         }
@@ -98,18 +110,36 @@ public class StreamerRoleListener extends ListenerAdapter {
         return true;
     }
 
+    /**
+     * Add the role to the user
+     */
     private void addStreamerRole(UserGameUpdateEvent event) {
         Helper.log("add role");
         event.getGuild().getController().addSingleRoleToMember(event.getMember(), streamerRole).queue();
     }
 
+    /**
+     * Check if user has the role and remove it
+     */
     private void removeStreamerRole(UserGameUpdateEvent event) {
         if (event.getMember().getRoles().contains(streamerRole)) {
             Helper.log("remove role");
             event.getGuild().getController().removeSingleRoleFromMember(event.getMember(), streamerRole).queue();
         }
     }
-    
+
+    /**
+     * Schedule another call to twich to check if the game/category has changed
+     */
+    private void scheduleUpdate(UserGameUpdateEvent event) {
+        TimerTask task = new TimerTask() {
+            public void run() {
+                runChecks(event);
+            }
+        };
+        new Timer().schedule(task, RECALL_TWITCH_INTERVAL);
+    }
+
     /**
      * check if user has a "probation" role, if yes then dont add the Streamer role
      */

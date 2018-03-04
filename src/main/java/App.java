@@ -22,7 +22,7 @@ public class App {
             JDA jda = new JDABuilder(AccountType.BOT).setToken(Auth.BOT_TOKEN).buildBlocking();
 
             // Initiate a CommandsManager object, which builds a list of all the existent commands
-            CommandsManager commandsManager = new CommandsManager();
+            CommandsManager commandsManager = new CommandsManager(jda);
             commandsManager.init();
 
             // set the messages listener and pass the initiated commandsManager

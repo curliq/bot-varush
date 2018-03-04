@@ -6,16 +6,22 @@ import app.commands.About;
 import app.commands.Live;
 import app.commands.Stats;
 import app.commands.Welp;
+import net.dv8tion.jda.core.JDA;
 
 public class CommandsManager {
 
     ArrayList<Command> commandsArray = new ArrayList<>();
+    JDA jda;
+
+    public CommandsManager(JDA jda) {
+        this.jda = jda;
+    }
 
     public void init() {
         // Add all the commands to our array, which will be used a few places
         commandsArray.add(new Stats());
         // commandsArray.add(new Live());
-        commandsArray.add(new About());
+        commandsArray.add(new About(jda));
         commandsArray.add(new Welp(commandsArray));
     }
 

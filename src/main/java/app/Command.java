@@ -2,15 +2,23 @@ package app;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nullable;
+
 import app.rest.battlerite.BattleriteInterface;
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
 
 /**
  * Base class for every command
  */
 
 public abstract class Command {
+
+      /**
+     * Method used to return the repply message, must be implemented
+     */
+    protected abstract EmbedBuilder getReply();
 
     /**
      * Key is the first keyword after the trigger and is what defines a command, i.e. "stats"
@@ -28,18 +36,16 @@ public abstract class Command {
     private ArrayList<String> params;
 
     /**
+     * JDA object
+     */
+    private JDA jda;
+
+    /**
      * Return Retrofit instance to use for Battlerite API
      */
     protected BattleriteInterface getBattleriteRetrofit() {
         return new Helper().getBattleriteRetrofit().create(BattleriteInterface.class);
     }
-
-    /**
-     * Method used to return the repply message, must be implemented
-     */
-    protected abstract EmbedBuilder getReply();
-
-    
 
     /**
      * @return the key
@@ -84,6 +90,21 @@ public abstract class Command {
      */
     public void setParams(ArrayList<String> params) {
         this.params = params;
+    }
+
+    /**
+     * @return the jda
+     */
+    @Nullable
+    public JDA getJda() {
+        return jda;
+    }
+
+    /**
+     * @param jda the jda to set
+     */
+    public void setJda(JDA jda) {
+        this.jda = jda;
     }
 
 }
