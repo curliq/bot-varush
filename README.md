@@ -24,7 +24,7 @@ To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue h
 
 
 # Contribute
-This is the followed method: https://goo.gl/images/Su7k5k
+This is the followed git workflow: https://goo.gl/images/Su7k5k
 1. Create branch from `develop`
 2. If you do weird stuff make sure to comment it
 3. PR to `develop`
