@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.0.5";
+    public final static String BOT_VERSION = "2.1.1";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
@@ -33,7 +33,7 @@ public class Helper {
     public final static String ERROR_TITLE = "Sorry...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String NOT_A_COMMAND = "That's not really a command lady";
-    public final static int SEASON = 6; // current battlerite season to default in every request
+    public final static int SEASON = 7; // current battlerite season to default in every request
     public final static int BATTLERITE_COLOR_PRIMARY = 0xEF7326;
     public final static String STATS_SOLO_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
     public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";

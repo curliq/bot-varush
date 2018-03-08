@@ -82,7 +82,8 @@ public class MessageListener extends ListenerAdapter {
     public MessageEmbed baseMessage(MessageReceivedEvent event, EmbedBuilder messageBuilder) {
 
         messageBuilder.setColor(new Color(Helper.BATTLERITE_COLOR_PRIMARY));
-        messageBuilder.setFooter("Requested by " + event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+        messageBuilder.setFooter("Requested by " + event.getAuthor().getName() + " ⎟!br welp for more",
+                event.getAuthor().getAvatarUrl());
 
         return messageBuilder.build();
     };

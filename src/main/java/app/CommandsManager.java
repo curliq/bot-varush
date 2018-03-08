@@ -6,6 +6,7 @@ import app.commands.About;
 import app.commands.Live;
 import app.commands.Stats;
 import app.commands.Welp;
+import app.commands.WhoTheBestBot;
 import net.dv8tion.jda.core.JDA;
 
 public class CommandsManager {
@@ -23,6 +24,7 @@ public class CommandsManager {
         // commandsArray.add(new Live());
         commandsArray.add(new About(jda));
         commandsArray.add(new Welp(commandsArray));
+        commandsArray.add(new WhoTheBestBot());
     }
 
     /**
