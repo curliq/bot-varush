@@ -29,6 +29,9 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts = new HashMap<>();
         commandsShortcuts.put("!c", "!br stats curlicue");
         commandsShortcuts.put("!ex", "!br stats ExBlack");
+        commandsShortcuts.put("!bo", "!br stats Lustknecht");
+        commandsShortcuts.put("!bobo", "!br stats Lustknecht 2s");
+        commandsShortcuts.put("!bobobo", "!br stats Lustknecht 3s");
     }
 
     @Override
