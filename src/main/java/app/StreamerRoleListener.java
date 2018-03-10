@@ -38,6 +38,9 @@ public class StreamerRoleListener extends ListenerAdapter {
         super.onUserGameUpdate(event);
         Helper.log(event.getUser().getName());
 
+        if (!userHasAtLeastOneRole(event))
+            return;
+
         if (userHasProbationRole(event))
             return;
 
@@ -141,7 +144,14 @@ public class StreamerRoleListener extends ListenerAdapter {
     }
 
     /**
-     * check if user has a "probation" role, if yes then dont add the Streamer role
+     * Check if the user as at least one role, which will normally be the region role
+     */
+    private boolean userHasAtLeastOneRole(UserGameUpdateEvent event) {
+        return !event.getMember().getRoles().isEmpty();
+    }
+
+    /**
+     * Check if user has a "probation" role, if yes then dont add the Streamer role
      */
     private boolean userHasProbationRole(UserGameUpdateEvent event) {
         try {
