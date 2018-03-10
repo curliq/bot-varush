@@ -2,6 +2,7 @@ package app;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -19,11 +20,15 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class MessageListener extends ListenerAdapter {
 
-    CommandsManager commandsManager;
-    Helper helper = new Helper();
+    private CommandsManager commandsManager;
+    private Helper helper = new Helper();
+    private HashMap<String, String> commandsShortcuts;
 
     public MessageListener(CommandsManager commandsManager) {
         this.commandsManager = commandsManager;
+        commandsShortcuts = new HashMap<>();
+        commandsShortcuts.put("!c", "!br stats curlicue");
+        commandsShortcuts.put("!ex", "!br stats ExBlack");
     }
 
     @Override
@@ -32,7 +37,11 @@ public class MessageListener extends ListenerAdapter {
         Message message = event.getMessage();
         String content = message.getContentRaw();
 
-        // CHeck if message starts with "!br" to invoke the specific command
+        // Check if command is a shortcut, if yes, replace message content with shortcut value
+        if (commandsShortcuts.containsKey(content)) 
+            content = commandsShortcuts.get(content);
+        
+        // Check if message starts with "!br" to invoke the specific command
         if (content.toLowerCase().startsWith(Helper.COMMAND_TRIGGER)) {
 
             Scanner scanner = new Scanner(content);
