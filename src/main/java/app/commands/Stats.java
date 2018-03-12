@@ -20,7 +20,6 @@ public class Stats extends Command {
     public final static String PARAM_3V3 = "3s";
 
     private Helper helper = new Helper();
-    private Response<PlayerPOJO> playerResponse;
     private PlayerPOJO.Data playerData;
     private Response<TeamStatsPOJO> teamStatsResponse;
 
@@ -36,7 +35,8 @@ public class Stats extends Command {
 
         try {
             // fetches the player ID from the player name
-            playerResponse = getBattleriteRetrofit().getPlayerID(helper.urlEncode(getParams().get(0))).execute();
+            Response<PlayerPOJO> playerResponse = getBattleriteRetrofit()
+                    .getPlayerID(helper.urlEncode(getParams().get(0))).execute();
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {

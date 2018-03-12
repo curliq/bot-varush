@@ -1,7 +1,5 @@
 package app.commands;
 
-import java.util.ArrayList;
-
 import app.Command;
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;

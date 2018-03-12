@@ -15,11 +15,6 @@ import net.dv8tion.jda.core.JDA;
 
 public abstract class Command {
 
-      /**
-     * Method used to return the repply message, must be implemented
-     */
-    protected abstract EmbedBuilder getReply();
-
     /**
      * Key is the first keyword after the trigger and is what defines a command, i.e. "stats"
      */
@@ -39,6 +34,11 @@ public abstract class Command {
      * JDA object
      */
     private JDA jda;
+
+    /**
+    * Method used to return the repply message, must be implemented
+    */
+    protected abstract EmbedBuilder getReply();
 
     /**
      * Return Retrofit instance to use for Battlerite API

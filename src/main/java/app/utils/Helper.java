@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.2.1";
+    public final static String BOT_VERSION = "2.2.4";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
-
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -28,10 +26,14 @@ public class MessageListener extends ListenerAdapter {
         this.commandsManager = commandsManager;
         commandsShortcuts = new HashMap<>();
         commandsShortcuts.put("!c", "!br stats curlicue");
+        commandsShortcuts.put("!c2", "!br stats curlicue 2s");
+        commandsShortcuts.put("!c2", "!br stats curlicue 3s");
         commandsShortcuts.put("!ex", "!br stats ExBlack");
         commandsShortcuts.put("!bo", "!br stats Lustknecht");
         commandsShortcuts.put("!bobo", "!br stats Lustknecht 2s");
         commandsShortcuts.put("!bobobo", "!br stats Lustknecht 3s");
+        commandsShortcuts.put("!g", "!br stats Grisillo");
+        commandsShortcuts.put("!a", "!br stats Azginporsuk");
     }
 
     @Override

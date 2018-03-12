@@ -9,8 +9,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 public class Welp extends Command {
 
     public final static String KEY = "welp";
-
-    ArrayList<Command> commandsArray;
+    private ArrayList<Command> commandsArray;
 
     /**
      * This command is the only one that also takes the commandsArray

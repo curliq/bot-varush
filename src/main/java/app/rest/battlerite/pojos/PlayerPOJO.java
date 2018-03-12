@@ -98,10 +98,10 @@ public class PlayerPOJO {
     public class Stats {
         @SerializedName("picture")
         @Expose
-        long pictureID;
+        private long pictureID;
         @SerializedName("title")
         @Expose
-        long titleID;
+        private long titleID;
 
         public void settitleID(long titleID) {
             this.titleID = titleID;

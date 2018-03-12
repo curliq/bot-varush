@@ -3,7 +3,6 @@ package app;
 import java.util.ArrayList;
 
 import app.commands.About;
-import app.commands.Live;
 import app.commands.Stats;
 import app.commands.Welp;
 import app.commands.WhoTheBestBot;
@@ -11,8 +10,8 @@ import net.dv8tion.jda.core.JDA;
 
 public class CommandsManager {
 
-    ArrayList<Command> commandsArray = new ArrayList<>();
-    JDA jda;
+    private ArrayList<Command> commandsArray = new ArrayList<>();
+    private JDA jda;
 
     public CommandsManager(JDA jda) {
         this.jda = jda;
