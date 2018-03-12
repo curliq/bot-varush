@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
@@ -96,13 +95,13 @@ public class Stats extends Command {
 
     private EmbedBuilder getTeamsData(boolean is2v2) {
         EmbedBuilder eb = new EmbedBuilder();
-        ArrayList<Attributes> teamsArray = new ArrayList<>();
 
         // add all the teams out of placements to a list
-        for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData())
-            if (team.getAttributes().getStats().getMembers().size() == (is2v2 ? 2 : 3)
-                    && team.getAttributes().getStats().getPlacementGamesLeft() == 0)
-                teamsArray.add(team.getAttributes());
+        ArrayList<Attributes> teamsArray = teamStatsResponse.body().getData().stream()
+                .filter(p -> p.getAttributes().getStats().getMembers().size() == (is2v2 ? 2 : 3))
+                .filter(p -> p.getAttributes().getStats().getPlacementGamesLeft() == 0)
+                .map(p -> p.getAttributes())
+                .collect(Collectors.toCollection(ArrayList::new));
 
         // order the teams by division
         orderTeams(teamsArray);
@@ -145,16 +144,18 @@ public class Stats extends Command {
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
             // create a list and add the players of this team to it
-            List<PlayerPOJO.Data> otherPlayersNames = otherPLayersList.stream()
-                    .filter(p -> team.getStats().getMembers().contains(p.getId())).collect(Collectors.toList());
+            ArrayList<String> otherPlayersNames = otherPLayersList.stream()
+                    .filter(p -> team.getStats().getMembers().contains(p.getId()))
+                    .map(p -> p.getAttributes().getName())
+                    .collect(Collectors.toCollection(ArrayList::new));
 
             String otherPlayersString = "";
             try {
                 if (is2v2)
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0).getAttributes().getName() + ")";
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
                 else
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0).getAttributes().getName() + " and "
-                            + otherPlayersNames.get(1).getAttributes().getName() + ")";
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
+                            + ")";
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
