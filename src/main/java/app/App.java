@@ -1,3 +1,5 @@
+package app;
+
 import javax.security.auth.login.LoginException;
 
 import app.CommandsManager;

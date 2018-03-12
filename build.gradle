@@ -11,7 +11,7 @@ apply plugin: 'distribution'
 apply plugin: 'java'
 
 // Define the main class for the application
-mainClassName = 'App'
+mainClassName = 'app.App'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
@@ -21,8 +21,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
 }
 
 task buildZip(type: Zip) {
@@ -44,7 +42,7 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': 'app.App'
     } 
     doFirst {
         from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }

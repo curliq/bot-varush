@@ -3,6 +3,9 @@ package app.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.Collections;
 
 import app.Command;
@@ -142,21 +145,16 @@ public class Stats extends Command {
         for (TeamStatsPOJO.Attributes team : teamsArray) {
 
             // create a list and add the players of this team to it
-            ArrayList<String> otherPlayersNames = new ArrayList<>();
-            for (PlayerPOJO.Data otherPlayer : otherPLayersList) {
-                if (team.getStats().getMembers().contains(otherPlayer.getId())
-                        && !otherPlayersNames.contains(otherPlayer.getAttributes().getName())) {
-                    otherPlayersNames.add(otherPlayer.getAttributes().getName());
-                }
-            }
+            List<PlayerPOJO.Data> otherPlayersNames = otherPLayersList.stream()
+                    .filter(p -> team.getStats().getMembers().contains(p.getId())).collect(Collectors.toList());
 
             String otherPlayersString = "";
             try {
                 if (is2v2)
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0).getAttributes().getName() + ")";
                 else
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
-                            + ")";
+                    otherPlayersString = " (carried by " + otherPlayersNames.get(0).getAttributes().getName() + " and "
+                            + otherPlayersNames.get(1).getAttributes().getName() + ")";
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
