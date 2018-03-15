@@ -21,14 +21,14 @@ To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue h
 2. Pull the repository.
 3. `gradle run`
 
-##### Setup your private keys
+###### Setup your private keys
 1. Create file src/main/java/app/utils/Auth.java with `BOT_TOKEN`, `BATTLERITE_TOKEN` and `TWITCH_TOKEN`, being your discord's app token, your battlerite dev account token and your twitch app token respectively.
 2. For Streaming role - Change Helper.STREAMER_ROLE_NAME to the name of your "Streaming" role on your server
 
-##### Run locally
+###### Run locally
 1. `gradle run`
 
-##### Build jar
+###### Build jar
 1. `gradle jar -Dorg.gradle.java.home='/Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/'` path being your java home directory
 2. Find your jar at `bot-varush/build/libs/bot-varush.jar`
 	
@@ -40,7 +40,7 @@ This is the followed git workflow: https://goo.gl/images/Su7k5k
 3. PR to `develop`
 
 ###### Contributors
-
+---
 
 ###### Worth mentioning
 - @Bohnenkrautsaft#4768 - Help with API integration and deployment.
