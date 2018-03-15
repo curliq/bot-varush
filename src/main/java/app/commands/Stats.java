@@ -98,8 +98,7 @@ public class Stats extends Command {
         // add all the teams out of placements to a list
         ArrayList<Attributes> teamsArray = teamStatsResponse.body().getData().stream()
                 .filter(p -> p.getAttributes().getStats().getMembers().size() == (is2v2 ? 2 : 3))
-                .filter(p -> p.getAttributes().getStats().getPlacementGamesLeft() == 0)
-                .map(p -> p.getAttributes())
+                .filter(p -> p.getAttributes().getStats().getPlacementGamesLeft() == 0).map(p -> p.getAttributes())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         // order the teams by division
@@ -118,6 +117,29 @@ public class Stats extends Command {
         String otherPlayersIds = getPlayersInTeams(teamsArray);
 
         // get all the other players in the teams, divide in 2 requests because the api only returns 6 people max
+        ArrayList<PlayerPOJO.Data> otherPlayersList = getPlayersInTeams(otherPlayersIds);
+
+        // build view for each team
+        for (TeamStatsPOJO.Attributes team : teamsArray) {
+
+            eb.addBlankField(false);
+
+            eb.addField(team.getName() + getPlayersInThisTeamText(is2v2, team, otherPlayersList),
+                    "————————————————————", false);
+            addTeamInfo(eb, team);
+        }
+
+        eb.addBlankField(false);
+
+        return eb;
+    }
+
+    //////////////////////////// helper functions
+
+    /**
+     * Get a list of all the other players in the teams
+     */
+    private ArrayList<PlayerPOJO.Data> getPlayersInTeams(String otherPlayersIds) {
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
         try {
             Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
@@ -138,39 +160,32 @@ public class Stats extends Command {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // build view for each team
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
-
-            // create a list and add the players of this team to it
-            ArrayList<String> otherPlayersNames = otherPLayersList.stream()
-                    .filter(p -> team.getStats().getMembers().contains(p.getId()))
-                    .map(p -> p.getAttributes().getName())
-                    .collect(Collectors.toCollection(ArrayList::new));
-
-            String otherPlayersString = "";
-            try {
-                if (is2v2)
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
-                else
-                    otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
-                            + ")";
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-
-            eb.addBlankField(false);
-
-            eb.addField(team.getName() + otherPlayersString, "————————————————————", false);
-            addTeamInfo(eb, team);
-        }
-
-        eb.addBlankField(false);
-
-        return eb;
+        return otherPLayersList;
     }
 
-    //////////////////////////// helper functions
+    /**
+     * Make string of the other players in this team
+     */
+    private String getPlayersInThisTeamText(boolean is2v2, TeamStatsPOJO.Attributes team,
+            ArrayList<PlayerPOJO.Data> otherPLayersList) {
+
+        // create a list and add the players of this team to it
+        ArrayList<String> otherPlayersNames = otherPLayersList.stream()
+                .filter(p -> team.getStats().getMembers().contains(p.getId())).map(p -> p.getAttributes().getName())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        String otherPlayersString = "";
+        try {
+            if (is2v2)
+                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
+            else
+                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
+                        + ")";
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        return otherPlayersString;
+    }
 
     /**
      * Add wins, losses, win ratio and league (to avoid code duplication)
