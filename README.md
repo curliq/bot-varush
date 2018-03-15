@@ -29,7 +29,7 @@ To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue h
 1. `gradle run`
 
 ##### Build jar
-1. gradle jar -Dorg.gradle.java.home='/Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/'
+1. `gradle jar -Dorg.gradle.java.home='/Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/'` path being your java home directory
 	
 
 # Contribute
