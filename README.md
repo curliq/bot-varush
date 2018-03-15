@@ -40,7 +40,7 @@ This is the followed git workflow: https://goo.gl/images/Su7k5k
 3. PR to `develop`
 
 ###### Contributors
----
+--
 
 ###### Worth mentioning
 - @Bohnenkrautsaft#4768 - Help with API integration and deployment.
