@@ -26,12 +26,8 @@ public class MessageListener extends ListenerAdapter {
         this.commandsManager = commandsManager;
         commandsShortcuts = new HashMap<>();
         commandsShortcuts.put("!c", "!br stats curlicue");
-        commandsShortcuts.put("!c2", "!br stats curlicue 2s");
-        commandsShortcuts.put("!c3", "!br stats curlicue 3s");
         commandsShortcuts.put("!ex", "!br stats ExBlack");
         commandsShortcuts.put("!bo", "!br stats Lustknecht");
-        commandsShortcuts.put("!bobo", "!br stats Lustknecht 2s");
-        commandsShortcuts.put("!bobobo", "!br stats Lustknecht 3s");
         commandsShortcuts.put("!g", "!br stats Grisillo");
         commandsShortcuts.put("!a", "!br stats Azginporsuk");
         commandsShortcuts.put("!9", "!br stats 9gag");
@@ -43,10 +39,16 @@ public class MessageListener extends ListenerAdapter {
         Message message = event.getMessage();
         String content = message.getContentRaw();
 
-        // Check if command is a shortcut, if yes, replace message content with shortcut value
-        if (commandsShortcuts.containsKey(content)) 
-            content = commandsShortcuts.get(content);
-        
+        // Check if command contains a shortcut, if yes, replace shortcut text with shortcut value and append the rest
+        for (String shortcutKey : commandsShortcuts.keySet()) {
+            if (content.contains(shortcutKey)) {
+                int keyIndex = content.contains(" ") ? content.indexOf(" ") : content.length();
+                String key = content.substring(0, keyIndex);
+                String rest = content.substring(keyIndex);
+                content = commandsShortcuts.get(key) + rest;
+            }
+        }
+
         // Check if message starts with "!br" to invoke the specific command
         if (content.toLowerCase().startsWith(Helper.COMMAND_TRIGGER)) {
 
