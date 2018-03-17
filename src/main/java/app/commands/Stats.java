@@ -247,7 +247,7 @@ public class Stats extends Command {
                 else {
                     // won game
                     if (newPoints.getDivisionRating() > oldPoints.getPoints()) {
-                        finalString = "+" + Integer.valueOf(newPoints.getTopDivisionRating() - oldPoints.getPoints());
+                        finalString = "+" + Integer.valueOf(newPoints.getDivisionRating() - oldPoints.getPoints());
                     }
                     // lost game
                     else {
