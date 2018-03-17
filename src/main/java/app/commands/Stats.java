@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import javax.swing.PopupFactory;
+
 import java.util.Collections;
 
 import app.Command;
@@ -195,7 +197,6 @@ public class Stats extends Command {
      */
     private void addTeamInfo(EmbedBuilder eb, TeamStatsPOJO.Data team) {
         TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
-        TeamCachedPOJO cachedPoints = Helper.getTeamPoints(team.getId());
 
         // calculate win rate
         double winRate = (Double.valueOf(teamAttrs.getStats().getWins())
@@ -206,11 +207,7 @@ public class Stats extends Command {
         eb.addField("Wins", "" + teamAttrs.getStats().getWins(), true);
         eb.addField("Losses", "" + teamAttrs.getStats().getLosses(), true);
         eb.addField("Win ratio", winRateString, true);
-        eb.addField("League",
-                helper.getLeage(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
-                        + teamAttrs.getStats().getDivisionRating() + "pts"
-                        + getPointsDelta(cachedPoints, teamAttrs.getStats()),
-                true);
+        eb.addField("League", makeLeagueText(team), true);
 
         // Update team entry with new points amount
         Helper.saveTeamPoints(team.getId(), new TeamCachedPOJO(teamAttrs.getStats().getDivision(),
@@ -219,46 +216,46 @@ public class Stats extends Command {
     }
 
     /**
+     * Make league text.
+     * Checks if is in placements or not
+     * Gets the points delta
+     */
+    private String makeLeagueText(TeamStatsPOJO.Data team) {
+        TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
+        TeamCachedPOJO cachedPoints = Helper.getTeamPoints(team.getId());
+
+        if (teamAttrs.getStats().getPlacementGamesLeft() > 0)
+            return "Placements: " + teamAttrs.getStats().getPlacementGamesLeft() + " games left";
+
+        return helper.getLeague(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
+                + teamAttrs.getStats().getDivisionRating() + "pts" + getPointsDelta(cachedPoints, teamAttrs.getStats());
+    }
+
+    /**
      * Calculate the delta between the current points and cached points considering the division and league
      */
     private String getPointsDelta(TeamCachedPOJO oldPoints, TeamStatsPOJO.Stats newPoints) {
-        String finalString;
+        
+        if (oldPoints == null)
+            return "";
 
-        if (oldPoints != null && oldPoints.getPoints() != newPoints.getDivisionRating()) {
-            // promoted to new division
-            if (newPoints.getLeague() < oldPoints.getLeague()) {
-                finalString = "+" + Integer.valueOf(100 - (oldPoints.getPoints() - newPoints.getDivisionRating()));
-            }
-            // demoted league
-            else if (newPoints.getLeague() > oldPoints.getLeague()) {
-                finalString = "-" + Integer.valueOf(100 + oldPoints.getPoints() - newPoints.getDivisionRating());
-            }
-            // same league
-            else {
-                // promoted to next division
-                if (newPoints.getDivision() > oldPoints.getDivision()) {
-                    finalString = "+" + Integer.valueOf(100 - (oldPoints.getPoints() - newPoints.getDivisionRating()));
-                }
-                // demoted division
-                else if (newPoints.getDivision() < oldPoints.getDivision()) {
-                    finalString = "-" + Integer.valueOf(100 + oldPoints.getPoints() - newPoints.getDivisionRating());
-                }
-                // same division
-                else {
-                    // won game
-                    if (newPoints.getDivisionRating() > oldPoints.getPoints()) {
-                        finalString = "+" + Integer.valueOf(newPoints.getDivisionRating() - oldPoints.getPoints());
-                    }
-                    // lost game
-                    else {
-                        finalString = "-" + Integer.valueOf(oldPoints.getPoints() - newPoints.getDivisionRating());
-                    }
-                }
-            }
-            return " *(" + finalString + ")*";
-        } else {
+        // promoted league(s)
+        int newGlobalPoints = helper.getGlobalPoints(newPoints.getLeague(), newPoints.getDivision())
+                + newPoints.getDivisionRating();
+        int oldGlobalPoints = helper.getGlobalPoints(oldPoints.getLeague(), oldPoints.getDivision())
+                + oldPoints.getPoints();
+
+        int pointsDiff = newGlobalPoints - oldGlobalPoints;
+        String finalString = String.valueOf(pointsDiff);
+
+        if (pointsDiff == 0) {
             return "";
         }
+        else if (pointsDiff > 0) {
+            finalString = "+" + pointsDiff;
+        }
+
+        return " *(" + finalString + ")*";
     }
 
     /**

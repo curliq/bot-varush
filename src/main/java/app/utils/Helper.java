@@ -32,6 +32,7 @@ public class Helper {
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
+    // public final static String BATTLERITE_BASE_URL = "http://demo2022116.mockable.io/";
     public final static String TWITCH_BASE_URL = "https://api.twitch.tv/";
     public final static String ERROR_TITLE = "Sorry...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
@@ -101,7 +102,7 @@ public class Helper {
                     requestBuilder.addHeader(header, headersMap.get(header));
                 }
                 requestBuilder.method(original.method(), original.body());
-                
+                // 
                 Request request = requestBuilder.build();
                 return chain.proceed(request);
             }
@@ -120,8 +121,8 @@ public class Helper {
     /**
      * Get a player's league name
      */
-    public String getLeage(int division) {
-        switch (division) {
+    public String getLeague(int league) {
+        switch (league) {
         case 0:
             return "Bronze";
         case 1:
@@ -213,4 +214,70 @@ public class Helper {
         return teamCachedPOJO;
     }
 
+    /**
+     * Get points amount from Bronze 5 to Grand Champion 1.
+     * Bronze 5 is 0 points. Gold 5 is division 1000, etc
+     */
+    public int getGlobalPoints(int league, int division) {
+        switch(league) {
+            // bronze
+            case 0:
+                switch (division) {
+                    case 5: return 0;
+                    case 4: return 100;
+                    case 3: return 200;
+                    case 2: return 300;
+                    case 1: return 400;
+                }
+            // silver
+            case 1:
+                switch (division) {
+                    case 5: return 500;
+                    case 4: return 600;
+                    case 3: return 700;
+                    case 2: return 800;
+                    case 1: return 900;
+                }
+            // gold
+            case 2:
+                switch (division) {
+                    case 5: return 1000;
+                    case 4: return 1100;
+                    case 3: return 1200;
+                    case 2: return 1300;
+                    case 1: return 1400;
+                }
+            // platinum
+            case 3:
+                switch (division) {
+                    case 5: return 1500;
+                    case 4: return 1600;
+                    case 3: return 1700;
+                    case 2: return 1800;
+                    case 1: return 1900;
+                }
+            // diamond
+            case 4:
+                switch (division) {
+                    case 5: return 2000;
+                    case 4: return 2100;
+                    case 3: return 2200;
+                    case 2: return 2300;
+                    case 1: return 2400;
+                }
+            // champion
+            case 5:
+                switch (division) {
+                    case 5: return 2500;
+                    case 4: return 2600;
+                    case 3: return 2700;
+                    case 2: return 2800;
+                    case 1: return 2900;
+                }
+            // grand champion
+            case 6:
+                return 3000;
+        }
+        return 0;
+    }
 }
