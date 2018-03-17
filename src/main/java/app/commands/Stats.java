@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-import javax.swing.PopupFactory;
-
 import java.util.Collections;
 
 import app.Command;
 import app.rest.battlerite.pojos.TeamStatsPOJO;
-import app.rest.battlerite.pojos.TeamStatsPOJO.Attributes;
 import app.rest.battlerite.pojos.TeamStatsPOJO.Data;
 import app.rest.battlerite.pojos.PlayerPOJO;
 import app.utils.Helper;
