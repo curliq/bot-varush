@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+
 import java.util.Collections;
 
 import app.Command;
 import app.rest.battlerite.pojos.TeamStatsPOJO;
 import app.rest.battlerite.pojos.TeamStatsPOJO.Attributes;
+import app.rest.battlerite.pojos.TeamStatsPOJO.Data;
 import app.rest.battlerite.pojos.PlayerPOJO;
 import app.utils.Helper;
+import app.utils.TeamCachedPOJO;
 import net.dv8tion.jda.core.EmbedBuilder;
 import retrofit2.Response;
 
@@ -74,12 +77,12 @@ public class Stats extends Command {
     }
 
     private EmbedBuilder getSoloData() {
-        TeamStatsPOJO.Attributes playerTeam = teamStatsResponse.body().getData().get(0).getAttributes();
+        TeamStatsPOJO.Data playerTeam = teamStatsResponse.body().getData().get(0);
         // loop through the teams and check which one is the one for
         // solo (i.e. just one member) just in case it's not the first one
         for (TeamStatsPOJO.Data team : teamStatsResponse.body().getData()) {
             if (team.getAttributes().getStats().getMembers().size() == 1)
-                playerTeam = team.getAttributes();
+                playerTeam = team;
         }
         EmbedBuilder eb = new EmbedBuilder();
 
@@ -96,9 +99,9 @@ public class Stats extends Command {
         EmbedBuilder eb = new EmbedBuilder();
 
         // add all the teams out of placements to a list
-        ArrayList<Attributes> teamsArray = teamStatsResponse.body().getData().stream()
+        ArrayList<Data> teamsArray = teamStatsResponse.body().getData().stream()
                 .filter(p -> p.getAttributes().getStats().getMembers().size() == (is2v2 ? 2 : 3))
-                .filter(p -> p.getAttributes().getStats().getPlacementGamesLeft() == 0).map(p -> p.getAttributes())
+                .filter(p -> p.getAttributes().getStats().getPlacementGamesLeft() == 0)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         // order the teams by division
@@ -114,17 +117,17 @@ public class Stats extends Command {
         }
 
         // get the ids of the players that are in the teams
-        String otherPlayersIds = getPlayersInTeams(teamsArray);
+        String otherPlayersIds = getPlayersInTeamsString(teamsArray);
 
         // get all the other players in the teams, divide in 2 requests because the api only returns 6 people max
         ArrayList<PlayerPOJO.Data> otherPlayersList = getPlayersInTeams(otherPlayersIds);
 
         // build view for each team
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
+        for (TeamStatsPOJO.Data team : teamsArray) {
 
             eb.addBlankField(false);
 
-            eb.addField(team.getName() + getPlayersInThisTeamText(is2v2, team, otherPlayersList),
+            eb.addField(team.getAttributes().getName() + getPlayersInThisTeamText(is2v2, team, otherPlayersList),
                     "————————————————————", false);
             addTeamInfo(eb, team);
         }
@@ -166,13 +169,13 @@ public class Stats extends Command {
     /**
      * Make string of the other players in this team
      */
-    private String getPlayersInThisTeamText(boolean is2v2, TeamStatsPOJO.Attributes team,
+    private String getPlayersInThisTeamText(boolean is2v2, TeamStatsPOJO.Data team,
             ArrayList<PlayerPOJO.Data> otherPLayersList) {
 
         // create a list and add the players of this team to it
         ArrayList<String> otherPlayersNames = otherPLayersList.stream()
-                .filter(p -> team.getStats().getMembers().contains(p.getId())).map(p -> p.getAttributes().getName())
-                .collect(Collectors.toCollection(ArrayList::new));
+                .filter(p -> team.getAttributes().getStats().getMembers().contains(p.getId()))
+                .map(p -> p.getAttributes().getName()).collect(Collectors.toCollection(ArrayList::new));
 
         String otherPlayersString = "";
         try {
@@ -190,44 +193,102 @@ public class Stats extends Command {
     /**
      * Add wins, losses, win ratio and league (to avoid code duplication)
      */
-    private void addTeamInfo(EmbedBuilder eb, TeamStatsPOJO.Attributes team) {
-        double winRate = (Double.valueOf(team.getStats().getWins())
-                / (Double.valueOf(team.getStats().getWins()) + Double.valueOf(team.getStats().getLosses()))) * 100f;
+    private void addTeamInfo(EmbedBuilder eb, TeamStatsPOJO.Data team) {
+        TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
+        TeamCachedPOJO cachedPoints = Helper.getTeamPoints(team.getId());
+
+        // calculate win rate
+        double winRate = (Double.valueOf(teamAttrs.getStats().getWins())
+                / (Double.valueOf(teamAttrs.getStats().getWins()) + Double.valueOf(teamAttrs.getStats().getLosses())))
+                * 100f;
         String winRateString = Double.isNaN(winRate) ? "git gud" : helper.roundTwoDecimals(winRate) + "%";
 
-        eb.addField("Wins", "" + team.getStats().getWins(), true);
-        eb.addField("Losses", "" + team.getStats().getLosses(), true);
+        eb.addField("Wins", "" + teamAttrs.getStats().getWins(), true);
+        eb.addField("Losses", "" + teamAttrs.getStats().getLosses(), true);
         eb.addField("Win ratio", winRateString, true);
-        eb.addField("League", "" + helper.getLeage(team.getStats().getLeague()) + " " + team.getStats().getDivision()
-                + " (" + team.getStats().getDivisionRating() + ")", true);
+        eb.addField("League",
+                helper.getLeage(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
+                        + teamAttrs.getStats().getDivisionRating() + "pts"
+                        + getPointsDelta(cachedPoints, teamAttrs.getStats()),
+                true);
+
+        // Update team entry with new points amount
+        Helper.saveTeamPoints(team.getId(), new TeamCachedPOJO(teamAttrs.getStats().getDivision(),
+                teamAttrs.getStats().getLeague(), teamAttrs.getStats().getDivisionRating()));
+
+    }
+
+    /**
+     * Calculate the delta between the current points and cached points considering the division and league
+     */
+    private String getPointsDelta(TeamCachedPOJO oldPoints, TeamStatsPOJO.Stats newPoints) {
+        String finalString;
+
+        if (oldPoints != null && oldPoints.getPoints() != newPoints.getDivisionRating()) {
+            // promoted to new division
+            if (newPoints.getLeague() < oldPoints.getLeague()) {
+                finalString = "+" + Integer.valueOf(100 - (oldPoints.getPoints() - newPoints.getDivisionRating()));
+            }
+            // demoted league
+            else if (newPoints.getLeague() > oldPoints.getLeague()) {
+                finalString = "-" + Integer.valueOf(100 + oldPoints.getPoints() - newPoints.getDivisionRating());
+            }
+            // same league
+            else {
+                // promoted to next division
+                if (newPoints.getDivision() > oldPoints.getDivision()) {
+                    finalString = "+" + Integer.valueOf(100 - (oldPoints.getPoints() - newPoints.getDivisionRating()));
+                }
+                // demoted division
+                else if (newPoints.getDivision() < oldPoints.getDivision()) {
+                    finalString = "-" + Integer.valueOf(100 + oldPoints.getPoints() - newPoints.getDivisionRating());
+                }
+                // same division
+                else {
+                    // won game
+                    if (newPoints.getDivisionRating() > oldPoints.getPoints()) {
+                        finalString = "+" + Integer.valueOf(newPoints.getTopDivisionRating() - oldPoints.getPoints());
+                    }
+                    // lost game
+                    else {
+                        finalString = "-" + Integer.valueOf(oldPoints.getPoints() - newPoints.getDivisionRating());
+                    }
+                }
+            }
+            return " *(" + finalString + ")*";
+        } else {
+            return "";
+        }
     }
 
     /**
      * Order teams vy division then league then points
      */
-    private void orderTeams(ArrayList<Attributes> teamsArray) {
+    private void orderTeams(ArrayList<Data> teamsArray) {
 
-        Comparator<TeamStatsPOJO.Attributes> byLeague = new Comparator<TeamStatsPOJO.Attributes>() {
-            public int compare(TeamStatsPOJO.Attributes o1, TeamStatsPOJO.Attributes o2) {
-                if (o1.getStats().getLeague() == o2.getStats().getLeague())
+        Comparator<TeamStatsPOJO.Data> byLeague = new Comparator<TeamStatsPOJO.Data>() {
+            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
+                if (o1.getAttributes().getStats().getLeague() == o2.getAttributes().getStats().getLeague())
                     return 0;
-                return o2.getStats().getLeague() - o1.getStats().getLeague();
+                return o2.getAttributes().getStats().getLeague() - o1.getAttributes().getStats().getLeague();
             }
         };
 
-        Comparator<TeamStatsPOJO.Attributes> byDivision = new Comparator<TeamStatsPOJO.Attributes>() {
-            public int compare(TeamStatsPOJO.Attributes o1, TeamStatsPOJO.Attributes o2) {
-                if (o1.getStats().getDivision() == o2.getStats().getDivision())
+        Comparator<TeamStatsPOJO.Data> byDivision = new Comparator<TeamStatsPOJO.Data>() {
+            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
+                if (o1.getAttributes().getStats().getDivision() == o2.getAttributes().getStats().getDivision())
                     return 0;
-                return o1.getStats().getDivision() - o2.getStats().getDivision();
+                return o1.getAttributes().getStats().getDivision() - o2.getAttributes().getStats().getDivision();
             }
         };
 
-        Comparator<TeamStatsPOJO.Attributes> byPoints = new Comparator<TeamStatsPOJO.Attributes>() {
-            public int compare(TeamStatsPOJO.Attributes o1, TeamStatsPOJO.Attributes o2) {
-                if (o1.getStats().getDivisionRating() == o2.getStats().getDivisionRating())
+        Comparator<TeamStatsPOJO.Data> byPoints = new Comparator<TeamStatsPOJO.Data>() {
+            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
+                if (o1.getAttributes().getStats().getDivisionRating() == o2.getAttributes().getStats()
+                        .getDivisionRating())
                     return 0;
-                return o2.getStats().getDivisionRating() - o1.getStats().getDivisionRating();
+                return o2.getAttributes().getStats().getDivisionRating()
+                        - o1.getAttributes().getStats().getDivisionRating();
             }
         };
 
@@ -235,13 +296,13 @@ public class Stats extends Command {
 
     }
 
-    private String getPlayersInTeams(ArrayList<Attributes> teamsArray) {
+    private String getPlayersInTeamsString(ArrayList<Data> teamsArray) {
         String otherPlayersIds = "";
 
         // loop through all the teams
-        for (TeamStatsPOJO.Attributes team : teamsArray) {
+        for (TeamStatsPOJO.Data team : teamsArray) {
             // loop through all the players in each team
-            for (Long otherPlayerID : team.getStats().getMembers()) {
+            for (Long otherPlayerID : team.getAttributes().getStats().getMembers()) {
                 // check if player isnt the one requesting and isnt repeated
                 if (!otherPlayerID.equals(playerData.getId()))
                     otherPlayersIds += otherPlayerID + ",";
@@ -250,8 +311,6 @@ public class Stats extends Command {
         // remove last comma
         if (otherPlayersIds.length() > 0)
             otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
-
-        Helper.log(otherPlayersIds);
 
         return otherPlayersIds;
     }

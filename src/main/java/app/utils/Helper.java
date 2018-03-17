@@ -8,6 +8,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -24,8 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.2.4";
-
+    public final static String BOT_VERSION = "2.3.0";
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
@@ -42,11 +45,28 @@ public class Helper {
     public final static String STREAMING_ROLE_NAME = "Streaming";
     public final static String PROBATION_ROLE_NAME = "Under Probation";
 
+    public static LinkedHashMap<Long, TeamCachedPOJO> teamsPointsCacheMap;
 
+    public static void init() {
+        final int MAX_ENTRIES = 100;
+        teamsPointsCacheMap = new LinkedHashMap<Long, TeamCachedPOJO>(MAX_ENTRIES, .75F, true) {
+            // This method is called just after a new entry has been added
+            public boolean removeEldestEntry(Map.Entry<Long, TeamCachedPOJO> eldest) {
+                return size() > MAX_ENTRIES-1;
+            }
+        };
+    }
+
+    /**
+     * Shortcut to log something on the console
+     */
     public static void log(Object o) {
         System.out.println(o);
     }
 
+    /**
+     * Get retrofit object to interact with Battlerite API
+     */
     public Retrofit getBattleriteRetrofit() {
         HashMap<String, String> headersMap = new HashMap<>();
         headersMap.put("Authorization", Auth.BATTLERITE_TOKEN);
@@ -54,12 +74,18 @@ public class Helper {
         return getRetrofit(BATTLERITE_BASE_URL, headersMap);
     }
    
+    /**
+     * Get retrofit object to interact with Twitch API
+     */
     public Retrofit getTwitchRetrofit() {
         HashMap<String, String> headersMap = new HashMap<>();
         headersMap.put("Client-ID", Auth.TWITCH_TOKEN);
         return getRetrofit(TWITCH_BASE_URL, headersMap);
     }
 
+    /**
+     * Get generic retrofit object
+     */
     public Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -91,6 +117,9 @@ public class Helper {
         return retrofit;
     }
 
+    /**
+     * Get a player's league name
+     */
     public String getLeage(int division) {
         switch (division) {
         case 0:
@@ -112,12 +141,18 @@ public class Helper {
         }
     }
 
+    /**
+     * Build a basic embed message with just one field
+     */
     public EmbedBuilder getBasicEmbedMessage(String title, String message) {
         EmbedBuilder eb = new EmbedBuilder();
         eb.addField(title, message, false);
         return eb;
     }
 
+    /**
+     * Get a player's title
+     */
     public String getPlayerTitle(long titleID) {
 
         try {
@@ -142,11 +177,17 @@ public class Helper {
         return "Boosted Silver";
     }
 
+    /**
+     * Round decimal to 2 cases
+     */
     public Double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Double.valueOf(twoDForm.format(d));
     }
 
+    /**
+     * Urlencode a string
+     */
     public String urlEncode(String string) {
         try {
             return URLEncoder.encode(string, "UTF-8");
@@ -154,6 +195,22 @@ public class Helper {
             e.printStackTrace();
             return string;
         }
+    }
+
+    /**
+     * Save a team's current points to cache, key being the player's ID, and value the points amount
+     */
+    public static void saveTeamPoints(long teamID, TeamCachedPOJO teamCachedPOJO) {
+        teamsPointsCacheMap.put(teamID, teamCachedPOJO);
+    }
+
+    /**
+     * Get the saved points amount from a team, may be null
+     */
+    @Nullable
+    public static TeamCachedPOJO getTeamPoints(long teamID) {
+        TeamCachedPOJO teamCachedPOJO = teamsPointsCacheMap.get(teamID);
+        return teamCachedPOJO;
     }
 
 }

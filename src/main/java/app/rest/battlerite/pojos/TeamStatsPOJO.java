@@ -26,7 +26,7 @@ public class TeamStatsPOJO {
         private String type;
         @SerializedName("id")
         @Expose
-        private String id;
+        private Long id;
         @SerializedName("attributes")
         @Expose
         private Attributes attributes;
@@ -39,11 +39,11 @@ public class TeamStatsPOJO {
             this.type = type;
         }
 
-        public String getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(Long id) {
             this.id = id;
         }
 
