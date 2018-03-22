@@ -17,12 +17,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import app.rest.google.GoogleInterface;
+import app.rest.google.pojos.UrlShortenerPOJO;
 import net.dv8tion.jda.core.EmbedBuilder;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -34,6 +37,7 @@ public class Helper {
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
     // public final static String BATTLERITE_BASE_URL = "http://demo2022116.mockable.io/";
     public final static String TWITCH_BASE_URL = "https://api.twitch.tv/";
+    public final static String GOOGLE_API_BASE_URL = "https://www.googleapis.com/";
     public final static String ERROR_TITLE = "Sorry...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String NOT_A_COMMAND = "That's not really a command lady";
@@ -53,7 +57,7 @@ public class Helper {
         teamsPointsCacheMap = new LinkedHashMap<Long, TeamCachedPOJO>(MAX_ENTRIES, .75F, true) {
             // This method is called just after a new entry has been added
             public boolean removeEldestEntry(Map.Entry<Long, TeamCachedPOJO> eldest) {
-                return size() > MAX_ENTRIES-1;
+                return size() > MAX_ENTRIES - 1;
             }
         };
     }
@@ -74,7 +78,7 @@ public class Helper {
         headersMap.put("Accept", "application/vnd.api+json");
         return getRetrofit(BATTLERITE_BASE_URL, headersMap);
     }
-   
+
     /**
      * Get retrofit object to interact with Twitch API
      */
@@ -98,9 +102,10 @@ public class Helper {
             public okhttp3.Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
                 Builder requestBuilder = original.newBuilder();
-                for (String header : headersMap.keySet()) {
-                    requestBuilder.addHeader(header, headersMap.get(header));
-                }
+                if (headersMap != null)
+                    for (String header : headersMap.keySet())
+                        requestBuilder.addHeader(header, headersMap.get(header));
+
                 requestBuilder.method(original.method(), original.body());
                 // 
                 Request request = requestBuilder.build();
@@ -109,11 +114,8 @@ public class Helper {
         });
 
         OkHttpClient client = httpClient.build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
+                .client(client).build();
 
         return retrofit;
     }
@@ -219,65 +221,116 @@ public class Helper {
      * Bronze 5 is 0 points. Gold 5 is division 1000, etc
      */
     public int getGlobalPoints(int league, int division) {
-        switch(league) {
-            // bronze
-            case 0:
-                switch (division) {
-                    case 5: return 0;
-                    case 4: return 100;
-                    case 3: return 200;
-                    case 2: return 300;
-                    case 1: return 400;
-                }
-            // silver
-            case 1:
-                switch (division) {
-                    case 5: return 500;
-                    case 4: return 600;
-                    case 3: return 700;
-                    case 2: return 800;
-                    case 1: return 900;
-                }
-            // gold
-            case 2:
-                switch (division) {
-                    case 5: return 1000;
-                    case 4: return 1100;
-                    case 3: return 1200;
-                    case 2: return 1300;
-                    case 1: return 1400;
-                }
-            // platinum
-            case 3:
-                switch (division) {
-                    case 5: return 1500;
-                    case 4: return 1600;
-                    case 3: return 1700;
-                    case 2: return 1800;
-                    case 1: return 1900;
-                }
-            // diamond
-            case 4:
-                switch (division) {
-                    case 5: return 2000;
-                    case 4: return 2100;
-                    case 3: return 2200;
-                    case 2: return 2300;
-                    case 1: return 2400;
-                }
-            // champion
+        switch (league) {
+        // bronze
+        case 0:
+            switch (division) {
             case 5:
-                switch (division) {
-                    case 5: return 2500;
-                    case 4: return 2600;
-                    case 3: return 2700;
-                    case 2: return 2800;
-                    case 1: return 2900;
-                }
+                return 0;
+            case 4:
+                return 100;
+            case 3:
+                return 200;
+            case 2:
+                return 300;
+            case 1:
+                return 400;
+            }
+            // silver
+        case 1:
+            switch (division) {
+            case 5:
+                return 500;
+            case 4:
+                return 600;
+            case 3:
+                return 700;
+            case 2:
+                return 800;
+            case 1:
+                return 900;
+            }
+            // gold
+        case 2:
+            switch (division) {
+            case 5:
+                return 1000;
+            case 4:
+                return 1100;
+            case 3:
+                return 1200;
+            case 2:
+                return 1300;
+            case 1:
+                return 1400;
+            }
+            // platinum
+        case 3:
+            switch (division) {
+            case 5:
+                return 1500;
+            case 4:
+                return 1600;
+            case 3:
+                return 1700;
+            case 2:
+                return 1800;
+            case 1:
+                return 1900;
+            }
+            // diamond
+        case 4:
+            switch (division) {
+            case 5:
+                return 2000;
+            case 4:
+                return 2100;
+            case 3:
+                return 2200;
+            case 2:
+                return 2300;
+            case 1:
+                return 2400;
+            }
+            // champion
+        case 5:
+            switch (division) {
+            case 5:
+                return 2500;
+            case 4:
+                return 2600;
+            case 3:
+                return 2700;
+            case 2:
+                return 2800;
+            case 1:
+                return 2900;
+            }
             // grand champion
-            case 6:
-                return 3000;
+        case 6:
+            return 3000;
         }
         return 0;
+    }
+
+    public String getBrStatsPlayerUrl(long playerID) {
+        return "https://battlerite-stats.com/profile/" + playerID;
+    }
+
+    /**
+     * Shorten url with goo.gl
+     */
+    public String shortenUrl(String longUrl) {
+        try {
+            HashMap<String, String> bodyMap = new HashMap<>();
+            // bodyMap.put("key", Auth.GOOGLE_URL_SHORTENER_KEY);
+            bodyMap.put("longUrl", longUrl);
+            Response<UrlShortenerPOJO> response = getRetrofit(GOOGLE_API_BASE_URL, null).create(GoogleInterface.class)
+                    .getShortenedUrl(Auth.GOOGLE_URL_SHORTENER_KEY, bodyMap).execute();
+            return response.body().getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return longUrl;
     }
 }

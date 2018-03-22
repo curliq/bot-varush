@@ -85,7 +85,8 @@ public class Stats extends Command {
         }
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle(playerData.getAttributes().getName());
+        eb.setTitle(playerData.getAttributes().getName() + " ⎪ profile: "
+                + helper.shortenUrl(helper.getBrStatsPlayerUrl(playerData.getId())));
         eb.setDescription(helper.getPlayerTitle(playerData.getAttributes().getStats().gettitleID()));
         eb.setThumbnail(Helper.STATS_SOLO_IMAGE);
         eb.addBlankField(false);
@@ -106,7 +107,8 @@ public class Stats extends Command {
         // order the teams by division
         orderTeams(teamsArray);
 
-        eb.setTitle(playerData.getAttributes().getName());
+        eb.setTitle(playerData.getAttributes().getName() + " ⎪ profile: "
+        + helper.shortenUrl(helper.getBrStatsPlayerUrl(playerData.getId())));
         eb.setDescription((is2v2 ? "2v2" : "3v3") + " teams stats - " + teamsArray.size() + " teams");
         eb.setThumbnail(is2v2 ? Helper.STATS_2V2_IMAGE : Helper.STATS_3V3_IMAGE);
 
@@ -232,7 +234,7 @@ public class Stats extends Command {
      * Calculate the delta between the current points and cached points considering the division and league
      */
     private String getPointsDelta(TeamCachedPOJO oldPoints, TeamStatsPOJO.Stats newPoints) {
-        
+
         if (oldPoints == null)
             return "";
 
@@ -247,8 +249,7 @@ public class Stats extends Command {
 
         if (pointsDiff == 0) {
             return "";
-        }
-        else if (pointsDiff > 0) {
+        } else if (pointsDiff > 0) {
             finalString = "+" + pointsDiff;
         }
 
