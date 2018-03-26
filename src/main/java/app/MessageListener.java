@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.management.MBeanException;
+
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -35,6 +37,7 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts.put("!al2", "!br stats Twitch.tv/AldysTV");
         commandsShortcuts.put("!m", "!br stats marchallificent");
         commandsShortcuts.put("!cash", "!br stats Cash12121");
+        commandsShortcuts.put("!ND", "!br stats NeloDante");
     }
 
     @Override
