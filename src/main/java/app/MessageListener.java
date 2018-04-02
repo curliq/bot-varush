@@ -1,6 +1,7 @@
 package app;
 
 import java.awt.Color;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -9,9 +10,13 @@ import javax.management.MBeanException;
 
 import app.utils.Helper;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 /**
@@ -41,9 +46,22 @@ public class MessageListener extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageUpdate(MessageUpdateEvent event) {
+        if (event.getMessage().getCreationTime().isAfter(OffsetDateTime.now().minusSeconds(15))) 
+            processMessageSent(event.getMessage(), event.getAuthor(), event.getChannel());
+    }
 
-        Message message = event.getMessage();
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        processMessageSent(event.getMessage(), event.getAuthor(), event.getChannel());
+    }
+
+    /**
+     * Method that gets called when there's a new message or the last message was edited
+     * Figures out what command to call basically
+     */
+    private void processMessageSent(Message message, User author, MessageChannel channel) {
+
         String content = message.getContentRaw();
 
         // Check if command contains a shortcut, if yes, replace shortcut text with shortcut value and append the rest
@@ -78,16 +96,16 @@ public class MessageListener extends ListenerAdapter {
 
             if (command == null) {
                 // The command doesn't exist
-                sendMessage(event, helper.getBasicEmbedMessage(Helper.ERROR_TITLE,
+                sendMessage(author, channel, helper.getBasicEmbedMessage(Helper.ERROR_TITLE,
                         "That's not really a command, do `!br welp` to see all the commands"));
                 return;
             } else {
                 // show typing indicator
-                event.getChannel().sendTyping().queue();
+                channel.sendTyping().queue();
                 // sends the params to the command object to be used
                 command.setParams(params);
                 // calculate the response from the command (getReply()) and send it
-                sendMessage(event, command.getReply());
+                sendMessage(author, channel, command.getReply());
             }
         }
     }
@@ -96,18 +114,18 @@ public class MessageListener extends ListenerAdapter {
      * send a message to the current channel the user is typing in.
      * pass event received from the messages listener and the EmbedBuilder with the message data
      */
-    private void sendMessage(MessageReceivedEvent event, EmbedBuilder messageBuilder) {
-        event.getChannel().sendMessage(baseMessage(event, messageBuilder)).queue();
+    private void sendMessage(User author, MessageChannel channel, EmbedBuilder messageBuilder) {
+        channel.sendMessage(baseMessage(author, messageBuilder)).queue();
     }
 
     /**
      * base message for every message send, basically just color and footer
      */
-    public MessageEmbed baseMessage(MessageReceivedEvent event, EmbedBuilder messageBuilder) {
+    public MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
 
         messageBuilder.setColor(new Color(Helper.BATTLERITE_COLOR_PRIMARY));
-        messageBuilder.setFooter("Requested by " + event.getAuthor().getName() + " ⎪ !br welp for more",
-                event.getAuthor().getAvatarUrl());
+        messageBuilder.setFooter("Requested by " + author.getName() + " ⎪ !br welp for more",
+                author.getAvatarUrl());
 
         return messageBuilder.build();
     };
