@@ -4,7 +4,7 @@ import javax.security.auth.login.LoginException;
 
 import app.CommandsManager;
 import app.MessageListener;
-import app.StreamerRoleListener;
+import app.StreamingRoleListener;
 import app.utils.Auth;
 import app.utils.Helper;
 import net.dv8tion.jda.core.AccountType;
@@ -33,8 +33,8 @@ public class App {
 
             // set the messages listener and pass the initiated commandsManager
             jda.addEventListener(new MessageListener(commandsManager));
-            // set user game listener for Streamer role, more info at StreamerRoleListener.java
-            jda.addEventListener(new StreamerRoleListener());
+            // set user game listener for Streamer role, more info at StreamingRoleListener.java
+            jda.addEventListener(new StreamingRoleListener());
             jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
 
         } catch (InterruptedException | LoginException exception) {

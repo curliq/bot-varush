@@ -8,7 +8,10 @@ import app.rest.twitch.TwitchInterface;
 import app.rest.twitch.pojos.StreamPOJO;
 import app.utils.Helper;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.core.events.user.UserGameUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import retrofit2.Response;
@@ -21,9 +24,8 @@ import retrofit2.Response;
  * 
  * To use this create a role called {@value utils.Helper.#STREAMER_ROLE_NAME} 
  * and pin it to the right hand side on your server.
- * 
  */
-public class StreamerRoleListener extends ListenerAdapter {
+public class StreamingRoleListener extends ListenerAdapter {
 
     private final int TWITCH_REQUEST_DELAY = 30 * 1000; // 30 seconds
     private final int RECALL_TWITCH_INTERVAL = 90 * 1000; // 1:30 minutes
@@ -38,56 +40,76 @@ public class StreamerRoleListener extends ListenerAdapter {
         super.onUserGameUpdate(event);
         Helper.log(event.getUser().getName());
 
-        if (!userHasAtLeastOneRole(event))
+        // this isn't in runChecks, so we still remove the role after twitch callback, if the user was given the 
+        // probation role while streaming
+        if (userHasProbationRole(event.getGuild(), event.getMember()))
             return;
 
-        if (userHasProbationRole(event))
+        runChecks(event.getGuild(), event.getMember(), event.getCurrentGame());
+    }
+
+    /**
+     * Called whenever someone gets added a new role
+     * Useful for when someone joins the server already streaming, so game change wont be detected, but
+     * if they add region role then we can add the Streaming role
+     */
+    @Override
+    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+        super.onGuildMemberRoleAdd(event);
+        Helper.log(event.getUser().getName() + " some role was added");
+
+        // this isn't in runChecks, so we still remove the role after twitch callback, if the user was given the 
+        // probation role while streaming
+        if (userHasProbationRole(event.getGuild(), event.getMember()))
+            return;
+
+        runChecks(event.getGuild(), event.getMember(), event.getMember().getGame());
+    }
+
+    private void runChecks(Guild guild, Member member, Game currentGame) {
+
+        if (!userHasAtLeastOneRole(member))
             return;
 
         // stop if there is no role called Helper.SREAMING_ROLE_NAME
         try {
-            streamerRole = event.getGuild().getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
+            streamerRole = guild.getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
         } catch (IndexOutOfBoundsException e) {
             return;
         }
 
-        runChecks(event);
-
-    }
-
-    private void runChecks(UserGameUpdateEvent event) {
-        if (!isStreaming(event))
-            removeStreamerRole(event);
+        if (!isStreaming(currentGame))
+            removeStreamerRole(guild, member);
         else {
             // start a new thread to check if is streaming battlerite
             Thread newThread = new Thread() {
                 public void run() {
-                    if (!isStreamingBattlerite(event))
-                        removeStreamerRole(event);
+                    if (!isStreamingBattlerite(currentGame))
+                        removeStreamerRole(guild, member);
                     else
-                        addStreamerRole(event);
+                        addStreamerRole(guild, member);
                 }
             };
             newThread.start();
 
             // is streaming so call twitch again soon
-            scheduleUpdate(event);
+            scheduleUpdate(guild, member, currentGame);
         }
     }
 
     /**
      * Checks if the user is streaming on twitch
      */
-    private boolean isStreaming(UserGameUpdateEvent event) {
-        if (event.getCurrentGame() == null || event.getCurrentGame().getUrl() == null)
+    private boolean isStreaming(Game currentGame) {
+        if (currentGame == null || currentGame.getUrl() == null)
             return false;
-        return Game.isValidStreamingUrl(event.getCurrentGame().getUrl());
+        return Game.isValidStreamingUrl(currentGame.getUrl());
     }
 
     /**
      * Checks if the Game/Category on twitch is Battlerite
      */
-    private boolean isStreamingBattlerite(UserGameUpdateEvent event) {
+    private boolean isStreamingBattlerite(Game currentGame) {
         // wait 1 minute before cheking the game from twitch because their api takes a bit to update after changes
         // to the stream
         try {
@@ -97,7 +119,7 @@ public class StreamerRoleListener extends ListenerAdapter {
         }
 
         TwitchInterface api = new Helper().getTwitchRetrofit().create(TwitchInterface.class);
-        String streamUrl = event.getCurrentGame().getUrl();
+        String streamUrl = currentGame.getUrl();
         String twitchUserName = streamUrl.substring(streamUrl.lastIndexOf('/') + 1);
         // call twitch api to check the user's stream game/category
         try {
@@ -116,28 +138,28 @@ public class StreamerRoleListener extends ListenerAdapter {
     /**
      * Add the role to the user
      */
-    private void addStreamerRole(UserGameUpdateEvent event) {
+    private void addStreamerRole(Guild guild, Member member) {
         Helper.log("add role");
-        event.getGuild().getController().addSingleRoleToMember(event.getMember(), streamerRole).queue();
+        guild.getController().addSingleRoleToMember(member, streamerRole).queue();
     }
 
     /**
      * Check if user has the role and remove it
      */
-    private void removeStreamerRole(UserGameUpdateEvent event) {
-        if (event.getMember().getRoles().contains(streamerRole)) {
+    private void removeStreamerRole(Guild guild, Member member) {
+        if (member.getRoles().contains(streamerRole)) {
             Helper.log("remove role");
-            event.getGuild().getController().removeSingleRoleFromMember(event.getMember(), streamerRole).queue();
+            guild.getController().removeSingleRoleFromMember(member, streamerRole).queue();
         }
     }
 
     /**
      * Schedule another call to twich to check if the game/category has changed
      */
-    private void scheduleUpdate(UserGameUpdateEvent event) {
+    private void scheduleUpdate(Guild guild, Member member, Game currentGame) {
         TimerTask task = new TimerTask() {
             public void run() {
-                runChecks(event);
+                runChecks(guild, member, currentGame);
             }
         };
         new Timer().schedule(task, RECALL_TWITCH_INTERVAL);
@@ -146,17 +168,17 @@ public class StreamerRoleListener extends ListenerAdapter {
     /**
      * Check if the user as at least one role, which will normally be the region role
      */
-    private boolean userHasAtLeastOneRole(UserGameUpdateEvent event) {
-        return !event.getMember().getRoles().isEmpty();
+    private boolean userHasAtLeastOneRole(Member member) {
+        return !member.getRoles().isEmpty();
     }
 
     /**
      * Check if user has a "probation" role, if yes then dont add the Streamer role
      */
-    private boolean userHasProbationRole(UserGameUpdateEvent event) {
+    private boolean userHasProbationRole(Guild guild, Member member) {
         try {
-            Role probationRole = event.getGuild().getRolesByName(Helper.PROBATION_ROLE_NAME, true).get(0);
-            return event.getMember().getRoles().contains(probationRole);
+            Role probationRole = guild.getRolesByName(Helper.PROBATION_ROLE_NAME, true).get(0);
+            return member.getRoles().contains(probationRole);
         } catch (IndexOutOfBoundsException e) {
             return false;
         }
