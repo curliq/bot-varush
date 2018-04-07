@@ -21,8 +21,7 @@ public class About extends Command {
         eb.setTitle("Bot Varush");
         eb.setDescription("About");
         eb.addBlankField(false);
-        eb.addField("Some info",
-                "Just another bot that aims to cover all (read: most) the features a Battlerite bot can have.", false);
+        eb.addField("Some info", "A Battlerite bot kek.", false);
         eb.addBlankField(false);
         eb.addField("Contribute & feature request",
                 "The bot is open source and everyone is welcome to contribute: github.com/joaosardinha/bot-varush, "
