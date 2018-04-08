@@ -111,7 +111,6 @@ public class StreamingRoleListener extends ListenerAdapter {
     private boolean isStreaming(Game currentGame) {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;
-        Helper.log(currentGame.getUrl());
         return Game.isValidStreamingUrl(currentGame.getUrl());
     }
 
