@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import app.rest.twitch.TwitchInterface;
 import app.rest.twitch.pojos.StreamPOJO;
 import app.utils.Helper;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -31,6 +32,11 @@ public class StreamingRoleListener extends ListenerAdapter {
     private final int RECALL_TWITCH_INTERVAL = 90 * 1000; // 1:30 minutes
 
     private Role streamerRole;
+
+    public StreamingRoleListener(JDA jda) {
+        for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
+            runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
+    }
 
     /**
      * called whenever someone in the server changes their "playing" status
@@ -63,7 +69,8 @@ public class StreamingRoleListener extends ListenerAdapter {
         if (userHasProbationRole(event.getGuild(), event.getMember()))
             return;
 
-        runChecks(event.getGuild(), event.getMember(), event.getMember().getGame());
+        if (!event.getRoles().get(0).getId().equals(Helper.STREAMING_ROLE_ID))
+            runChecks(event.getGuild(), event.getMember(), event.getMember().getGame());
     }
 
     private void runChecks(Guild guild, Member member, Game currentGame) {
@@ -73,8 +80,9 @@ public class StreamingRoleListener extends ListenerAdapter {
 
         // stop if there is no role called Helper.SREAMING_ROLE_NAME
         try {
-            streamerRole = guild.getRolesByName(Helper.STREAMING_ROLE_NAME, true).get(0);
+            streamerRole = guild.getRoleById(Helper.STREAMING_ROLE_ID);
         } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
             return;
         }
 
@@ -139,8 +147,10 @@ public class StreamingRoleListener extends ListenerAdapter {
      * Add the role to the user
      */
     private void addStreamerRole(Guild guild, Member member) {
-        Helper.log("add role");
-        guild.getController().addSingleRoleToMember(member, streamerRole).queue();
+        if (!member.getRoles().contains(streamerRole)) {
+            Helper.log("add role");
+            guild.getController().addSingleRoleToMember(member, streamerRole).queue();
+        }
     }
 
     /**
@@ -177,7 +187,7 @@ public class StreamingRoleListener extends ListenerAdapter {
      */
     private boolean userHasProbationRole(Guild guild, Member member) {
         try {
-            Role probationRole = guild.getRolesByName(Helper.PROBATION_ROLE_NAME, true).get(0);
+            Role probationRole = guild.getRoleById(Helper.PROBATION_ROLE_ID);
             return member.getRoles().contains(probationRole);
         } catch (IndexOutOfBoundsException e) {
             return false;
