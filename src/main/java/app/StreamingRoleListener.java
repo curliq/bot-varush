@@ -85,7 +85,7 @@ public class StreamingRoleListener extends ListenerAdapter {
             e.printStackTrace();
             return;
         }
-
+        
         if (!isStreaming(currentGame))
             removeStreamerRole(guild, member);
         else {
@@ -111,6 +111,7 @@ public class StreamingRoleListener extends ListenerAdapter {
     private boolean isStreaming(Game currentGame) {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;
+        Helper.log(currentGame.getUrl());
         return Game.isValidStreamingUrl(currentGame.getUrl());
     }
 
@@ -148,7 +149,7 @@ public class StreamingRoleListener extends ListenerAdapter {
      */
     private void addStreamerRole(Guild guild, Member member) {
         if (!member.getRoles().contains(streamerRole)) {
-            Helper.log("add role");
+            Helper.log("add role to " + member);
             guild.getController().addSingleRoleToMember(member, streamerRole).queue();
         }
     }
@@ -158,7 +159,7 @@ public class StreamingRoleListener extends ListenerAdapter {
      */
     private void removeStreamerRole(Guild guild, Member member) {
         if (member.getRoles().contains(streamerRole)) {
-            Helper.log("remove role");
+            Helper.log("remove role from " + member);
             guild.getController().removeSingleRoleFromMember(member, streamerRole).queue();
         }
     }
