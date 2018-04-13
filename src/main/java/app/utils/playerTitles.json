@@ -70,6 +70,11 @@
         "text": "Art Warrior"
     },
     {
+        "stackableId": 514,
+        "localizedText": "3f3f0a1d6305429291da0e23e9047ccc",
+        "text": "Korean Beta Tester"
+    },
+    {
         "stackableId": 31001,
         "localizedText": "b33eb96a2eff4d5699e246c223a2359d",
         "text": "The Expelled Alchemist"
@@ -193,6 +198,16 @@
         "stackableId": 31041,
         "localizedText": "b9a91c424bcb4ac5b892202a3c5a463d",
         "text": "The Ice Weaver"
+    },
+    {
+        "stackableId": 31043,
+        "localizedText": "d6fe0b7c9178425e9553c30b7d07c221",
+        "text": "The Shadowblade Assassin"
+    },
+    {
+        "stackableId": 31039,
+        "localizedText": "8dd966f2df57414e90c245170ed22d25",
+        "text": "The Unwavering Light"
     },
     {
         "stackableId": 60000,

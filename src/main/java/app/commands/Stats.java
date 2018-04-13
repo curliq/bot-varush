@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+
 import java.util.Collections;
 
 import app.Command;
@@ -40,6 +42,7 @@ public class Stats extends Command {
             // fetches the player ID from the player name
             Response<PlayerPOJO> playerResponse = getBattleriteRetrofit()
                     .getPlayerID(helper.urlEncode(getParams().get(0))).execute();
+            Helper.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
@@ -49,6 +52,7 @@ public class Stats extends Command {
             // fetches the team data from the player ID
             teamStatsResponse = getBattleriteRetrofit()
                     .getPlayerStats(playerResponse.body().getData().get(0).getId(), Helper.SEASON).execute();
+            Helper.log(new Gson().toJson(teamStatsResponse.body()));
 
             // return error message if something went wrong
             if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())
@@ -146,6 +150,8 @@ public class Stats extends Command {
         try {
             Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
                     .execute();
+            Helper.log(new Gson().toJson(otherPlayersResponse.body()));
+
             // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
             // to 6 players max
             int i = otherPlayersIds.indexOf(',',
@@ -155,6 +161,7 @@ public class Stats extends Command {
             // get players excluding the 6 first found from the teams                
             Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
                     .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
+            Helper.log(new Gson().toJson(otherPlayersResponse2.body()));
 
             // add them all to a list
             otherPLayersList.addAll(otherPlayersResponse.body().getData());
