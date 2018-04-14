@@ -32,7 +32,6 @@ import retrofit2.Response;
  */
 public class StreamingRoleListener extends ListenerAdapter {
 
-    private final int TWITCH_REQUEST_DELAY = 30 * 1000; // 30 seconds
     private final int RECALL_TWITCH_INTERVAL = 90 * 1000; // 1:30 minutes
 
     private Role streamerRole;
