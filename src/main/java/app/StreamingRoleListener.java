@@ -32,7 +32,6 @@ import retrofit2.Response;
  */
 public class StreamingRoleListener extends ListenerAdapter {
 
-    private final int TWITCH_REQUEST_DELAY = 30 * 1000; // 30 seconds
     private final int RECALL_TWITCH_INTERVAL = 90 * 1000; // 1:30 minutes
 
     private Role streamerRole;
@@ -104,15 +103,7 @@ public class StreamingRoleListener extends ListenerAdapter {
                         removeStreamerRole(guild, member);
                 }
             };
-
-            // Start the new thread in TWITCH_REQUEST_DELAY milliseconds
-            // because twitch's API has a delay before updating
-            TimerTask task = new TimerTask() {
-                public void run() {
-                    newThread.start();
-                }
-            };
-            new Timer().schedule(task, TWITCH_REQUEST_DELAY);
+            newThread.start();
 
             // Is streaming so call twitch again soon
             scheduleUpdate(guild, member, currentGame);
