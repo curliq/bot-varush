@@ -24,7 +24,7 @@ import retrofit2.Response;
 /**
  * This class listens for changes in Game presence on every user in the server.
  * 
- * Porpuse of this is to add a role called Streamer to whomever is streaming Battlerite at the moment and remove it
+ * Purpose of this is to add a role called Streamer to whomever is streaming Battlerite at the moment and remove it
  * as soon as they finish the stream or stop playing Battlerite.
  * 
  * To use this create a role called {@value utils.Helper.#STREAMER_ROLE_NAME} 
