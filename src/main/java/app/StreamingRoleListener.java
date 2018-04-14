@@ -107,8 +107,12 @@ public class StreamingRoleListener extends ListenerAdapter {
 
             // Start the new thread in TWITCH_REQUEST_DELAY milliseconds
             // because twitch's API has a delay before updating
-            new ScheduledThreadPoolExecutor(1).schedule(() -> newThread.start(), TWITCH_REQUEST_DELAY,
-                    TimeUnit.MILLISECONDS);
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    newThread.start();
+                }
+            };
+            new Timer().schedule(task, TWITCH_REQUEST_DELAY);
 
             // Is streaming so call twitch again soon
             scheduleUpdate(guild, member, currentGame);
