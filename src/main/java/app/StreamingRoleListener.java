@@ -38,8 +38,8 @@ public class StreamingRoleListener extends ListenerAdapter {
     private Role streamerRole;
 
     public StreamingRoleListener(JDA jda) {
-        for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
-            runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
+        // for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
+            // runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
     }
 
     /**
@@ -94,24 +94,7 @@ public class StreamingRoleListener extends ListenerAdapter {
             removeStreamerRole(guild, member);
         else {
             Helper.log(member.getEffectiveName() + " is streaming");
-
-            // Start a new thread to check if is streaming battlerite (because it will call twitch API)
-            Thread newThread = new Thread() {
-                public void run() {
-                    if (isStreamingBattlerite(currentGame))
-                        addStreamerRole(guild, member);
-                    else
-                        removeStreamerRole(guild, member);
-                }
-            };
-
-            // Start the new thread in TWITCH_REQUEST_DELAY milliseconds
-            // because twitch's API has a delay before updating
-            new ScheduledThreadPoolExecutor(1).schedule(() -> newThread.start(), TWITCH_REQUEST_DELAY,
-                    TimeUnit.MILLISECONDS);
-
-            // Is streaming so call twitch again soon
-            scheduleUpdate(guild, member, currentGame);
+            addStreamerRole(guild, member);
         }
     }
 
@@ -122,28 +105,6 @@ public class StreamingRoleListener extends ListenerAdapter {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;
         return Game.isValidStreamingUrl(currentGame.getUrl());
-    }
-
-    /**
-     * Checks if the Game/Category on twitch is Battlerite
-     */
-    private boolean isStreamingBattlerite(Game currentGame) {
-        TwitchInterface api = new Helper().getTwitchRetrofit().create(TwitchInterface.class);
-        String streamUrl = currentGame.getUrl();
-        String twitchUserName = streamUrl.substring(streamUrl.lastIndexOf('/') + 1);
-        // call twitch api to check the user's stream game/category
-        try {
-            Response<StreamPOJO> response = api.getStreamByName(twitchUserName).execute();
-            Helper.log(new Gson().toJson(response.body()));
-            // no stream found
-            if (response.body().getData().isEmpty()) {
-                return false;
-            }
-            return response.body().getData().get(0).getGameId().equals(Helper.TWITCH_BATTLERITE_ID);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 
     /**
@@ -164,18 +125,6 @@ public class StreamingRoleListener extends ListenerAdapter {
             Helper.log("remove role from " + member);
             guild.getController().removeSingleRoleFromMember(member, streamerRole).queue();
         }
-    }
-
-    /**
-     * Schedule another call to twich to check if the game/category has changed
-     */
-    private void scheduleUpdate(Guild guild, Member member, Game currentGame) {
-        TimerTask task = new TimerTask() {
-            public void run() {
-                runChecks(guild, member, currentGame);
-            }
-        };
-        new Timer().schedule(task, RECALL_TWITCH_INTERVAL);
     }
 
     /**
