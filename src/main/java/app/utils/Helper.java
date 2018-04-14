@@ -318,20 +318,4 @@ public class Helper {
         return "https://battlerite-stats.com/profile/" + playerID;
     }
 
-    /**
-     * Shorten url with goo.gl
-     */
-    public String shortenUrl(String longUrl) {
-        try {
-            HashMap<String, String> bodyMap = new HashMap<>();
-            // bodyMap.put("key", Auth.GOOGLE_URL_SHORTENER_KEY);
-            bodyMap.put("longUrl", longUrl);
-            Response<UrlShortenerPOJO> response = getRetrofit(GOOGLE_API_BASE_URL, null).create(GoogleInterface.class)
-                    .getShortenedUrl(Auth.GOOGLE_URL_SHORTENER_KEY, bodyMap).execute();
-            return response.body().getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return longUrl;
-    }
 }
