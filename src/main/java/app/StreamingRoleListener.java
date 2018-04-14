@@ -145,9 +145,10 @@ public class StreamingRoleListener extends ListenerAdapter {
             }
             return response.body().getData().get(0).getGameId().equals(Helper.TWITCH_BATTLERITE_ID);
         } catch (IOException e) {
+            Helper.log("failed getting response from twitch");
             e.printStackTrace();
+            return false;
         }
-        return true;
     }
 
     /**
