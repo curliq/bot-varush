@@ -1,6 +1,7 @@
 package app;
 
 import java.awt.Color;
+import java.nio.charset.Charset;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageUpdate(MessageUpdateEvent event) {
-        if (event.getMessage().getCreationTime().isAfter(OffsetDateTime.now().minusSeconds(15))) 
+        if (event.getMessage().getCreationTime().isAfter(OffsetDateTime.now().minusSeconds(15)))
             processMessageSent(event.getMessage(), event.getAuthor(), event.getChannel());
     }
 
@@ -120,8 +121,9 @@ public class MessageListener extends ListenerAdapter {
      */
     public MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
 
+        String bigPipe = String.valueOf(Character.toChars(Integer.parseInt("23AA", 16)));
         messageBuilder.setColor(new Color(Helper.BATTLERITE_COLOR_PRIMARY));
-        messageBuilder.setFooter("Requested by " + author.getName() + " ⎪ !br welp for more",
+        messageBuilder.setFooter("Requested by " + author.getName() + bigPipe + " !br welp for more",
                 author.getAvatarUrl());
 
         return messageBuilder.build();
