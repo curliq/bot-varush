@@ -1,7 +1,6 @@
 package app;
 
 import java.awt.Color;
-import java.nio.charset.Charset;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
