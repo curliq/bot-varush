@@ -28,7 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.5.4";
+    public final static String BOT_VERSION = "2.5.5";
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
@@ -50,7 +50,7 @@ public class Helper {
     public static LinkedHashMap<Long, TeamCachedPOJO> teamsPointsCacheMap;
 
     public static void init() {
-        final int MAX_ENTRIES = 100;
+        final int MAX_ENTRIES = 20;
         teamsPointsCacheMap = new LinkedHashMap<Long, TeamCachedPOJO>(MAX_ENTRIES, .75F, true) {
             // This method is called just after a new entry has been added
             public boolean removeEldestEntry(Map.Entry<Long, TeamCachedPOJO> eldest) {
