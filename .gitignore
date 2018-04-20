@@ -27,3 +27,8 @@ src/main/java/app/utils/Auth.java
 *.lock
 *.bin
 build/*
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
