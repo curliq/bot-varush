@@ -28,7 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Helper {
 
-    public final static String BOT_VERSION = "2.5.5";
+    public final static String BOT_VERSION = "2.6.0";
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
@@ -70,7 +70,7 @@ public class Helper {
     /**
      * Get retrofit object to interact with Battlerite API
      */
-    public Retrofit getBattleriteRetrofit() {
+    public static Retrofit getBattleriteRetrofit() {
         HashMap<String, String> headersMap = new HashMap<>();
         headersMap.put("Authorization", Auth.BATTLERITE_TOKEN);
         headersMap.put("Accept", "application/vnd.api+json");
@@ -80,7 +80,7 @@ public class Helper {
     /**
      * Get retrofit object to interact with Twitch API
      */
-    public Retrofit getTwitchRetrofit() {
+    public static Retrofit getTwitchRetrofit() {
         HashMap<String, String> headersMap = new HashMap<>();
         headersMap.put("Client-ID", Auth.TWITCH_TOKEN);
         return getRetrofit(TWITCH_BASE_URL, headersMap);
@@ -89,7 +89,7 @@ public class Helper {
     /**
      * Get generic retrofit object
      */
-    public Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
+    public static Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
@@ -121,7 +121,7 @@ public class Helper {
     /**
      * Get a player's league name
      */
-    public String getLeague(int league) {
+    public static String getLeague(int league) {
         switch (league) {
         case 0:
             return "Bronze";
@@ -145,7 +145,7 @@ public class Helper {
     /**
      * Build a basic embed message with just one field
      */
-    public EmbedBuilder getBasicEmbedMessage(String title, String message) {
+    public static EmbedBuilder getBasicEmbedMessage(String title, String message) {
         EmbedBuilder eb = new EmbedBuilder();
         eb.addField(title, message, false);
         return eb;
@@ -154,12 +154,12 @@ public class Helper {
     /**
      * Get a player's title
      */
-    public String getPlayerTitle(long titleID) {
+    public static String getPlayerTitle(long titleID) {
 
         try {
             String path = "/playerTitles.json";
 
-            InputStream is = getClass().getResourceAsStream(path);
+            InputStream is = Helper.class.getResourceAsStream(path);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader bufferedReader = new BufferedReader(isr);
 
@@ -181,7 +181,7 @@ public class Helper {
     /**
      * Round decimal to 2 cases
      */
-    public Double roundTwoDecimals(double d) {
+    public static Double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Double.valueOf(twoDForm.format(d));
     }
@@ -189,7 +189,7 @@ public class Helper {
     /**
      * Urlencode a string
      */
-    public String urlEncode(String string) {
+    public static String urlEncode(String string) {
         try {
             return URLEncoder.encode(string, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -218,7 +218,7 @@ public class Helper {
      * Get points amount from Bronze 5 to Grand Champion 1.
      * Bronze 5 is 0 points. Gold 5 is division 1000, etc
      */
-    public int getGlobalPoints(int league, int division) {
+    public static int getGlobalPoints(int league, int division) {
         switch (league) {
         // bronze
         case 0:
@@ -311,7 +311,7 @@ public class Helper {
         return 0;
     }
 
-    public String getBrStatsPlayerUrl(long playerID) {
+    public static String getBrStatsPlayerUrl(long playerID) {
         return "https://battlerite-stats.com/profile/" + playerID;
     }
 

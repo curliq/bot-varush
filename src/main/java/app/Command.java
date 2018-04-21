@@ -44,7 +44,7 @@ public abstract class Command {
      * Return Retrofit instance to use for Battlerite API
      */
     protected BattleriteInterface getBattleriteRetrofit() {
-        return new Helper().getBattleriteRetrofit().create(BattleriteInterface.class);
+        return Helper.getBattleriteRetrofit().create(BattleriteInterface.class);
     }
 
     /**

@@ -23,7 +23,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class MessageListener extends ListenerAdapter {
 
     private CommandsManager commandsManager;
-    private Helper helper = new Helper();
     private HashMap<String, String> commandsShortcuts;
 
     public MessageListener(CommandsManager commandsManager) {
@@ -93,7 +92,7 @@ public class MessageListener extends ListenerAdapter {
 
             if (command == null) {
                 // The command doesn't exist
-                sendMessage(author, channel, helper.getBasicEmbedMessage(Helper.ERROR_TITLE,
+                sendMessage(author, channel, Helper.getBasicEmbedMessage(Helper.ERROR_TITLE,
                         "That's not really a command, do `!br welp` to see all the commands"));
                 return;
             } else {

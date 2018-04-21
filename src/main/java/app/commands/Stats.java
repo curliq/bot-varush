@@ -24,7 +24,6 @@ public class Stats extends Command {
     public final static String PARAM_2V2 = "2s";
     public final static String PARAM_3V3 = "3s";
 
-    private Helper helper = new Helper();
     private PlayerPOJO.Data playerData;
     private Response<TeamStatsPOJO> teamStatsResponse;
 
@@ -41,12 +40,12 @@ public class Stats extends Command {
         try {
             // fetches the player ID from the player name
             Response<PlayerPOJO> playerResponse = getBattleriteRetrofit()
-                    .getPlayerID(helper.urlEncode(getParams().get(0))).execute();
+                    .getPlayerID(Helper.urlEncode(getParams().get(0))).execute();
             Helper.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
-                return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "That's not a player I'm afraid");
+                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "That's not a player I'm afraid");
             }
 
             // fetches the team data from the player ID
@@ -56,16 +55,16 @@ public class Stats extends Command {
 
             // return error message if something went wrong
             if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())
-                return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "Found the player but couldn't find any data");
+                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "Found the player but couldn't find any data");
 
             else if (!playerResponse.isSuccessful() || !teamStatsResponse.isSuccessful())
-                return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
+                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
+            return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
         }
 
         if (getParams().size() > 1)
@@ -89,8 +88,8 @@ public class Stats extends Command {
         }
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle(playerData.getAttributes().getName(), helper.getBrStatsPlayerUrl(playerData.getId()));
-        eb.setDescription(helper.getPlayerTitle(playerData.getAttributes().getStats().gettitleID()));
+        eb.setTitle(playerData.getAttributes().getName(), Helper.getBrStatsPlayerUrl(playerData.getId()));
+        eb.setDescription(Helper.getPlayerTitle(playerData.getAttributes().getStats().gettitleID()));
         eb.setThumbnail(Helper.STATS_SOLO_IMAGE);
         eb.addBlankField(false);
         addTeamInfo(eb, playerTeam);
@@ -110,7 +109,7 @@ public class Stats extends Command {
         // order the teams by division
         orderTeams(teamsArray);
 
-        eb.setTitle(playerData.getAttributes().getName(), helper.getBrStatsPlayerUrl(playerData.getId()));
+        eb.setTitle(playerData.getAttributes().getName(), Helper.getBrStatsPlayerUrl(playerData.getId()));
         eb.setDescription((is2v2 ? "2v2" : "3v3") + " teams stats - " + teamsArray.size() + " teams");
         eb.setThumbnail(is2v2 ? Helper.STATS_2V2_IMAGE : Helper.STATS_3V3_IMAGE);
 
@@ -140,7 +139,7 @@ public class Stats extends Command {
         return eb;
     }
 
-    //////////////////////////// helper functions
+    //////////////////////////// Helper functions
 
     /**
      * Get a list of all the other players in the teams
@@ -206,7 +205,7 @@ public class Stats extends Command {
         double winRate = (Double.valueOf(teamAttrs.getStats().getWins())
                 / (Double.valueOf(teamAttrs.getStats().getWins()) + Double.valueOf(teamAttrs.getStats().getLosses())))
                 * 100f;
-        String winRateString = Double.isNaN(winRate) ? "git gud" : helper.roundTwoDecimals(winRate) + "%";
+        String winRateString = Double.isNaN(winRate) ? "git gud" : Helper.roundTwoDecimals(winRate) + "%";
 
         eb.addField("Wins", "" + teamAttrs.getStats().getWins(), true);
         eb.addField("Losses", "" + teamAttrs.getStats().getLosses(), true);
@@ -231,7 +230,7 @@ public class Stats extends Command {
         if (teamAttrs.getStats().getPlacementGamesLeft() > 0)
             return "Placements: " + teamAttrs.getStats().getPlacementGamesLeft() + " games left";
 
-        return helper.getLeague(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
+        return Helper.getLeague(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
                 + teamAttrs.getStats().getDivisionRating() + "pts" + getPointsDelta(cachedPoints, teamAttrs.getStats());
     }
 
@@ -244,9 +243,9 @@ public class Stats extends Command {
             return "";
 
         // promoted league(s)
-        int newGlobalPoints = helper.getGlobalPoints(newPoints.getLeague(), newPoints.getDivision())
+        int newGlobalPoints = Helper.getGlobalPoints(newPoints.getLeague(), newPoints.getDivision())
                 + newPoints.getDivisionRating();
-        int oldGlobalPoints = helper.getGlobalPoints(oldPoints.getLeague(), oldPoints.getDivision())
+        int oldGlobalPoints = Helper.getGlobalPoints(oldPoints.getLeague(), oldPoints.getDivision())
                 + oldPoints.getPoints();
 
         int pointsDiff = newGlobalPoints - oldGlobalPoints;

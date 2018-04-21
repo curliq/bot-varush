@@ -91,10 +91,11 @@ public class StreamingRoleListener extends ListenerAdapter {
             removeStreamerRole(guild, member);
         else {
             Helper.log(member.getEffectiveName() + " is streaming");
-
+            
             // Start a new thread to check if is streaming battlerite (because it will call twitch API)
             Thread newThread = new Thread() {
                 public void run() {
+                    Helper.log(member.getEffectiveName() + " - check if is streaming battlerite on new thread");
                     if (isStreamingBattlerite(currentGame))
                         addStreamerRole(guild, member);
                     else
@@ -121,13 +122,13 @@ public class StreamingRoleListener extends ListenerAdapter {
      * Checks if the Game/Category on twitch is Battlerite
      */
     private boolean isStreamingBattlerite(Game currentGame) {
-        TwitchInterface api = new Helper().getTwitchRetrofit().create(TwitchInterface.class);
+        TwitchInterface api = Helper.getTwitchRetrofit().create(TwitchInterface.class);
         String streamUrl = currentGame.getUrl();
         String twitchUserName = streamUrl.substring(streamUrl.lastIndexOf('/') + 1);
         // call twitch api to check the user's stream game/category
         try {
             Response<StreamPOJO> response = api.getStreamByName(twitchUserName).execute();
-            Helper.log(new Gson().toJson(response.body()));
+            Helper.log(response.code() + " " + new Gson().toJson(response.body()));
             // no stream found
             if (response.body().getData().isEmpty()) {
                 return false;
