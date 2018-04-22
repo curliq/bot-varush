@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 import app.rest.battlerite.BattleriteInterface;
-import app.utils.Helper;
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
+import app.utils.NetworkUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 
@@ -44,7 +46,7 @@ public abstract class Command {
      * Return Retrofit instance to use for Battlerite API
      */
     protected BattleriteInterface getBattleriteRetrofit() {
-        return Helper.getBattleriteRetrofit().create(BattleriteInterface.class);
+        return NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class);
     }
 
     /**

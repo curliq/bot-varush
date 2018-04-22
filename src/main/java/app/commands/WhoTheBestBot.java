@@ -1,7 +1,7 @@
 package app.commands;
 
 import app.Command;
-import app.utils.Helper;
+import app.utils.GenericUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 public class WhoTheBestBot extends Command {
@@ -13,7 +13,7 @@ public class WhoTheBestBot extends Command {
      */
     public WhoTheBestBot() {
         setKey(KEY);
-        setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + "` - surprise feature.");
+        setDescription(String.format("`%s %s` - surprise feature.", GenericUtils.COMMAND_TRIGGER, getKey()));
     }
 
     @Override

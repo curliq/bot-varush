@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import javax.swing.plaf.basic.BasicGraphicsUtils;
+
 import com.google.gson.Gson;
 
 import java.util.Collections;
@@ -13,7 +15,12 @@ import app.Command;
 import app.rest.battlerite.pojos.TeamStatsPOJO;
 import app.rest.battlerite.pojos.TeamStatsPOJO.Data;
 import app.rest.battlerite.pojos.PlayerPOJO;
-import app.utils.Helper;
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
+import app.utils.db.DbRequests;
+import app.utils.db.DbUtils;
+import app.utils.db.Player;
+import app.utils.db.Team;
 import app.utils.TeamCachedPOJO;
 import net.dv8tion.jda.core.EmbedBuilder;
 import retrofit2.Response;
@@ -29,42 +36,50 @@ public class Stats extends Command {
 
     public Stats() {
         setKey(KEY);
-        setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + " playerName` - get the stats of a player \n"
-                + "`" + Helper.COMMAND_TRIGGER + " " + getKey() + " playerName 2s` - get the 2v2 teams of a player \n"
-                + "`" + Helper.COMMAND_TRIGGER + " " + getKey() + " playerName 3s` - get the 3v3 teams of a player");
+        setDescription(String.format(
+                "`%s %s" + " playerName` - get the stats of a player \n" + "`%s %s"
+                        + " playerName 2s` - get the 2v2 teams of a player \n"
+                        + "`%s %s playerName 3s` - get the 3v3 teams of a player",
+                GenericUtils.COMMAND_TRIGGER, getKey(), GenericUtils.COMMAND_TRIGGER, getKey(),
+                GenericUtils.COMMAND_TRIGGER, getKey()));
     }
 
     @Override
     public EmbedBuilder getReply() {
 
         try {
+            String playerName = getParams().get(0);
             // fetches the player ID from the player name
             Response<PlayerPOJO> playerResponse = getBattleriteRetrofit()
-                    .getPlayerID(Helper.urlEncode(getParams().get(0))).execute();
-            Helper.log(new Gson().toJson(playerResponse.body()));
+                    .getPlayerID(GenericUtils.urlEncode(playerName)).execute();
+            GenericUtils.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
-                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "That's not a player I'm afraid");
+                return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, "That's not a player I'm afraid");
             }
 
             // fetches the team data from the player ID
             teamStatsResponse = getBattleriteRetrofit()
-                    .getPlayerStats(playerResponse.body().getData().get(0).getId(), Helper.SEASON).execute();
-            Helper.log(new Gson().toJson(teamStatsResponse.body()));
+                    .getPlayerStats(playerResponse.body().getData().get(0).getId(), BattleriteUtils.SEASON).execute();
+            GenericUtils.log(new Gson().toJson(teamStatsResponse.body()));
 
             // return error message if something went wrong
             if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())
-                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, "Found the player but couldn't find any data");
+                return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE,
+                        "Found the player but couldn't find any data");
 
             else if (!playerResponse.isSuccessful() || !teamStatsResponse.isSuccessful())
-                return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
+                return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, GenericUtils.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
+            DbRequests.savePlayer(playerData.getId(), playerData.getAttributes().getName(),
+                    playerData.getAttributes().getStats().getTitleId(),
+                    playerData.getAttributes().getStats().getPictureID());
 
         } catch (Exception e) {
             e.printStackTrace();
-            return Helper.getBasicEmbedMessage(Helper.ERROR_TITLE, Helper.ERROR_MESSAGE);
+            return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, GenericUtils.ERROR_MESSAGE);
         }
 
         if (getParams().size() > 1)
@@ -88,9 +103,9 @@ public class Stats extends Command {
         }
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle(playerData.getAttributes().getName(), Helper.getBrStatsPlayerUrl(playerData.getId()));
-        eb.setDescription(Helper.getPlayerTitle(playerData.getAttributes().getStats().gettitleID()));
-        eb.setThumbnail(Helper.STATS_SOLO_IMAGE);
+        eb.setTitle(playerData.getAttributes().getName(), BattleriteUtils.getBrStatsPlayerUrl(playerData.getId()));
+        eb.setDescription(BattleriteUtils.getPlayerTitle(playerData.getAttributes().getStats().getTitleId()));
+        eb.setThumbnail(BattleriteUtils.STATS_SOLO_IMAGE);
         eb.addBlankField(false);
         addTeamInfo(eb, playerTeam);
         eb.addBlankField(false);
@@ -109,9 +124,10 @@ public class Stats extends Command {
         // order the teams by division
         orderTeams(teamsArray);
 
-        eb.setTitle(playerData.getAttributes().getName(), Helper.getBrStatsPlayerUrl(playerData.getId()));
-        eb.setDescription((is2v2 ? "2v2" : "3v3") + " teams stats - " + teamsArray.size() + " teams");
-        eb.setThumbnail(is2v2 ? Helper.STATS_2V2_IMAGE : Helper.STATS_3V3_IMAGE);
+        eb.setTitle(playerData.getAttributes().getName(), BattleriteUtils.getBrStatsPlayerUrl(playerData.getId()));
+        eb.setDescription(
+                String.format("%s teams stats - %s teams", (is2v2 ? "2v2" : "3v3"), teamsArray.size()));
+        eb.setThumbnail(is2v2 ? BattleriteUtils.STATS_2V2_IMAGE : BattleriteUtils.STATS_3V3_IMAGE);
 
         if (teamsArray.isEmpty()) {
             eb.addField("Nothing to see here", "flex dab swag turn up", true);
@@ -139,7 +155,7 @@ public class Stats extends Command {
         return eb;
     }
 
-    //////////////////////////// Helper functions
+    //////////////////////////// GenericUtils functions
 
     /**
      * Get a list of all the other players in the teams
@@ -149,7 +165,7 @@ public class Stats extends Command {
         try {
             Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
                     .execute();
-            Helper.log(new Gson().toJson(otherPlayersResponse.body()));
+            GenericUtils.log(new Gson().toJson(otherPlayersResponse.body()));
 
             // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
             // to 6 players max
@@ -160,7 +176,7 @@ public class Stats extends Command {
             // get players excluding the 6 first found from the teams                
             Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
                     .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
-            Helper.log(new Gson().toJson(otherPlayersResponse2.body()));
+            GenericUtils.log(new Gson().toJson(otherPlayersResponse2.body()));
 
             // add them all to a list
             otherPLayersList.addAll(otherPlayersResponse.body().getData());
@@ -185,10 +201,10 @@ public class Stats extends Command {
         String otherPlayersString = "";
         try {
             if (is2v2)
-                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + ")";
+                otherPlayersString = String.format(" (carried by %s)", otherPlayersNames.get(0));
             else
-                otherPlayersString = " (carried by " + otherPlayersNames.get(0) + " and " + otherPlayersNames.get(1)
-                        + ")";
+                otherPlayersString = String.format(" (carried by %s and %s)", otherPlayersNames.get(0),
+                        otherPlayersNames.get(1));
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -205,17 +221,21 @@ public class Stats extends Command {
         double winRate = (Double.valueOf(teamAttrs.getStats().getWins())
                 / (Double.valueOf(teamAttrs.getStats().getWins()) + Double.valueOf(teamAttrs.getStats().getLosses())))
                 * 100f;
-        String winRateString = Double.isNaN(winRate) ? "git gud" : Helper.roundTwoDecimals(winRate) + "%";
+        String winRateString = Double.isNaN(winRate) ? "git gud" : GenericUtils.roundTwoDecimals(winRate) + "%";
 
         eb.addField("Wins", "" + teamAttrs.getStats().getWins(), true);
         eb.addField("Losses", "" + teamAttrs.getStats().getLosses(), true);
         eb.addField("Win ratio", winRateString, true);
         eb.addField("League", makeLeagueText(team), true);
 
+        GenericUtils.log(teamAttrs.getName());
         // Update team entry with new points amount
-        Helper.saveTeamPoints(team.getId(), new TeamCachedPOJO(teamAttrs.getStats().getDivision(),
-                teamAttrs.getStats().getLeague(), teamAttrs.getStats().getDivisionRating()));
-
+        DbRequests.saveTeam(team.getId(), teamAttrs.getStats().getMembers(), teamAttrs.getName(),
+                teamAttrs.getStats().getLeague(), teamAttrs.getStats().getDivision(),
+                teamAttrs.getStats().getDivisionRating(), teamAttrs.getStats().getAvatar(),
+                teamAttrs.getStats().getWins(), teamAttrs.getStats().getLosses(),
+                teamAttrs.getStats().getPlacementGamesLeft(), teamAttrs.getStats().getTopLeague(),
+                teamAttrs.getStats().getTopDivision(), teamAttrs.getStats().getTopDivisionRating());
     }
 
     /**
@@ -225,27 +245,27 @@ public class Stats extends Command {
      */
     private String makeLeagueText(TeamStatsPOJO.Data team) {
         TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
-        TeamCachedPOJO cachedPoints = Helper.getTeamPoints(team.getId());
+        Team cachedPoints = DbRequests.getTeam(team.getId());
 
         if (teamAttrs.getStats().getPlacementGamesLeft() > 0)
             return "Placements: " + teamAttrs.getStats().getPlacementGamesLeft() + " games left";
 
-        return Helper.getLeague(teamAttrs.getStats().getLeague()) + " " + teamAttrs.getStats().getDivision() + ", "
-                + teamAttrs.getStats().getDivisionRating() + "pts" + getPointsDelta(cachedPoints, teamAttrs.getStats());
+        return String.format("%s %s, %s pts %s", BattleriteUtils.getLeague(teamAttrs.getStats().getLeague()),
+                teamAttrs.getStats().getDivision(), teamAttrs.getStats().getDivisionRating(),
+                getPointsDelta(cachedPoints, teamAttrs.getStats()));
     }
 
     /**
      * Calculate the delta between the current points and cached points considering the division and league
      */
-    private String getPointsDelta(TeamCachedPOJO oldPoints, TeamStatsPOJO.Stats newPoints) {
+    private String getPointsDelta(Team oldPoints, TeamStatsPOJO.Stats newPoints) {
 
         if (oldPoints == null)
             return "";
 
-        // promoted league(s)
-        int newGlobalPoints = Helper.getGlobalPoints(newPoints.getLeague(), newPoints.getDivision())
+        int newGlobalPoints = BattleriteUtils.getGlobalPoints(newPoints.getLeague(), newPoints.getDivision())
                 + newPoints.getDivisionRating();
-        int oldGlobalPoints = Helper.getGlobalPoints(oldPoints.getLeague(), oldPoints.getDivision())
+        int oldGlobalPoints = BattleriteUtils.getGlobalPoints(oldPoints.getLeague(), oldPoints.getDivision())
                 + oldPoints.getPoints();
 
         int pointsDiff = newGlobalPoints - oldGlobalPoints;
@@ -301,7 +321,7 @@ public class Stats extends Command {
         // loop through all the teams
         for (TeamStatsPOJO.Data team : teamsArray) {
             // loop through all the players in each team
-            for (Long otherPlayerID : team.getAttributes().getStats().getMembers()) {
+            for (String otherPlayerID : team.getAttributes().getStats().getMembers()) {
                 // check if player isnt the one requesting and isnt repeated
                 if (!otherPlayerID.equals(playerData.getId()))
                     otherPlayersIds += otherPlayerID + ",";

@@ -13,6 +13,7 @@ A Discord bot to display Battlerite player data and other cool things. Everyone 
 - [ ] player's all champions data
 - [ ] randomizer for inhouses - select 2/4/6 random champions, with random rites, and 1 random skill
 - [ ] get live match data
+- [ ] player's match history
 
 To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue here on Github.
 
@@ -22,8 +23,8 @@ To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue h
 3. `gradle run`
 
 ###### Setup your private keys
-1. Create file src/main/java/app/utils/Auth.java with `BOT_TOKEN`, `BATTLERITE_TOKEN`, `TWITCH_TOKEN` and `GOOGLE_URL_SHORTENER_KEY`, being your discord's app token, your battlerite dev account token, your twitch app token and your Google API Url Shortener key respectively.
-2. For Streaming role - Change Helper.STREAMER_ROLE_NAME to the name of your "Streaming" role on your server
+1. Create file src/main/java/app/utils/Secrets.java with `BOT_TOKEN`, `BATTLERITE_TOKEN` and `TWITCH_TOKEN`, being your discord's app token, your battlerite dev account token, and your twitch app token respectively.
+2. For Streaming role - Change GenericUtils.STREAMER_ROLE_NAME to the name of your "Streaming" role on your server
 
 ###### Run locally
 1. `gradle run`

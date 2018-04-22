@@ -3,7 +3,7 @@ package app.commands;
 import java.util.ArrayList;
 
 import app.Command;
-import app.utils.Helper;
+import app.utils.GenericUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 public class Welp extends Command {
@@ -16,7 +16,8 @@ public class Welp extends Command {
      */
     public Welp(ArrayList<Command> commandsArray) {
         setKey(KEY);
-        setDescription("`" + Helper.COMMAND_TRIGGER + " " + getKey() + "` - get the list of all commands.");
+        setDescription(
+                String.format("`%s %s` - get the list of all commands.", GenericUtils.COMMAND_TRIGGER, getKey()));
         this.commandsArray = commandsArray;
     }
 
@@ -26,7 +27,7 @@ public class Welp extends Command {
         eb.setTitle("All that Varush knows");
         for (Command command : commandsArray) {
             String title = command.getKey().equals(Live.KEY) ? Live.KEY + "  (coming soon)" : command.getKey();
-            eb.addField("", "**" + title + "**\n" + command.getDescription(), false);
+            eb.addField("", String.format("**%s**\n" + command.getDescription(), title), false);
         }
         eb.addBlankField(false);
         return eb;

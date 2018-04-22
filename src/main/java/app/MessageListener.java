@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import app.utils.Helper;
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -71,7 +72,7 @@ public class MessageListener extends ListenerAdapter {
         }
 
         // Check if message starts with "!br" to invoke the specific command
-        if (content.toLowerCase().startsWith(Helper.COMMAND_TRIGGER)) {
+        if (content.toLowerCase().startsWith(GenericUtils.COMMAND_TRIGGER)) {
 
             Scanner scanner = new Scanner(content);
 
@@ -92,7 +93,7 @@ public class MessageListener extends ListenerAdapter {
 
             if (command == null) {
                 // The command doesn't exist
-                sendMessage(author, channel, Helper.getBasicEmbedMessage(Helper.ERROR_TITLE,
+                sendMessage(author, channel, GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE,
                         "That's not really a command, do `!br welp` to see all the commands"));
                 return;
             } else {
@@ -120,7 +121,7 @@ public class MessageListener extends ListenerAdapter {
     public MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
 
         String bigPipe = String.valueOf(Character.toChars(Integer.parseInt("23AA", 16)));
-        messageBuilder.setColor(new Color(Helper.BATTLERITE_COLOR_PRIMARY));
+        messageBuilder.setColor(new Color(BattleriteUtils.BATTLERITE_COLOR_PRIMARY));
         messageBuilder.setFooter("Requested by " + author.getName() + bigPipe + " !br welp for more",
                 author.getAvatarUrl());
 

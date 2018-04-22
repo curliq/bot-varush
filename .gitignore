@@ -1,4 +1,4 @@
-src/main/java/app/Auth.java
+src/main/java/app/Secrets.java
 .vscode
 
 # Compiled class file
@@ -23,7 +23,7 @@ src/main/java/app/Auth.java
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 
-src/main/java/app/utils/Auth.java
+src/main/java/app/utils/Secrets.java
 *.lock
 *.bin
 build/*

@@ -98,25 +98,25 @@ public class PlayerPOJO {
     public class Stats {
         @SerializedName("picture")
         @Expose
-        private long pictureID;
+        private String pictureId;
         @SerializedName("title")
         @Expose
-        private long titleID;
+        private String titleId;
 
-        public void settitleID(long titleID) {
-            this.titleID = titleID;
+        public void settitleID(String titleId) {
+            this.titleId = titleId;
         }
 
-        public long gettitleID() {
-            return titleID;
+        public String getTitleId() {
+            return titleId;
         }
 
-        public void setPictureID(long pictureID) {
-            this.pictureID = pictureID;
+        public void getPictureId(String pictureId) {
+            this.pictureId = pictureId;
         }
 
-        public long getPictureID() {
-            return pictureID;
+        public String getPictureID() {
+            return pictureId;
         }
     }
 
@@ -127,7 +127,7 @@ public class PlayerPOJO {
         private String type;
         @SerializedName("id")
         @Expose
-        private Long id;
+        private String id;
         @SerializedName("attributes")
         @Expose
         private Attributes attributes;
@@ -146,11 +146,11 @@ public class PlayerPOJO {
             this.type = type;
         }
 
-        public Long getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(Long id) {
+        public void setId(String id) {
             this.id = id;
         }
 

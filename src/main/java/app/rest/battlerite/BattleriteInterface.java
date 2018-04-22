@@ -15,6 +15,6 @@ public interface BattleriteInterface {
     Call<PlayerPOJO> getPlayersByID(@Query("filter[playerIds]") String idsArray); //filter[playerIds]=123,123,123
 
     @GET("teams")
-    Call<TeamStatsPOJO> getPlayerStats(@Query("filter[playerIds]") Long id, @Query("tag[season]") int season);
+    Call<TeamStatsPOJO> getPlayerStats(@Query("filter[playerIds]") String id, @Query("tag[season]") int season);
 
 }

@@ -21,6 +21,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
 }
 
 task buildZip(type: Zip) {

@@ -26,7 +26,7 @@ public class TeamStatsPOJO {
         private String type;
         @SerializedName("id")
         @Expose
-        private Long id;
+        private String id;
         @SerializedName("attributes")
         @Expose
         private Attributes attributes;
@@ -39,11 +39,11 @@ public class TeamStatsPOJO {
             this.type = type;
         }
 
-        public Long getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(Long id) {
+        public void setId(String id) {
             this.id = id;
         }
 
@@ -110,7 +110,7 @@ public class TeamStatsPOJO {
 
         @SerializedName("avatar")
         @Expose
-        private Integer avatar;
+        private String avatar;
         @SerializedName("division")
         @Expose
         private Integer division;
@@ -125,7 +125,7 @@ public class TeamStatsPOJO {
         private Integer losses;
         @SerializedName("members")
         @Expose
-        private ArrayList<Long> members = null;
+        private ArrayList<String> members = null;
         @SerializedName("placementGamesLeft")
         @Expose
         private Integer placementGamesLeft;
@@ -142,11 +142,11 @@ public class TeamStatsPOJO {
         @Expose
         private Integer wins;
 
-        public Integer getAvatar() {
+        public String getAvatar() {
             return avatar;
         }
 
-        public void setAvatar(Integer avatar) {
+        public void setAvatar(String avatar) {
             this.avatar = avatar;
         }
 
@@ -182,11 +182,11 @@ public class TeamStatsPOJO {
             this.losses = losses;
         }
 
-        public ArrayList<Long> getMembers() {
+        public ArrayList<String> getMembers() {
             return members;
         }
 
-        public void setMembers(ArrayList<Long> members) {
+        public void setMembers(ArrayList<String> members) {
             this.members = members;
         }
 
