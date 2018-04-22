@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-import javax.swing.plaf.basic.BasicGraphicsUtils;
-
 import com.google.gson.Gson;
 
 import java.util.Collections;
@@ -18,10 +16,7 @@ import app.rest.battlerite.pojos.PlayerPOJO;
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
 import app.utils.db.DbRequests;
-import app.utils.db.DbUtils;
-import app.utils.db.Player;
 import app.utils.db.Team;
-import app.utils.TeamCachedPOJO;
 import net.dv8tion.jda.core.EmbedBuilder;
 import retrofit2.Response;
 

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 import app.rest.battlerite.BattleriteInterface;
-import app.utils.BattleriteUtils;
-import app.utils.GenericUtils;
 import app.utils.NetworkUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
