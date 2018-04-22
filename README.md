@@ -61,7 +61,7 @@ public class Secrets {
 # Run
 1. Install java (version 8 specifically).
 2. Pull the repository.
-3. `gradle run`
+3. Add the bot to your server with the OAuth2 URL Generator in discordapp.com/developers
 
 ###### Run locally
 1. `gradle run`
