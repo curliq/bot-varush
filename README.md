@@ -37,9 +37,6 @@ public class Secrets {
 
     public final static String BOT_TOKEN = "your discord app's secret token";
     public final static String BATTLERITE_TOKEN = "your battlerite api key";
-    public final static String TWITCH_TOKEN_1 = "your twitch app key";
-    public final static String TWITCH_TOKEN_2 = "your other twitch app key";
-    public final static String TWITCH_TOKEN_3 = "your other twitch app key";
 
     // Database
     public final static String DATABASE_HOST = "your database's host";

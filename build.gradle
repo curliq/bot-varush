@@ -16,7 +16,7 @@ mainClassName = 'app.App'
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
-    compile 'net.dv8tion:JDA:3.5.0_338'
+    compile 'net.dv8tion:JDA:3.6.0_358'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
