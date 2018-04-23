@@ -99,7 +99,7 @@ public class StreamingRoleListener extends ListenerAdapter {
             Thread newThread = new Thread() {
                 public void run() {
                     GenericUtils.log(member.getEffectiveName() + " - check if is streaming battlerite on new thread");
-                    if (isStreamingBattlerite(currentGame) && isStreaming(currentGame))
+                    if (isStreaming(currentGame) && isStreamingBattlerite(currentGame))
                         addStreamerRole(guild, member);
                     else
                         removeStreamerRole(guild, member);
@@ -133,8 +133,7 @@ public class StreamingRoleListener extends ListenerAdapter {
      */
     private boolean isStreamingBattlerite(Game currentGame) {
         TwitchInterface api = NetworkUtils.getTwitchRetrofit().create(TwitchInterface.class);
-        String streamUrl = currentGame.getUrl();
-        String twitchUserName = streamUrl.substring(streamUrl.lastIndexOf('/') + 1);
+        String twitchUserName = currentGame.getUrl().substring(currentGame.getUrl().lastIndexOf('/') + 1);
         // call twitch api to check the user's stream game/category
         try {
             Response<StreamPOJO> response = api.getStreamByName(twitchUserName).execute();
@@ -183,12 +182,12 @@ public class StreamingRoleListener extends ListenerAdapter {
      * Schedule another call to twich to check if the game/category has changed
      */
     private void scheduleUpdate(Guild guild, Member member, Game currentGame) {
-        TimerTask task = new TimerTask() {
+        new Timer().schedule(new TimerTask() {
+            @Override
             public void run() {
                 runChecks(guild, member, currentGame);
             }
-        };
-        new Timer().schedule(task, RECALL_TWITCH_INTERVAL);
+        }, RECALL_TWITCH_INTERVAL);
     }
 
     /**
