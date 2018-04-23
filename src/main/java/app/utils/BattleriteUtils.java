@@ -15,7 +15,7 @@ public class BattleriteUtils {
     public final static String STATS_SOLO_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
     public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";
     public final static String STATS_3V3_IMAGE = "https://i.imgur.com/igCOlpX.png";
-    public final static String BATTLERITE_RICHPRESENCE_ID = "352378924317147156"; 
+    public final static String BATTLERITE_RICHPRESENCE_NAME = "Battlerite"; 
 
     /**
      * Get points amount from Bronze 5 to Grand Champion 1.

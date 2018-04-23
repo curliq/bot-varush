@@ -64,6 +64,12 @@ public class StreamingRoleListener extends ListenerAdapter {
     }
 
     private void runChecks(Guild guild, Member member, Game currentGame) {
+        // GenericUtils.log(member.getEffectiveName() + ": running checks");
+        try {
+            GenericUtils.log(member.getEffectiveName() + " " + currentGame.asRichPresence().getDetails());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
         if (!userHasAtLeastOneRole(member))
             return;
@@ -78,10 +84,11 @@ public class StreamingRoleListener extends ListenerAdapter {
             return;
         }
 
-        if (!isStreaming(currentGame) || !isStreamingBattlerite(currentGame))
-            removeStreamerRole(guild, member);
-        else {
+        if (isStreaming(currentGame) && isStreamingBattlerite(currentGame)) {
+            GenericUtils.log(member.getEffectiveName() + ": is streaming battlerite");
             addStreamerRole(guild, member);
+        } else {
+            removeStreamerRole(guild, member);
         }
     }
 
@@ -98,7 +105,11 @@ public class StreamingRoleListener extends ListenerAdapter {
      * Checks if the game from Discor rich presence is Battlerite
      */
     private boolean isStreamingBattlerite(Game currentGame) {
-        return currentGame.asRichPresence().getApplicationId().equals(BattleriteUtils.BATTLERITE_RICHPRESENCE_ID);
+        try {
+            return currentGame.asRichPresence().getDetails().equals(BattleriteUtils.BATTLERITE_RICHPRESENCE_NAME);
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     /**

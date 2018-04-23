@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 
 public class GenericUtils {
 
-    public final static String BOT_VERSION = "3.1.0";
+    public final static String BOT_VERSION = "3.2.0";
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     // public final static String BATTLERITE_BASE_URL = "http://demo2022116.mockable.io/";
