@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkUtils {
 
-    public final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
+    private final static String BATTLERITE_BASE_URL = "https://api.dc01.gamelockerapp.com/shards/global/";
 
     /**
      * Get retrofit object to interact with Battlerite API
@@ -28,33 +28,29 @@ public class NetworkUtils {
     /**
      * Get generic retrofit object
      */
-    public static Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
+    private static Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
         httpClient.addInterceptor(loggingInterceptor);
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Interceptor.Chain chain) throws IOException {
-                Request original = chain.request();
-                Builder requestBuilder = original.newBuilder();
-                if (headersMap != null)
-                    for (String header : headersMap.keySet())
-                        requestBuilder.addHeader(header, headersMap.get(header));
+        httpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+            Builder requestBuilder = original.newBuilder();
+            if (headersMap != null)
+                for (String header : headersMap.keySet())
+                    requestBuilder.addHeader(header, headersMap.get(header));
 
-                requestBuilder.method(original.method(), original.body());
-                // 
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
+            requestBuilder.method(original.method(), original.body());
+            //
+            Request request = requestBuilder.build();
+            return chain.proceed(request);
         });
 
         OkHttpClient client = httpClient.build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
-                .client(client).build();
 
-        return retrofit;
+        return new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
+                .client(client).build();
     }
 
 }

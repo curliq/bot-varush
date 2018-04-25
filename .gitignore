@@ -32,3 +32,8 @@ build/*
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# IDEA
+.idea/*
+local.properties
+varush-bot.iml

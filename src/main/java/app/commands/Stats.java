@@ -17,7 +17,9 @@ import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
 import app.utils.db.DbRequests;
 import app.utils.db.Team;
+
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import retrofit2.Response;
 
 public class Stats extends Command {
@@ -186,7 +188,7 @@ public class Stats extends Command {
      * Make string of the other players in this team
      */
     private String getPlayersInThisTeamText(boolean is2v2, TeamStatsPOJO.Data team,
-            ArrayList<PlayerPOJO.Data> otherPLayersList) {
+                                            ArrayList<PlayerPOJO.Data> otherPLayersList) {
 
         // create a list and add the players of this team to it
         ArrayList<String> otherPlayersNames = otherPLayersList.stream()

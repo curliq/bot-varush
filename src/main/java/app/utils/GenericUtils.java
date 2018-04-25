@@ -11,10 +11,8 @@ public class GenericUtils {
     public final static String BOT_VERSION = "3.2.0";
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
-    // public final static String BATTLERITE_BASE_URL = "http://demo2022116.mockable.io/";
     public final static String ERROR_TITLE = "Sorry...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
-    public final static String NOT_A_COMMAND = "That's not really a command lady";
     public final static String STREAMING_ROLE_NAME = "Streaming";
     public final static String PROBATION_ROLE_NAME = "Under Probation";
 

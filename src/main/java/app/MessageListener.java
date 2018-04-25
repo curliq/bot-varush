@@ -61,12 +61,16 @@ public class MessageListener extends ListenerAdapter {
 
         String content = message.getContentRaw();
 
-        // Check if command contains a shortcut, if yes, replace shortcut text with shortcut value and append the rest
+        // Check if command contains a shortcut, if yes, replace shortcut text with shortcut value and
+        // append the rest of the params, i.e. "!c 2s" becomes "!br stats curlicue 2s"
         for (String shortcutKey : commandsShortcuts.keySet()) {
             if (content.contains(shortcutKey)) {
                 int keyIndex = content.contains(" ") ? content.indexOf(" ") : content.length();
+                // get shortcut, i.e. "!c"
                 String key = content.substring(0, keyIndex);
+                // get the other params after the shortcut, i.e. "2s"
                 String rest = content.substring(keyIndex);
+
                 content = commandsShortcuts.get(key) + rest;
             }
         }
@@ -74,6 +78,7 @@ public class MessageListener extends ListenerAdapter {
         // Check if message starts with "!br" to invoke the specific command
         if (content.toLowerCase().startsWith(GenericUtils.COMMAND_TRIGGER)) {
 
+            // create a scanner to go through every word in the command
             Scanner scanner = new Scanner(content);
 
             // Get the first word after "!br" i.e. the command key
@@ -81,7 +86,7 @@ public class MessageListener extends ListenerAdapter {
             String commandKey = scanner.next().toLowerCase();
 
             // Create arraylist with the params passed by the player, i.e. each consecutive word
-            ArrayList<String> params = new ArrayList<String>();
+            ArrayList<String> params = new ArrayList<>();
             while (scanner.hasNext())
                 params.add(scanner.next());
 
@@ -92,10 +97,9 @@ public class MessageListener extends ListenerAdapter {
             Command command = commandsManager.getCommand(commandKey);
 
             if (command == null) {
-                // The command doesn't exist
+                // The command doesn't exist, send message saying suggesting !br welp
                 sendMessage(author, channel, GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE,
                         "That's not really a command, do `!br welp` to see all the commands"));
-                return;
             } else {
                 // show typing indicator
                 channel.sendTyping().queue();
@@ -116,16 +120,19 @@ public class MessageListener extends ListenerAdapter {
     }
 
     /**
-     * base message for every message send, basically just color and footer
+     * base message for every message send, basically just set color and footer
      */
-    public MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
+    private MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
 
+        // get pipe symbol from hex code
         String bigPipe = String.valueOf(Character.toChars(Integer.parseInt("23AA", 16)));
+        // set embed message color
         messageBuilder.setColor(new Color(BattleriteUtils.BATTLERITE_COLOR_PRIMARY));
+        // set embed message footer
         messageBuilder.setFooter("Requested by " + author.getName() + bigPipe + " !br welp for more",
                 author.getAvatarUrl());
 
         return messageBuilder.build();
-    };
+    }
 
 }
