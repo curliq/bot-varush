@@ -10,13 +10,14 @@ import com.google.gson.Gson;
 import java.util.Collections;
 
 import app.Command;
-import app.rest.battlerite.pojos.TeamStatsPOJO;
-import app.rest.battlerite.pojos.TeamStatsPOJO.Data;
-import app.rest.battlerite.pojos.PlayerPOJO;
+import app.rest.pojos.TeamStatsPOJO;
+import app.rest.pojos.TeamStatsPOJO.Data;
+import app.rest.pojos.PlayerPOJO;
+import app.rest.HttpRequests;
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
-import app.utils.db.DbRequests;
-import app.utils.db.Team;
+import app.db.DbRequests;
+import app.db.models.Team;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 
@@ -25,8 +26,8 @@ import retrofit2.Response;
 public class Stats extends Command {
 
     public final static String KEY = "stats";
-    public final static String PARAM_2V2 = "2s";
-    public final static String PARAM_3V3 = "3s";
+    private final static String PARAM_2V2 = "2s";
+    private final static String PARAM_3V3 = "3s";
 
     private PlayerPOJO.Data playerData;
     private Response<TeamStatsPOJO> teamStatsResponse;
@@ -47,8 +48,7 @@ public class Stats extends Command {
         try {
             String playerName = getParams().get(0);
             // fetches the player ID from the player name
-            Response<PlayerPOJO> playerResponse = getBattleriteRetrofit()
-                    .getPlayerID(GenericUtils.urlEncode(playerName)).execute();
+            Response<PlayerPOJO> playerResponse = HttpRequests.getPlayerByName(playerName);
             GenericUtils.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
@@ -57,8 +57,7 @@ public class Stats extends Command {
             }
 
             // fetches the team data from the player ID
-            teamStatsResponse = getBattleriteRetrofit()
-                    .getPlayerStats(playerResponse.body().getData().get(0).getId(), BattleriteUtils.SEASON).execute();
+            teamStatsResponse = HttpRequests.getTeam(playerResponse.body().getData().get(0).getId());
             GenericUtils.log(new Gson().toJson(teamStatsResponse.body()));
 
             // return error message if something went wrong
@@ -159,28 +158,22 @@ public class Stats extends Command {
      */
     private ArrayList<PlayerPOJO.Data> getPlayersInTeams(String otherPlayersIds) {
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
-        try {
-            Response<PlayerPOJO> otherPlayersResponse = getBattleriteRetrofit().getPlayersByID(otherPlayersIds)
-                    .execute();
-            GenericUtils.log(new Gson().toJson(otherPlayersResponse.body()));
+        Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(otherPlayersIds);
+        GenericUtils.log(new Gson().toJson(otherPlayersResponse.body()));
 
-            // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
-            // to 6 players max
-            int i = otherPlayersIds.indexOf(',',
-                    1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',',
-                            1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(','))))));
+        // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
+        // to 6 players max
+        int i = otherPlayersIds.indexOf(',',
+                1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',',
+                        1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(','))))));
 
-            // get players excluding the 6 first found from the teams                
-            Response<PlayerPOJO> otherPlayersResponse2 = getBattleriteRetrofit()
-                    .getPlayersByID(otherPlayersIds.substring(i + 1)).execute();
-            GenericUtils.log(new Gson().toJson(otherPlayersResponse2.body()));
+        // get players excluding the 6 first found from the teams
+        Response<PlayerPOJO> otherPlayersResponse2 = HttpRequests.getPlayersByIds(otherPlayersIds.substring(i + 1));
+        GenericUtils.log(new Gson().toJson(otherPlayersResponse2.body()));
 
-            // add them all to a list
-            otherPLayersList.addAll(otherPlayersResponse.body().getData());
-            otherPLayersList.addAll(otherPlayersResponse2.body().getData());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // add them all to a list
+        otherPLayersList.addAll(otherPlayersResponse.body().getData());
+        otherPLayersList.addAll(otherPlayersResponse2.body().getData());
         return otherPLayersList;
     }
 

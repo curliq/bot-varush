@@ -29,7 +29,7 @@ To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue h
 # Setup
 
 ### Your private keys
-Create file src/main/java/app/utils/Secrets.java, here's a template:
+Create file src/main/java/app/Secrets.java, here's a template:
 ```
 package app.utils;
 

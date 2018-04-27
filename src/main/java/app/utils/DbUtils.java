@@ -1,4 +1,4 @@
-package app.utils.db;
+package app.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import app.utils.GenericUtils;
-import app.utils.Secrets;
+import app.Secrets;
 
 public class DbUtils {
 
@@ -22,7 +22,10 @@ public class DbUtils {
     private static ArrayList<ResultSet> resultSets = new ArrayList<>();
     private static Timer closeConnectionTimer;
 
-    /** Base method to perform a database request, taking the raw sql query as a parameter */
+    /**
+     * Base method to perform a database request, taking the raw sql query as a parameter
+     * Opens a connection if not already opened, and stars a timer to close the connection
+     */
     public static ResultSet makeRequest(String sqlQuery) {
         GenericUtils.log(sqlQuery);
         try {
@@ -41,7 +44,7 @@ public class DbUtils {
         return null;
     }
 
-    /** Open a connection with the database */
+    /** Open a connection with the database if not already opened */
     private static void openConnection() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -73,7 +76,7 @@ public class DbUtils {
         }
     }
 
-    /** Close the database connection */
+    /** Close the database connection, after a 10 second delay */
     private static void closeConnection() {
         GenericUtils.log("DB: start timer to close db connection");
         if (closeConnectionTimer != null)

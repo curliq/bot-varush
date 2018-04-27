@@ -1,39 +1,30 @@
 package app;
 
-import java.util.ArrayList;
-
 import app.commands.About;
 import app.commands.Stats;
 import app.commands.Welp;
 import app.commands.WhoTheBestBot;
-import net.dv8tion.jda.core.JDA;
 
-public class CommandsManager {
+public final class CommandsManager {
 
-    private ArrayList<Command> commandsArray = new ArrayList<>();
-    private JDA jda;
-
-    public CommandsManager(JDA jda) {
-        this.jda = jda;
-    }
-
-    public void init() {
-        // Add all the commands to our array, which will be used a few places
-        commandsArray.add(new Stats());
-        // commandsArray.add(new Live());
-        commandsArray.add(new About(jda));
-        commandsArray.add(new Welp(commandsArray));
-        commandsArray.add(new WhoTheBestBot());
+    private CommandsManager() {
     }
 
     /**
      * Get the command from the commandsArray from it's key
      */
-    public Command getCommand(String key) {
+    public static Command getCommand(String key) {
         // Loop through all commands until the one with the received key is found
-        for (Command command : commandsArray) {
-            if (command.getKey().equals(key))
-                return command;
+        switch (key) {
+            case Stats.KEY:
+                return new Stats();
+            case About.KEY:
+                return new About();
+            case Welp.KEY:
+                return new Welp();
+            case WhoTheBestBot.KEY:
+                return new WhoTheBestBot();
+
         }
         return null;
     }

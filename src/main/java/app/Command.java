@@ -2,12 +2,7 @@ package app;
 
 import java.util.ArrayList;
 
-import javax.annotation.Nullable;
-
-import app.rest.battlerite.BattleriteInterface;
-import app.utils.NetworkUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 
 /**
  * Base class for every command
@@ -31,21 +26,9 @@ public abstract class Command {
     private ArrayList<String> params;
 
     /**
-     * JDA object
-     */
-    private JDA jda;
-
-    /**
     * Method used to return the repply message, must be implemented
     */
     protected abstract EmbedBuilder getReply();
-
-    /**
-     * Return Retrofit instance to use for Battlerite API
-     */
-    protected BattleriteInterface getBattleriteRetrofit() {
-        return NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class);
-    }
 
     /**
      * @return the key
@@ -90,21 +73,6 @@ public abstract class Command {
      */
     public void setParams(ArrayList<String> params) {
         this.params = params;
-    }
-
-    /**
-     * @return the jda
-     */
-    @Nullable
-    public JDA getJda() {
-        return jda;
-    }
-
-    /**
-     * @param jda the jda to set
-     */
-    public void setJda(JDA jda) {
-        this.jda = jda;
     }
 
 }

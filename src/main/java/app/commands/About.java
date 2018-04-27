@@ -1,19 +1,19 @@
 package app.commands;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+
+import app.App;
 import app.Command;
 import app.utils.GenericUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 
 public class About extends Command {
 
     public final static String KEY = "about";
 
-    public About(JDA jda) {
+    public About() {
         setKey(KEY);
         setDescription(
                 String.format("`%s %s` - a bit of useless information.", GenericUtils.COMMAND_TRIGGER, getKey()));
-        setJda(jda);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class About extends Command {
                 "The bot is open source and everyone is welcome to contribute: github.com/joaosardinha/bot-varush, "
                         + "to request a " + "feature click on Issues and create a new one describing what you'd like "
                         + "to see, or ping %s",
-                getJda().getUserById(GenericUtils.OWNER_DISCORD_USER_ID).getAsMention()), false);
+                App.jda.getUserById(GenericUtils.OWNER_DISCORD_USER_ID).getAsMention()), false);
         eb.addBlankField(false);
         return eb;
     }

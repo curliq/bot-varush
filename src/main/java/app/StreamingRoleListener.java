@@ -17,21 +17,19 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
  * Purpose of this is to add a role called Streamer to whomever is streaming Battlerite at the moment and remove it
  * as soon as they finish the stream or stop playing Battlerite.
  * 
- * To use this create a role called {@value utils.GenericUtils.#STREAMER_ROLE_NAME} 
+ * To use this create a role called {@value utils.GenericUtils.STREAMER_ROLE_NAME}
  * and pin it to the right hand side on your server.
  */
 public class StreamingRoleListener extends ListenerAdapter {
 
     private Role streamerRole;
 
-    public StreamingRoleListener(JDA jda) {
+    StreamingRoleListener(JDA jda) {
         for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
             runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
     }
 
-    /**
-     * called whenever someone in the server changes their "playing" status
-     */
+    /** called whenever someone in the server changes their "playing" status */
     @Override
     public void onUserUpdateGame(UserUpdateGameEvent event) {
         super.onUserUpdateGame(event);
@@ -92,18 +90,14 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * Checks if the user is streaming on twitch
-     */
+    /** Checks if the user is streaming on twitch */
     private boolean isStreaming(Game currentGame) {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;
         return Game.isValidStreamingUrl(currentGame.getUrl());
     }
 
-    /**
-     * Checks if the game from Discor rich presence is Battlerite
-     */
+    /** Checks if the game from Discord rich presence is Battlerite */
     private boolean isStreamingBattlerite(Game currentGame) {
         try {
             return currentGame.asRichPresence().getDetails().equals(BattleriteUtils.BATTLERITE_RICHPRESENCE_NAME);
@@ -112,9 +106,7 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * Add the role to the user
-     */
+    /** Add the role to the user */
     private void addStreamerRole(Guild guild, Member member) {
         if (!member.getRoles().contains(streamerRole)) {
             GenericUtils.log("add role to " + member);
@@ -122,9 +114,7 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * Check if user has the role and remove it
-     */
+    /** Check if user has the role and remove it */
     private void removeStreamerRole(Guild guild, Member member) {
         if (member.getRoles().contains(streamerRole)) {
             GenericUtils.log("remove role from " + member);
@@ -132,16 +122,12 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * Check if the user as at least one role, which will normally be the region role
-     */
+    /** Check if the user as at least one role, which will normally be the region role */
     private boolean userHasAtLeastOneRole(Member member) {
         return !member.getRoles().isEmpty();
     }
 
-    /**
-     * Check if user has a "probation" role, if yes then dont add the Streamer role
-     */
+    /** Check if user has a "probation" role, if yes then don't add the Streamer role */
     private boolean userHasProbationRole(Guild guild, Member member) {
         try {
             Role probationRole = guild.getRolesByName(GenericUtils.PROBATION_ROLE_NAME, true).get(0);

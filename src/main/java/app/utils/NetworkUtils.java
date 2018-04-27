@@ -1,9 +1,8 @@
 package app.utils;
 
-import java.io.IOException;
 import java.util.HashMap;
 
-import okhttp3.Interceptor;
+import app.Secrets;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
@@ -20,7 +19,7 @@ public class NetworkUtils {
      */
     public static Retrofit getBattleriteRetrofit() {
         HashMap<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", Secrets.BATTLERITE_TOKEN);
+        headersMap.put("Authorization", "Bearer " + Secrets.BATTLERITE_TOKEN);
         headersMap.put("Accept", "application/vnd.api+json");
         return getRetrofit(BATTLERITE_BASE_URL, headersMap);
     }

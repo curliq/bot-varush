@@ -23,11 +23,9 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class MessageListener extends ListenerAdapter {
 
-    private CommandsManager commandsManager;
     private HashMap<String, String> commandsShortcuts;
 
-    public MessageListener(CommandsManager commandsManager) {
-        this.commandsManager = commandsManager;
+    MessageListener() {
         commandsShortcuts = new HashMap<>();
         commandsShortcuts.put("!c", "!br stats curlicue");
         commandsShortcuts.put("!ex", "!br stats ExBlack");
@@ -94,7 +92,7 @@ public class MessageListener extends ListenerAdapter {
             scanner.close();
 
             // Get the command object that matches the command key sent by the player (eg "stats")
-            Command command = commandsManager.getCommand(commandKey);
+            Command command = CommandsManager.getCommand(commandKey);
 
             if (command == null) {
                 // The command doesn't exist, send message saying suggesting !br welp
