@@ -240,7 +240,7 @@ public class Stats extends Command {
         if (newAmount <= oldAmount)
             return "";
         else
-            return " (+" + (newAmount - oldAmount) + ")";
+            return " *(+" + (newAmount - oldAmount) + ")*";
     }
 
     /**
