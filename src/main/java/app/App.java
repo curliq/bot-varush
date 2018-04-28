@@ -8,13 +8,15 @@ import net.dv8tion.jda.core.entities.Game.GameType;
 
 import javax.security.auth.login.LoginException;
 
+import app.utils.Scripts;
+
 public class App {
+
+    public static JDA jda;
 
     public static void main(String[] args) {
         new App().setUpBot();
     }
-
-    public static JDA jda;
 
     private void setUpBot() {
         try {
@@ -29,6 +31,7 @@ public class App {
             jda.addEventListener(new StreamingRoleListener(jda));
             jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
 
+//            Scripts.createCollumns();
 
         } catch (InterruptedException | LoginException exception) {
             exception.printStackTrace();

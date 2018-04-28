@@ -1,26 +1,23 @@
 package app.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.stream.Collectors;
-
 import com.google.gson.Gson;
-
-import java.util.Collections;
-
-import app.Command;
-import app.rest.pojos.TeamStatsPOJO;
-import app.rest.pojos.TeamStatsPOJO.Data;
-import app.rest.pojos.PlayerPOJO;
-import app.rest.HttpRequests;
-import app.utils.BattleriteUtils;
-import app.utils.GenericUtils;
-import app.db.DbRequests;
-import app.db.models.Team;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
+import app.Command;
+import app.db.DbRequests;
+import app.db.models.Team;
+import app.rest.HttpRequests;
+import app.rest.pojos.PlayerPOJO;
+import app.rest.pojos.TeamStatsPOJO;
+import app.rest.pojos.TeamStatsPOJO.Data;
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
 import retrofit2.Response;
 
 public class Stats extends Command {
@@ -206,6 +203,7 @@ public class Stats extends Command {
      */
     private void addTeamInfo(EmbedBuilder eb, TeamStatsPOJO.Data team) {
         TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
+        Team cachedPoints = DbRequests.getTeam(team.getId());
 
         // calculate win rate
         double winRate = (Double.valueOf(teamAttrs.getStats().getWins())
@@ -213,10 +211,12 @@ public class Stats extends Command {
                 * 100f;
         String winRateString = Double.isNaN(winRate) ? "git gud" : GenericUtils.roundTwoDecimals(winRate) + "%";
 
-        eb.addField("Wins", "" + teamAttrs.getStats().getWins(), true);
-        eb.addField("Losses", "" + teamAttrs.getStats().getLosses(), true);
+        eb.addField("Wins", teamAttrs.getStats().getWins() +
+                getWinsLossesDelta(true, teamAttrs.getStats().getWins(), cachedPoints), true);
+        eb.addField("Losses", teamAttrs.getStats().getLosses() +
+                getWinsLossesDelta(false, teamAttrs.getStats().getLosses(), cachedPoints), true);
         eb.addField("Win ratio", winRateString, true);
-        eb.addField("League", makeLeagueText(team), true);
+        eb.addField("League", makeLeagueText(team, cachedPoints), true);
 
         GenericUtils.log(teamAttrs.getName());
         // Update team entry with new points amount
@@ -228,14 +228,28 @@ public class Stats extends Command {
                 teamAttrs.getStats().getTopDivision(), teamAttrs.getStats().getTopDivisionRating());
     }
 
+
     /**
-     * Make league text.
-     * Checks if is in placements or not
-     * Gets the points delta
+     * Get the difference of wins or losses since the last request
+     *
+     * @param isWins    true for wins, false for losses
+     * @param newAmount the current amount of wins or losses
      */
-    private String makeLeagueText(TeamStatsPOJO.Data team) {
+    private String getWinsLossesDelta(boolean isWins, int newAmount, Team cachedPoints) {
+        int oldAmount = isWins ? cachedPoints.getWins() : cachedPoints.getLosses();
+        if (newAmount <= oldAmount)
+            return "";
+        else
+            return " (+" + (newAmount - oldAmount) + ")";
+    }
+
+    /**
+     * Make league/division text.
+     * Checks if is in placements or not
+     * Gets the points delta from database
+     */
+    private String makeLeagueText(TeamStatsPOJO.Data team, Team cachedPoints) {
         TeamStatsPOJO.Attributes teamAttrs = team.getAttributes();
-        Team cachedPoints = DbRequests.getTeam(team.getId());
 
         if (teamAttrs.getStats().getPlacementGamesLeft() > 0)
             return "Placements: " + teamAttrs.getStats().getPlacementGamesLeft() + " games left";

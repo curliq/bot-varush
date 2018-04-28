@@ -10,7 +10,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import app.utils.GenericUtils;
 import app.Secrets;
 
 public class DbUtils {

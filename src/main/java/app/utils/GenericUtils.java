@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 public class GenericUtils {
 
     /** Just used as a reference for version control */
-    protected final static String BOT_VERSION = "3.3.0";
+    protected final static String BOT_VERSION = "3.3.1";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;

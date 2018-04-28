@@ -1,12 +1,11 @@
 package app.commands;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+
 import java.util.ArrayList;
 
-import app.App;
 import app.Command;
 import app.utils.GenericUtils;
-
-import net.dv8tion.jda.core.EmbedBuilder;
 
 public class Welp extends Command {
 
