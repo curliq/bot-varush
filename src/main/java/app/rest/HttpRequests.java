@@ -2,6 +2,7 @@ package app.rest;
 
 import java.io.IOException;
 
+import app.rest.pojos.MatchPOJO;
 import app.rest.pojos.PlayerPOJO;
 import app.rest.pojos.TeamStatsPOJO;
 import app.utils.BattleriteUtils;
@@ -39,6 +40,11 @@ public class HttpRequests {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Response<MatchPOJO> getMatches(String filterCreatedAfter) {
+//        return NetworkUtils.getBattleriteRetrofit().create() //todo finish this
+        return null;
     }
 
 }

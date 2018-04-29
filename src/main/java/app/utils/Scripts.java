@@ -6,7 +6,6 @@ package app.utils;
 public class Scripts {
 
     public static void createCollumns() {
-        GenericUtils.log("create colms");
         String[] c = {"ALTER TABLE players ADD COLUMN c3 int;",
                 "ALTER TABLE players ADD COLUMN c4 int;",
                 "ALTER TABLE players ADD COLUMN c56 int;",
@@ -1873,15 +1872,12 @@ public class Scripts {
                 "ALTER TABLE players ADD COLUMN c10041 int;",
                 "ALTER TABLE players ADD COLUMN c10043 int;",
                 "ALTER TABLE players ADD COLUMN c10045 int;"};
-
-        GenericUtils.log(c.length);
         for (String s : c) {
-            GenericUtils.log("do it");
             DbUtils.makeRequest(s);
         }
     }
 
-    public static void savePlayersData() {
+    public static void savePlayersData(String filterCreatedAt) {
 
     }
 

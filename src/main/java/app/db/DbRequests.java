@@ -1,31 +1,53 @@
 package app.db;
 
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import app.db.models.Player;
 import app.db.models.Team;
+import app.rest.pojos.PlayerPOJO;
 import app.utils.DbUtils;
 import app.utils.GenericUtils;
 
 public class DbRequests {
 
     /**
-     * Save a player in the database or update if already exists
+     * Save a player in the database
      */
-    public static void savePlayer(String id, String name, String titleId, String pictureId) {
-        new Thread(() -> {
-            DbUtils.makeRequest(String.format(
-                    "INSERT INTO %s (%s, %s, %s, %s) VALUES ('%s', '%s', '%s', '%s') ON CONFLICT (%s) DO UPDATE "
-                            + " SET %s = excluded.%s, %s = excluded.%s, %s = excluded.%s;",
-                    Player.TABLE_NAME, Player.Fields.ID.val, Player.Fields.NAME.val, Player.Fields.TITLE_ID.val,
-                    Player.Fields.PICTURE_ID.val, id, name, titleId, pictureId, Player.Fields.ID.val,
-                    Player.Fields.NAME.val, Player.Fields.NAME.val, Player.Fields.TITLE_ID.val,
-                    Player.Fields.TITLE_ID.val, Player.Fields.PICTURE_ID.val, Player.Fields.PICTURE_ID.val));
-            GenericUtils.log("BD: saved player: " + name);
-        }).start();
+    public static void savePlayer(PlayerPOJO.Attributes attrs, PlayerPOJO.Data data, PlayerPOJO.Stats stats) {
+        JSONObject json = new JSONObject(new Gson().toJson(stats));
+        json.put(Player.Fields.NAME.val, attrs.getName());
+        json.put(Player.Fields.TITLE_ID.val, stats.getTitleId());
+        json.put(Player.Fields.PICTURE_ID.val, stats.getPictureID());
+        json.put(Player.Fields.ID.val, data.getId());
+
+        Iterator<?> keys = json.keys();
+        StringBuilder fields = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            Object val = json.get(key);
+            if (val instanceof Integer) {
+                fields.append(key);
+                values.append('\'').append(val).append('\'').append(',');
+            }
+        }
+        // remove last comma
+        values.setLength(values.length() - 1);
+
+        DbUtils.makeRequest(String.format(
+                "INSERT INTO %s (%s) VALUES (%s);",
+                Player.TABLE_NAME, fields.toString(), values.toString()));
+
+        GenericUtils.log("BD: saved player: " + attrs.getName());
     }
 
     /**

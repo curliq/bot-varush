@@ -66,9 +66,6 @@ public class Stats extends Command {
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, GenericUtils.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
-            DbRequests.savePlayer(playerData.getId(), playerData.getAttributes().getName(),
-                    playerData.getAttributes().getStats().getTitleId(),
-                    playerData.getAttributes().getStats().getPictureID());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -236,11 +233,15 @@ public class Stats extends Command {
      * @param newAmount the current amount of wins or losses
      */
     private String getWinsLossesDelta(boolean isWins, int newAmount, Team cachedPoints) {
+        if (cachedPoints == null)
+            return "";
+
         int oldAmount = isWins ? cachedPoints.getWins() : cachedPoints.getLosses();
         if (newAmount <= oldAmount)
             return "";
         else
             return " *(+" + (newAmount - oldAmount) + ")*";
+
     }
 
     /**

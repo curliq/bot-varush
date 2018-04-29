@@ -1,5 +1,6 @@
 package app.rest;
 
+import app.rest.pojos.MatchPOJO;
 import app.rest.pojos.PlayerPOJO;
 import app.rest.pojos.TeamStatsPOJO;
 import retrofit2.Call;
@@ -10,11 +11,15 @@ public interface BattleriteInterface {
 
     @GET("players")
     Call<PlayerPOJO> getPlayerID(@Query("filter[playerNames]") String name);
-   
+
     @GET("players")
     Call<PlayerPOJO> getPlayersByID(@Query("filter[playerIds]") String idsArray); //filter[playerIds]=123,123,123
 
     @GET("teams")
-    Call<TeamStatsPOJO> getPlayerStats(@Query("filter[playerIds]") String id, @Query("tag[season]") int season);
+    Call<TeamStatsPOJO> getPlayerStats(@Query("filter[playerIds]") String id,
+                                       @Query("tag[season]") int season);
 
+    @GET("matches")
+    Call<MatchPOJO> getMatches(@Query("filter[createdAt-start]") String createdAt);
+    // filter[createdAt-start]=2017-01-01T08:25:30Z
 }

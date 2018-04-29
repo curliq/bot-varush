@@ -17,7 +17,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
  * Purpose of this is to add a role called Streamer to whomever is streaming Battlerite at the moment and remove it
  * as soon as they finish the stream or stop playing Battlerite.
  * 
- * To use this create a role called {@value utils.GenericUtils.STREAMER_ROLE_NAME}
+ * To use this create a role called {@value app.utils.GenericUtils#STREAMING_ROLE_NAME}
  * and pin it to the right hand side on your server.
  */
 public class StreamingRoleListener extends ListenerAdapter {
@@ -25,8 +25,8 @@ public class StreamingRoleListener extends ListenerAdapter {
     private Role streamerRole;
 
     StreamingRoleListener(JDA jda) {
-        for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
-            runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
+//        for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
+//            runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
     }
 
     /** called whenever someone in the server changes their "playing" status */
