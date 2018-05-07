@@ -37,3 +37,4 @@ build/*
 .idea/*
 local.properties
 varush-bot.iml
+java_pid32597.hprof

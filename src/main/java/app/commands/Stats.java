@@ -191,7 +191,7 @@ public class Stats extends Command {
                 getWinsLossesDelta(true, teamAttrs.getStats().getWins(), cachedPoints), true);
         eb.addField("Losses", teamAttrs.getStats().getLosses() +
                 getWinsLossesDelta(false, teamAttrs.getStats().getLosses(), cachedPoints), true);
-        eb.addField("Win ratio", winRateString, false);
+        eb.addField("Win ratio", winRateString, true);
         eb.addField("League", makeLeagueText(team, cachedPoints), true);
 
         GenericUtils.log(teamAttrs.getName());

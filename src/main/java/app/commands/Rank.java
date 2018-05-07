@@ -98,7 +98,7 @@ public class Rank extends Command {
                             boolean isExtraCompact) {
         StringBuilder stringBuilder = new StringBuilder();
         String pipe = TextUtils.pipeSymbol();
-        String cross = "☐";
+        String cross = "?";
         int maxColumnSize = 16;
         int biggestNameLength = "Name".length();
         int biggestWinsLength = "Wins".length();
