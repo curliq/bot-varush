@@ -20,6 +20,7 @@ public interface BattleriteInterface {
                                        @Query("tag[season]") int season);
 
     @GET("matches")
-    Call<MatchPOJO> getMatches(@Query("filter[createdAt-start]") String createdAt);
-    // filter[createdAt-start]=2017-01-01T08:25:30Z
+    Call<MatchPOJO> getMatches(@Query("filter[createdAt-start]") String createdAt,
+                               @Query("filter[rankingType]") String rankingType); //ex: 2017-01-01T08:25:30Z
+
 }

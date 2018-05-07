@@ -50,11 +50,11 @@ public class DbUtils {
                 try {
                     Class.forName("org.postgresql.Driver");
                 } catch (ClassNotFoundException e) {
-                    System.out.println("Where is your PostgreSQL JDBC Driver? " + "Include in your library path!");
+                    GenericUtils.log("Where is your PostgreSQL JDBC Driver? " + "Include in your library path!");
                     e.printStackTrace();
                     return;
                 }
-                System.out.println("PostgreSQL JDBC Driver Registered!");
+                GenericUtils.log("PostgreSQL JDBC Driver Registered!");
 
                 String url = "jdbc:postgresql://" + Secrets.DATABASE_HOST + ":" + Secrets.DATABASE_PORT + "/"
                         + Secrets.DATABASE_NAME;

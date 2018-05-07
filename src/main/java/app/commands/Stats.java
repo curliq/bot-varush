@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import app.Command;
@@ -32,10 +32,9 @@ public class Stats extends Command {
     public Stats() {
         setKey(KEY);
         setDescription(String.format(
-                "`%s %s" + " playerName` - get the stats of a player \n" + "`%s %s"
+                "`%1$s %2$s" + " playerName` - get the stats of a player \n" + "`%1$s %2$s"
                         + " playerName 2s` - get the 2v2 teams of a player \n"
-                        + "`%s %s playerName 3s` - get the 3v3 teams of a player",
-                GenericUtils.COMMAND_TRIGGER, getKey(), GenericUtils.COMMAND_TRIGGER, getKey(),
+                        + "`%1$s %2$s playerName 3s` - get the 3v3 teams of a player",
                 GenericUtils.COMMAND_TRIGGER, getKey()));
     }
 
@@ -54,7 +53,7 @@ public class Stats extends Command {
             }
 
             // fetches the team data from the player ID
-            teamStatsResponse = HttpRequests.getTeam(playerResponse.body().getData().get(0).getId());
+            teamStatsResponse = HttpRequests.getTeams(playerResponse.body().getData().get(0).getId());
             GenericUtils.log(new Gson().toJson(teamStatsResponse.body()));
 
             // return error message if something went wrong
@@ -66,6 +65,7 @@ public class Stats extends Command {
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, GenericUtils.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
+            DbRequests.savePlayer(playerData.getAttributes(), playerData);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +95,9 @@ public class Stats extends Command {
 
         eb.setTitle(playerData.getAttributes().getName(), BattleriteUtils.getBrStatsPlayerUrl(playerData.getId()));
         eb.setDescription(BattleriteUtils.getPlayerTitle(playerData.getAttributes().getStats().getTitleId()));
-        eb.setThumbnail(BattleriteUtils.STATS_SOLO_IMAGE);
+        eb.setThumbnail(
+                GenericUtils.ASSETS_PROFILE_URL + playerData.getAttributes().getStats().getPictureID() + ".png");
+        GenericUtils.log(GenericUtils.ASSETS_PROFILE_URL + playerData.getAttributes().getStats().getPictureID() + ".png");
         eb.addBlankField(false);
         addTeamInfo(eb, playerTeam);
         eb.addBlankField(false);
@@ -112,7 +114,7 @@ public class Stats extends Command {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         // order the teams by division
-        orderTeams(teamsArray);
+        BattleriteUtils.orderTeams(teamsArray);
 
         eb.setTitle(playerData.getAttributes().getName(), BattleriteUtils.getBrStatsPlayerUrl(playerData.getId()));
         eb.setDescription(
@@ -127,8 +129,7 @@ public class Stats extends Command {
         // get the ids of the players that are in the teams
         String otherPlayersIds = getPlayersInTeamsString(teamsArray);
 
-        // get all the other players in the teams, divide in 2 requests because the api only returns 6 people max
-        ArrayList<PlayerPOJO.Data> otherPlayersList = getPlayersInTeams(otherPlayersIds);
+        ArrayList<PlayerPOJO.Data> otherPlayersList = BattleriteUtils.getPlayersInTeams(otherPlayersIds);
 
         // build view for each team
         for (TeamStatsPOJO.Data team : teamsArray) {
@@ -145,32 +146,6 @@ public class Stats extends Command {
         return eb;
     }
 
-    //////////////////////////// GenericUtils functions
-
-    /**
-     * Get a list of all the other players in the teams
-     */
-    private ArrayList<PlayerPOJO.Data> getPlayersInTeams(String otherPlayersIds) {
-        ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
-        Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(otherPlayersIds);
-        GenericUtils.log(new Gson().toJson(otherPlayersResponse.body()));
-
-        // get the ids after the 6th id, to make another request because battlerite limits the bulk player request
-        // to 6 players max
-        int i = otherPlayersIds.indexOf(',',
-                1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(',',
-                        1 + otherPlayersIds.indexOf(',', 1 + otherPlayersIds.indexOf(','))))));
-
-        // get players excluding the 6 first found from the teams
-        Response<PlayerPOJO> otherPlayersResponse2 = HttpRequests.getPlayersByIds(otherPlayersIds.substring(i + 1));
-        GenericUtils.log(new Gson().toJson(otherPlayersResponse2.body()));
-
-        // add them all to a list
-        otherPLayersList.addAll(otherPlayersResponse.body().getData());
-        otherPLayersList.addAll(otherPlayersResponse2.body().getData());
-        return otherPLayersList;
-    }
-
     /**
      * Make string of the other players in this team
      */
@@ -178,9 +153,13 @@ public class Stats extends Command {
                                             ArrayList<PlayerPOJO.Data> otherPLayersList) {
 
         // create a list and add the players of this team to it
+        GenericUtils.log("member of " + team.getAttributes().getName() + " " + new Gson().toJson(team.getAttributes().getStats().getMembers()));
         ArrayList<String> otherPlayersNames = otherPLayersList.stream()
                 .filter(p -> team.getAttributes().getStats().getMembers().contains(p.getId()))
                 .map(p -> p.getAttributes().getName()).collect(Collectors.toCollection(ArrayList::new));
+        Set<String> otherPlayersNamesSet = new HashSet<>(otherPlayersNames);
+        otherPlayersNames.clear();
+        otherPlayersNames.addAll(otherPlayersNamesSet);
 
         String otherPlayersString = "";
         try {
@@ -212,7 +191,7 @@ public class Stats extends Command {
                 getWinsLossesDelta(true, teamAttrs.getStats().getWins(), cachedPoints), true);
         eb.addField("Losses", teamAttrs.getStats().getLosses() +
                 getWinsLossesDelta(false, teamAttrs.getStats().getLosses(), cachedPoints), true);
-        eb.addField("Win ratio", winRateString, true);
+        eb.addField("Win ratio", winRateString, false);
         eb.addField("League", makeLeagueText(team, cachedPoints), true);
 
         GenericUtils.log(teamAttrs.getName());
@@ -286,57 +265,26 @@ public class Stats extends Command {
     }
 
     /**
-     * Order teams vy division then league then points
+     * Take a list of teams and return a list of players Ids as a string (i.e. "123, 412, 124")
+     * @param teamsArray list of teams
      */
-    private void orderTeams(ArrayList<Data> teamsArray) {
-
-        Comparator<TeamStatsPOJO.Data> byLeague = new Comparator<TeamStatsPOJO.Data>() {
-            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
-                if (o1.getAttributes().getStats().getLeague() == o2.getAttributes().getStats().getLeague())
-                    return 0;
-                return o2.getAttributes().getStats().getLeague() - o1.getAttributes().getStats().getLeague();
-            }
-        };
-
-        Comparator<TeamStatsPOJO.Data> byDivision = new Comparator<TeamStatsPOJO.Data>() {
-            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
-                if (o1.getAttributes().getStats().getDivision() == o2.getAttributes().getStats().getDivision())
-                    return 0;
-                return o1.getAttributes().getStats().getDivision() - o2.getAttributes().getStats().getDivision();
-            }
-        };
-
-        Comparator<TeamStatsPOJO.Data> byPoints = new Comparator<TeamStatsPOJO.Data>() {
-            public int compare(TeamStatsPOJO.Data o1, TeamStatsPOJO.Data o2) {
-                if (o1.getAttributes().getStats().getDivisionRating() == o2.getAttributes().getStats()
-                        .getDivisionRating())
-                    return 0;
-                return o2.getAttributes().getStats().getDivisionRating()
-                        - o1.getAttributes().getStats().getDivisionRating();
-            }
-        };
-
-        Collections.sort(teamsArray, byLeague.thenComparing(byDivision).thenComparing(byPoints));
-
-    }
-
     private String getPlayersInTeamsString(ArrayList<Data> teamsArray) {
-        String otherPlayersIds = "";
+        StringBuilder otherPlayersIds = new StringBuilder();
 
-        // loop through all the teams
-        for (TeamStatsPOJO.Data team : teamsArray) {
+        // loop through all the teams, first 4 only, because discord wont show more anyway
+        for (int i = 0; i < 4; i++) {
             // loop through all the players in each team
-            for (String otherPlayerID : team.getAttributes().getStats().getMembers()) {
+            for (String otherPlayerID : teamsArray.get(i).getAttributes().getStats().getMembers()) {
                 // check if player isnt the one requesting and isnt repeated
                 if (!otherPlayerID.equals(playerData.getId()))
-                    otherPlayersIds += otherPlayerID + ",";
+                    otherPlayersIds.append(otherPlayerID).append(",");
             }
         }
         // remove last comma
         if (otherPlayersIds.length() > 0)
-            otherPlayersIds = otherPlayersIds.substring(0, otherPlayersIds.length() - 1);
+            otherPlayersIds = new StringBuilder(otherPlayersIds.substring(0, otherPlayersIds.length() - 1));
 
-        return otherPlayersIds;
+        return otherPlayersIds.toString();
     }
 
 }

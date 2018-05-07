@@ -18,7 +18,7 @@ Dynamic Streaming role:
 - [x] solo league stats
 - [x] 2v2 and 3v3 teams stats
 - [x] Dynamic "Streaming" role for who's currently streaming Battlerite
-- [ ] Rank players by most games played on a specific champion (`!br rank Varesh`)
+- [x] Rank players by most games played on a specific champion (`!br rank Varesh`)
 - [ ] 3 best champions on (on `!br stats playername`)
 - [ ] player's all champions data
 - [ ] randomizer for inhouses - select 2/4/6 random champions, with random rites, and 1 random skill

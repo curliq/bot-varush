@@ -1,6 +1,7 @@
 package app;
 
 import app.commands.About;
+import app.commands.Rank;
 import app.commands.Stats;
 import app.commands.Welp;
 import app.commands.WhoTheBestBot;
@@ -22,9 +23,12 @@ public final class CommandsManager {
                 return new About();
             case Welp.KEY:
                 return new Welp();
+            case Welp.KEY2:
+                return new Welp();
             case WhoTheBestBot.KEY:
                 return new WhoTheBestBot();
-
+            case Rank.KEY:
+                return new Rank();
         }
         return null;
     }

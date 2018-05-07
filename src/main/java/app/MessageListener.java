@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
+import app.utils.TextUtils;
+
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -32,12 +34,13 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts.put("!bo", "!br stats Lustknecht");
         commandsShortcuts.put("!g", "!br stats Grisillo");
         commandsShortcuts.put("!a", "!br stats Azginporsuk");
-        commandsShortcuts.put("!9", "!br stats 9gag");
+        commandsShortcuts.put("!mtj", "!br stats MTJ");
         commandsShortcuts.put("!al1", "!br stats Aldys");
         commandsShortcuts.put("!al2", "!br stats Twitch.tv/AldysTV");
         commandsShortcuts.put("!m", "!br stats marchallificent");
         commandsShortcuts.put("!cash", "!br stats Cash12121");
         commandsShortcuts.put("!ND", "!br stats NeloDante");
+        commandsShortcuts.put("!s", "!br stats SlapMachine");
     }
 
     @Override
@@ -122,12 +125,11 @@ public class MessageListener extends ListenerAdapter {
      */
     private MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
 
-        // get pipe symbol from hex code
-        String bigPipe = String.valueOf(Character.toChars(Integer.parseInt("23AA", 16)));
         // set embed message color
         messageBuilder.setColor(new Color(BattleriteUtils.BATTLERITE_COLOR_PRIMARY));
         // set embed message footer
-        messageBuilder.setFooter("Requested by " + author.getName() + bigPipe + " !br welp for more",
+        messageBuilder.setFooter("Requested by " + author.getName() + " " + TextUtils.pipeSymbol() +
+                        " !br welp for more",
                 author.getAvatarUrl());
 
         return messageBuilder.build();

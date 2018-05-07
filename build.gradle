@@ -48,7 +48,7 @@ jar {
     doFirst {
         from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
     }
-    from('src/main/java/app/utils/mappings') {
+    from('src/main/java/app/utils/mapping') {
         include 'playerTitles.json'
         include 'playerStats.json'
     }

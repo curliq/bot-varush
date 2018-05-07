@@ -2,6 +2,7 @@ package app;
 
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
+
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -13,10 +14,10 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 /**
  * This class listens for changes in Game presence on every user in the server.
- * 
+ * <p>
  * Purpose of this is to add a role called Streamer to whomever is streaming Battlerite at the moment and remove it
  * as soon as they finish the stream or stop playing Battlerite.
- * 
+ * <p>
  * To use this create a role called {@value app.utils.GenericUtils#STREAMING_ROLE_NAME}
  * and pin it to the right hand side on your server.
  */
@@ -24,12 +25,17 @@ public class StreamingRoleListener extends ListenerAdapter {
 
     private Role streamerRole;
 
+    /** Constructor, check every member of every guild for to add the Streaming role */
     StreamingRoleListener(JDA jda) {
-//        for (Member m : jda.getGuildsByName("battlerite", true).get(0).getMembers())
-//            runChecks(jda.getGuildsByName("battlerite", true).get(0), m, m.getGame());
+        try {
+            for (Guild guild : jda.getGuilds())
+                for (Member m : guild.getMembers())
+                    runChecks(guild, m, m.getGame());
+        } catch (Exception ignored) {
+        }
     }
 
-    /** called whenever someone in the server changes their "playing" status */
+    /** Called whenever someone in the server changes their "playing" status */
     @Override
     public void onUserUpdateGame(UserUpdateGameEvent event) {
         super.onUserUpdateGame(event);
@@ -90,7 +96,7 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /** Checks if the user is streaming on twitch */
+    /**  Checks if the user is streaming on twitch */
     private boolean isStreaming(Game currentGame) {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;

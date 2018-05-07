@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,61 +17,80 @@ import app.db.models.Team;
 import app.rest.pojos.PlayerPOJO;
 import app.utils.DbUtils;
 import app.utils.GenericUtils;
+import app.utils.mapping.MappingUtils;
 
 public class DbRequests {
 
     /**
      * Save a player in the database
+     * Here we create the sql request dynamically by creating a JSONObject with all the player's data and mapping the
+     * json keys to the database's column names. This is to avoid hardcoding thousands of values.
      */
-    public static void savePlayer(PlayerPOJO.Attributes attrs, PlayerPOJO.Data data, PlayerPOJO.Stats stats) {
-        JSONObject json = new JSONObject(new Gson().toJson(stats));
+    public static void savePlayer(PlayerPOJO.Attributes attrs, PlayerPOJO.Data data) {
+        // make a JSONObject of all the player's Stats, the keys will be the values in @SerializedName in PlayerPOJO
+        JSONObject json = new JSONObject(new Gson().toJson(attrs.getStats()));
+
+        // remove the picture and title because these are not the names in our database
+        json.remove("picture");
+        json.remove("title");
+
+        // add the picture and title with the keys being the same name as in our database
+        json.put(Player.Fields.TITLE_ID.val, attrs.getStats().getTitleId());
+        json.put(Player.Fields.PICTURE_ID.val, attrs.getStats().getPictureID());
+
+        // add the player's name and id, with the keys being the same name as in our database
         json.put(Player.Fields.NAME.val, attrs.getName());
-        json.put(Player.Fields.TITLE_ID.val, stats.getTitleId());
-        json.put(Player.Fields.PICTURE_ID.val, stats.getPictureID());
         json.put(Player.Fields.ID.val, data.getId());
 
+        GenericUtils.log("json obj");
+        GenericUtils.log(json.toString());
+
+        // create an iterator with all the keys in our json
         Iterator<?> keys = json.keys();
+
+        // prepare two StringBuilders, for the keys and for the values to use in the SQL query
         StringBuilder fields = new StringBuilder();
         StringBuilder values = new StringBuilder();
+        StringBuilder updateFields = new StringBuilder();
 
+        // loop through every key in our json
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            Object val = json.get(key);
-            if (val instanceof Integer) {
-                fields.append(key);
-                values.append('\'').append(val).append('\'').append(',');
+            String val = String.valueOf(json.get(key));
+
+            // check if the value is an Integer, this also checks for null values
+            if (val != null) {
+
+                // prepend a "c" so the key becomes a string and matches the column names in our database
+                // but check if it's a number first, because some fields aren't, like the id and the name
+                if (Character.isDigit(key.charAt(0)))
+                    key = "c" + key;
+
+                // add the key to our field (i.e. keys) string, this will look like (id, name, title_id, ...)"
+                fields.append(key).append(",");
+                updateFields.append(key).append("=excluded.").append(key).append(",");
+
+                // add the key to our values string, this will look like ('123', 'Curlicue', '423421087', ...)
+                val = val.replace("\'", "\'\'");
+                values.append("'").append(val).append("'").append(",");
             }
         }
-        // remove last comma
+        // remove last comma from the strings
+        fields.setLength(fields.length() - 1);
         values.setLength(values.length() - 1);
+        updateFields.setLength(updateFields.length() - 1);
+
+        GenericUtils.log("lists");
+        GenericUtils.log(fields.toString());
+        GenericUtils.log(values.toString());
+
 
         DbUtils.makeRequest(String.format(
-                "INSERT INTO %s (%s) VALUES (%s);",
-                Player.TABLE_NAME, fields.toString(), values.toString()));
+                "INSERT INTO %s (%s) VALUES (%s) ON CONFLICT (%s) DO UPDATE SET %s;",
+                Player.TABLE_NAME, fields.toString(), values.toString(),
+                Player.Fields.ID.val, updateFields.toString()));
 
         GenericUtils.log("BD: saved player: " + attrs.getName());
-    }
-
-    /**
-     * Get a player by name from the database
-     */
-    public static Player getPlayer(String name) {
-        Player player = new Player();
-
-        ResultSet resultSet = DbUtils
-                .makeRequest(String.format("SELECT * FROM %s WHERE name='%s';", Player.TABLE_NAME, name));
-
-        try {
-            player.setId(resultSet.getString(Player.Fields.ID.val));
-            player.setName(resultSet.getString(Player.Fields.NAME.val));
-            player.setTitleId(resultSet.getString(Player.Fields.TITLE_ID.val));
-            player.getPictureId(resultSet.getString(Player.Fields.PICTURE_ID.val));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return player;
     }
 
     /**
@@ -110,7 +131,7 @@ public class DbRequests {
                 .makeRequest(String.format("SELECT * FROM %s WHERE id='%s';", Team.TABLE_NAME, id));
 
         try {
-            if (resultSet == null || !resultSet.next())
+            if (resultSet == null || !resultSet.isBeforeFirst())
                 return null;
         } catch (SQLException e1) {
             return null;
@@ -138,6 +159,96 @@ public class DbRequests {
         }
 
         return team;
+    }
+
+    /**
+     * Get a list of players from the database.
+     * To create the Player object, we assign the fields to it through reflection, checking if a field exists in
+     * player.getAttributes() first, if not then in player.getData(), if not then in player.getAttributes.getStats()
+     *
+     * @param request the raw sql request
+     * @param fields  the array of fields we're requesting, so we know what to use when building our Player object,
+     *                has to have exactly the same fields that the sql query returns
+     */
+    public static ArrayList<Player> getPlayers(String request, String[] fields) {
+        ArrayList<Player> playerArray = new ArrayList<>();
+        ResultSet resultSet = DbUtils.makeRequest(request);
+        try {
+            if (resultSet == null || !resultSet.isBeforeFirst())
+                return playerArray;
+        } catch (SQLException e1) {
+            return playerArray;
+        }
+
+        try {
+            while (resultSet.next()) {
+                Player player = new Player();
+
+                // loop through all the fields and set it to a player object through reflection
+                for (String fieldName : fields) {
+                    String fieldValue = resultSet.getString(fieldName).trim();
+
+                    try {
+                        // add the fields in the Player.Attributes, i.e. name
+                        Field field = player.getPlayerPojo().getAttributes().getClass().getDeclaredField(fieldName);
+                        field.setAccessible(true);
+                        field.set(player.getPlayerPojo().getAttributes(), fieldValue);
+                    } catch (NoSuchFieldException e) {
+                        GenericUtils.log("didnt set field " + fieldName + ":" + fieldValue + " for attributes");
+
+                        // add the fields in the Player.Data, i.e. id
+                        try {
+                            Field field = player.getPlayerPojo().getClass().getDeclaredField(fieldName);
+                            field.setAccessible(true);
+                            field.set(player.getPlayerPojo(), fieldValue);
+                        } catch (NoSuchFieldException e1) {
+                            GenericUtils.log("didnt set field " + fieldName + ":" + fieldValue + " for data");
+
+                            // add the fields in the Player.Stats
+                            try {
+                                Field field = player.getPlayerPojo().getAttributes().getStats().getClass()
+                                        .getDeclaredField(fieldName);
+                                field.setAccessible(true);
+                                field.set(
+                                        player.getPlayerPojo().getAttributes().getStats(),
+                                        Integer.valueOf(fieldValue));
+                            } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e2) {
+                                e2.printStackTrace();
+                                GenericUtils.log("error setting field in PlayerPOJO.Stats or getting the field");
+                            }
+                        } catch (IllegalAccessException | NullPointerException e1) {
+                            e1.printStackTrace();
+                            GenericUtils.log("error setting field in PlayerPOJO.Data");
+                        }
+                    } catch (IllegalAccessException | NullPointerException e) {
+                        e.printStackTrace();
+                        GenericUtils.log("error setting field in PlayerPOJO.Attributes");
+                    }
+                }
+                playerArray.add(player);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return playerArray;
+    }
+
+    /**
+     * Get the players ordered by most games played with given champion
+     *
+     * @param champion the champion
+     */
+    public static ArrayList<Player> getChampionRank(String champion) {
+        int limit = 15;
+        String championWins = MappingUtils.getDatabaseField("CharacterWins", champion);
+        String championLosses = MappingUtils.getDatabaseField("CharacterLosses", champion);
+        String[] fieldsArray = {Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses};
+
+        return getPlayers(String.format("SELECT %1$s, %2$s, %3$s, %4$s FROM %5$s WHERE %3$s IS NOT NULL ORDER BY %3$s" +
+                        " DESC LIMIT %6$s;",
+                Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, Player.TABLE_NAME, limit),
+                fieldsArray);
     }
 
 }

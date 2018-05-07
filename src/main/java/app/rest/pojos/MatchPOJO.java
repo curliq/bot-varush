@@ -7,14 +7,82 @@ import java.util.List;
 
 public class MatchPOJO {
 
+    public enum IncludedObjectType {
+
+        Player("player"), Participant("participant"), Roster("roster"), Team("team"), Round("round"), Asset("asset");
+
+        public String val;
+
+        IncludedObjectType(String value) {
+            this.val = value;
+        }
+    }
+
     @SerializedName("data")
     private ArrayList<Data> data;
+    @SerializedName("included")
+    private ArrayList<IncludedObject> included;
 
     public ArrayList<Data> getData() {
         return data;
     }
 
+    public ArrayList<IncludedObject> getIncluded() {
+        return included;
+    }
+
     public class Data {
+
+        @SerializedName("type")
+        private String type;
+        @SerializedName("id")
+        private String id;
+        @SerializedName("attributes")
+        private Attributes attributes;
+        @SerializedName("relationships")
+        private Relationships relationships;
+        @SerializedName("links")
+        private Links links;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Attributes getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(Attributes attributes) {
+            this.attributes = attributes;
+        }
+
+        public Relationships getRelationships() {
+            return relationships;
+        }
+
+        public void setRelationships(Relationships relationships) {
+            this.relationships = relationships;
+        }
+
+        public Links getLinks() {
+            return links;
+        }
+
+        public void setLinks(Links links) {
+            this.links = links;
+        }
 
         public class Assets {
 
@@ -141,111 +209,6 @@ public class MatchPOJO {
 
         }
 
-        public class Datum_ {
-
-            @SerializedName("type")
-            private String type;
-            @SerializedName("id")
-            private String id;
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public String getId() {
-                return id;
-            }
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-        }
-
-        public class Datum__ {
-
-            @SerializedName("type")
-            private String type;
-            @SerializedName("id")
-            private String id;
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public String getId() {
-                return id;
-            }
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-        }
-
-        public class Example {
-
-            @SerializedName("type")
-            private String type;
-            @SerializedName("id")
-            private String id;
-            @SerializedName("attributes")
-            private Attributes attributes;
-            @SerializedName("relationships")
-            private Relationships relationships;
-            @SerializedName("links")
-            private Links links;
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public String getId() {
-                return id;
-            }
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-            public Attributes getAttributes() {
-                return attributes;
-            }
-
-            public void setAttributes(Attributes attributes) {
-                this.attributes = attributes;
-            }
-
-            public Relationships getRelationships() {
-                return relationships;
-            }
-
-            public void setRelationships(Relationships relationships) {
-                this.relationships = relationships;
-            }
-
-            public Links getLinks() {
-                return links;
-            }
-
-            public void setLinks(Links links) {
-                this.links = links;
-            }
-
-        }
-
         public class Links {
 
             @SerializedName("schema")
@@ -319,13 +282,13 @@ public class MatchPOJO {
         public class Rosters {
 
             @SerializedName("data")
-            private List<Datum_> data = null;
+            private List<Datum> data = null;
 
-            public List<Datum_> getData() {
+            public List<Datum> getData() {
                 return data;
             }
 
-            public void setData(List<Datum_> data) {
+            public void setData(List<Datum> data) {
                 this.data = data;
             }
 
@@ -334,13 +297,13 @@ public class MatchPOJO {
         public class Rounds {
 
             @SerializedName("data")
-            private List<Datum__> data = null;
+            private List<Datum> data = null;
 
-            public List<Datum__> getData() {
+            public List<Datum> getData() {
                 return data;
             }
 
-            public void setData(List<Datum__> data) {
+            public void setData(List<Datum> data) {
                 this.data = data;
             }
 
@@ -413,4 +376,28 @@ public class MatchPOJO {
 
     }
 
+    public class IncludedObject {
+
+
+        @SerializedName("type")
+        private String type;
+        @SerializedName("id")
+        private String id;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
 }

@@ -8,8 +8,6 @@ import net.dv8tion.jda.core.entities.Game.GameType;
 
 import javax.security.auth.login.LoginException;
 
-import app.utils.Scripts;
-
 public class App {
 
     public static JDA jda;
@@ -19,7 +17,6 @@ public class App {
     }
 
     private void setUpBot() {
-//        Scripts.savePlayersData();
         try {
             // Initiate the Discord object
             jda = new JDABuilder(AccountType.BOT).setToken(Secrets.BOT_TOKEN).buildBlocking();

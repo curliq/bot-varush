@@ -1,8 +1,20 @@
 package app.utils;
 
-/**
- * Class with scripts that might want to be ran occasionally
- */
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+
+import app.db.DbRequests;
+import app.rest.HttpRequests;
+import app.rest.pojos.MatchPOJO;
+import app.rest.pojos.PlayerPOJO;
+import retrofit2.Response;
+
+/** Class with scripts that might want to be ran occasionally */
 public class Scripts {
 
     public static void createCollumns() {
@@ -1877,8 +1889,111 @@ public class Scripts {
         }
     }
 
-    public static void savePlayersData(String filterCreatedAt) {
+    /** Get every match since 28 days ago until now and save all the players in these matches */
+    public static void saveAllPlayers() {
+        // datetime of 28 days ago, and add 5 hours to avoid issues from Madglory's api being delayed.
+        LocalDateTime createdAfter = LocalDateTime.now().minusDays(8).withNano(0);
 
+        // Get matches while our date is before now, and update this date every request,
+        // to the last match's creation datetime
+        while (createdAfter.isBefore(LocalDateTime.now().minusHours(5))) {
+
+            try {
+                // get the matches since createdAfter, the API limits this to 5 matches only
+                Response<MatchPOJO> response = HttpRequests.getMatches(createdAfter.toString() + 'Z');
+
+                refreshRpm(response);
+
+                // loop through all the included data from the (~5) matches we just got
+                // the matches endpoint returns {data: [matches], included: [data related to the matches, i.e. players]}
+                for (MatchPOJO.IncludedObject includedObject : response.body().getIncluded()) {
+
+                    // check if the included object is a player, if so then save it in db for later,
+                    if (includedObject.getType().equals(MatchPOJO.IncludedObjectType.Player.val)) {
+                        DbUtils.makeRequest("insert into players (id) values ('" + includedObject.getId() + "')");
+                    }
+                }
+
+                // get the createdAt datetime from the latest match we got, i.e. the last because they're ordered by
+                // date
+
+                String lastMatchCreated = response.body().getData()
+                        .get(response.body().getData().size() - 1).getAttributes().getCreatedAt();
+
+                GenericUtils.log("last match created at " + lastMatchCreated);
+
+                // update out createdAfter object, add 1 hour to make it fast
+                createdAfter = LocalDateTime.ofInstant(
+                        Instant.parse(lastMatchCreated), ZoneId.of(ZoneOffset.UTC.getId())).plusSeconds(1);
+                if (createdAfter.getSecond() == 0)
+                    createdAfter = createdAfter.withSecond(1);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+//
+//        for (String playerId : playersInMatchesIds) {
+//            Response<PlayerPOJO> response = HttpRequests.getPlayersByIds(playerId);
+//            PlayerPOJO.Data playerPOJO = response.body().getData().get(0);
+//            DbRequests.savePlayer(playerPOJO.getAttributes(), playerPOJO, playerPOJO.getAttributes().getStats());
+//            refreshRpm(response);
+//        }
+
+    }
+
+    public static void savePlayersStats() {
+        ArrayList<String> playersArray = new ArrayList<>();
+        StringBuilder playersIds = new StringBuilder();
+        for (int i = 32000; i > 0; i--) {
+            ResultSet rs = DbUtils.makeRequest("SELECT id FROM players WHERE c2 is null and name is null limit 5;");
+            try {
+                ResultSetMetaData rsmd = rs.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+                playersArray.clear();
+                playersIds.setLength(0);
+                while (rs.next()) {
+                    for (int k = 1; k <= columnsNumber; k++) {
+                        String columnValue = rs.getString(k);
+                        GenericUtils.log(columnValue + " " + rsmd.getColumnName(k));
+                        playersArray.add(columnValue);
+                    }
+                }
+                for (String playedId : playersArray)
+                    playersIds.append(playedId).append(',');
+                playersIds.setLength(playersIds.length() - 1);
+
+                Response<PlayerPOJO> players = HttpRequests.getPlayersByIds(playersIds.toString());
+                for (PlayerPOJO.Data player : players.body().getData()) {
+                    DbRequests.savePlayer(player.getAttributes(), player);
+                }
+                refreshRpm(players);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /** Thread.sleep() when we run out of requests in the quota */
+    private static void refreshRpm(Response response) {
+        try {
+            // sleep if requests is approaching the max
+            if (Long.valueOf(response.headers().get("x-ratelimit-remaining")) < 10) {
+                long resetInMillis = (Long.valueOf(response.headers().get("x-ratelimit-reset")) / 10000000) + 1000;
+                GenericUtils.log(resetInMillis);
+                GenericUtils.log("sleeps");
+                try {
+                    Thread.sleep(resetInMillis);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                GenericUtils.log("wake up");
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
 }

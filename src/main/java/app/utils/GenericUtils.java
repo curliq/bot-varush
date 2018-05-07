@@ -1,15 +1,13 @@
 package app.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DecimalFormat;
-
 import net.dv8tion.jda.core.EmbedBuilder;
+
+import java.text.DecimalFormat;
 
 public class GenericUtils {
 
     /** Just used as a reference for version control */
-    protected final static String BOT_VERSION = "3.3.4";
+    protected final static String BOT_VERSION = "4.0.0";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
@@ -17,12 +15,15 @@ public class GenericUtils {
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String STREAMING_ROLE_NAME = "Streaming";
     public final static String PROBATION_ROLE_NAME = "Under Probation";
+    public final static String ASSETS_URL = "https://raw.githubusercontent.com/joaosardinha/assets/master/";
+    public final static String ASSETS_PROFILE_URL = "https://raw.githubusercontent" +
+            ".com/joaosardinha/assets/master/playerIcons/";
 
     /** Shortcut to log something on the console */
     public static void log(Object o) {
         System.out.println(o);
         System.out.println(" ");
-    }    
+    }
 
     /** Build a basic embed message with just one field */
     public static EmbedBuilder getBasicEmbedMessage(String title, String message) {
@@ -37,14 +38,4 @@ public class GenericUtils {
         return Double.valueOf(twoDForm.format(d));
     }
 
-    /** Urlencode a string */
-    public static String urlEncode(String string) {
-        try {
-            return URLEncoder.encode(string, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return string;
-        }
-    }
-    
 }

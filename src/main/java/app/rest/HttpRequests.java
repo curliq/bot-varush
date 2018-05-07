@@ -6,45 +6,69 @@ import app.rest.pojos.MatchPOJO;
 import app.rest.pojos.PlayerPOJO;
 import app.rest.pojos.TeamStatsPOJO;
 import app.utils.BattleriteUtils;
-import app.utils.GenericUtils;
 import app.utils.NetworkUtils;
+import app.utils.TextUtils;
 import retrofit2.Response;
 
 public class HttpRequests {
 
+    private static BattleriteInterface battleriteInterface =
+            NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class);
+
+    /**
+     * Get a player by passing his ign
+     *
+     * @param playerName his ign
+     */
     public static Response<PlayerPOJO> getPlayerByName(String playerName) {
         try {
-            return NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class)
-                    .getPlayerID(GenericUtils.urlEncode(playerName)).execute();
+            return battleriteInterface.getPlayerID(TextUtils.urlEncode(playerName)).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * Get a list of players by passing their IDs
+     *
+     * @param ids the ids of the players we want, comma separated, i.e. "123,43,5234,123"
+     */
     public static Response<PlayerPOJO> getPlayersByIds(String ids) {
         try {
-            return NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class)
-                    .getPlayersByID(ids).execute();
+            return battleriteInterface.getPlayersByID(ids).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static Response<TeamStatsPOJO> getTeam(String playedId) {
+    /**
+     * Get the all the teams from a player
+     *
+     * @param playedId the id fo the player we want to get the teams of
+     */
+    public static Response<TeamStatsPOJO> getTeams(String playedId) {
         try {
-            return NetworkUtils.getBattleriteRetrofit().create(BattleriteInterface.class)
-                    .getPlayerStats(playedId, BattleriteUtils.SEASON).execute();
+            return battleriteInterface.getPlayerStats(playedId, BattleriteUtils.SEASON).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * Get a list of matches, only returns 5
+     *
+     * @param filterCreatedAfter filter after match's end datetime
+     */
     public static Response<MatchPOJO> getMatches(String filterCreatedAfter) {
-//        return NetworkUtils.getBattleriteRetrofit().create() //todo finish this
-        return null;
+        try {
+            return battleriteInterface.getMatches(filterCreatedAfter, "RANKED").execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

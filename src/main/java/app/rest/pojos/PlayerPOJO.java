@@ -1,8 +1,11 @@
 package app.rest.pojos;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gson.annotations.SerializedName;
+
+import app.utils.mapping.MappingUtils;
 
 public class PlayerPOJO {
 
@@ -11,10 +14,6 @@ public class PlayerPOJO {
 
     public ArrayList<Data> getData() {
         return data;
-    }
-
-    public void setData(ArrayList<Data> data) {
-        this.data = data;
     }
 
     public class Assets {
@@ -41,7 +40,7 @@ public class PlayerPOJO {
         @SerializedName("shardId")
         private String shardId;
         @SerializedName("stats")
-        private Stats stats;
+        private Stats stats = new Stats();
 
         public String getName() {
             return name;
@@ -77,11 +76,17 @@ public class PlayerPOJO {
 
     }
 
+    /**
+     * The player's data stats from the madglory API are named with integers, i.e. "1005", since we can't do that in
+     * java nor in sql, we prefix a "c" to every key. "c" can stand for "column"
+     */
     public class Stats {
         @SerializedName("picture")
         private String pictureId;
         @SerializedName("title")
         private String titleId;
+        @SerializedName("2")
+        public Integer c2;
         @SerializedName("3")
         public Integer c3;
         @SerializedName("4")
@@ -3831,7 +3836,7 @@ public class PlayerPOJO {
         @SerializedName("id")
         private String id;
         @SerializedName("attributes")
-        private Attributes attributes;
+        private Attributes attributes = new Attributes();
         @SerializedName("relationships")
         private Relationships relationships;
         @SerializedName("links")
@@ -3877,6 +3882,14 @@ public class PlayerPOJO {
             this.links = links;
         }
 
+        public int getChampionWins(String champion) {
+            return MappingUtils.getPlayerStatsValue("CharacterWins", champion, getAttributes().getStats());
+        }
+
+        public int getChampionLosses(String champion) {
+            return MappingUtils.getPlayerStatsValue("CharacterLosses", champion, getAttributes().getStats());
+        }
+
     }
 
     public class Links {
@@ -3918,4 +3931,5 @@ public class PlayerPOJO {
         }
 
     }
+
 }
