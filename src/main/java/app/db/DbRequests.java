@@ -138,9 +138,10 @@ public class DbRequests {
         }
 
         try {
+            resultSet.next();
             team.setId(resultSet.getString(Team.Fields.ID.val));
             // convert Array to String[], and then convert to ArrayList<String>
-            team.setMembersIds(new ArrayList<String>(
+            team.setMembersIds(new ArrayList<>(
                     Arrays.asList((String[]) resultSet.getArray(Team.Fields.MEMBERS_IDS.val).getArray())));
             team.setName(resultSet.getString(Team.Fields.NAME.val));
             team.setLeague(resultSet.getInt(Team.Fields.LEAGUE.val));
