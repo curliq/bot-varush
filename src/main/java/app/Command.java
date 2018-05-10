@@ -13,7 +13,7 @@ public abstract class Command {
     /**
      * Key is the first keyword after the trigger and is what defines a command, i.e. "stats"
      */
-    private String key;
+    public abstract String getKey();
 
     /**
      * Description of the command, how to use and what it does
@@ -29,20 +29,6 @@ public abstract class Command {
     * Method used to return the repply message, must be implemented
     */
     protected abstract EmbedBuilder getReply();
-
-    /**
-     * @return the key
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * @param key the key to set
-     */
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     /**
      * @param description the description to set

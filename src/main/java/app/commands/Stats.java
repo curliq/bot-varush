@@ -30,12 +30,16 @@ public class Stats extends Command {
     private Response<TeamStatsPOJO> teamStatsResponse;
 
     public Stats() {
-        setKey(KEY);
         setDescription(String.format(
                 "`%1$s %2$s" + " playerName` - get the stats of a player \n" + "`%1$s %2$s"
                         + " playerName 2s` - get the 2v2 teams of a player \n"
                         + "`%1$s %2$s playerName 3s` - get the 3v3 teams of a player",
                 GenericUtils.COMMAND_TRIGGER, getKey()));
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override
@@ -274,10 +278,14 @@ public class Stats extends Command {
         // loop through all the teams, first 4 only, because discord wont show more anyway
         for (int i = 0; i < 4; i++) {
             // loop through all the players in each team
-            for (String otherPlayerID : teamsArray.get(i).getAttributes().getStats().getMembers()) {
-                // check if player isnt the one requesting and isnt repeated
-                if (!otherPlayerID.equals(playerData.getId()))
-                    otherPlayersIds.append(otherPlayerID).append(",");
+            try {
+                for (String otherPlayerID : teamsArray.get(i).getAttributes().getStats().getMembers()) {
+                    // check if player isnt the one requesting and isnt repeated
+                    if (!otherPlayerID.equals(playerData.getId()))
+                        otherPlayersIds.append(otherPlayerID).append(",");
+                }
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
         }
         // remove last comma

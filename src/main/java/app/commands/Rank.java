@@ -24,10 +24,14 @@ public class Rank extends Command {
     public final static String KEY = "rank";
 
     public Rank() {
-        setKey(KEY);
         setDescription(
                 String.format("`%s %s championName` - Display the players with the most wins with the given champion.",
                         GenericUtils.COMMAND_TRIGGER, getKey()));
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override

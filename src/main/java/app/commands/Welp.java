@@ -16,9 +16,13 @@ public class Welp extends Command {
      * This command is the only one that also takes the commandsArray
      */
     public Welp() {
-        setKey(KEY);
         setDescription(
                 String.format("`%s %s` - get the list of all commands.", GenericUtils.COMMAND_TRIGGER, getKey()));
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override

@@ -9,10 +9,14 @@ public class Live extends Command {
     public final static String KEY = "live";
 
     public Live() {
-        setKey(KEY);
         setDescription(String.format("`%s %s playerName` - get the stats of the current game this player is in.",
                 GenericUtils.COMMAND_TRIGGER, getKey()));
 
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override

@@ -11,9 +11,13 @@ public class About extends Command {
     public final static String KEY = "about";
 
     public About() {
-        setKey(KEY);
         setDescription(
                 String.format("`%s %s` - a bit of useless information.", GenericUtils.COMMAND_TRIGGER, getKey()));
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override

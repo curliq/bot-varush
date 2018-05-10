@@ -12,8 +12,12 @@ public class WhoTheBestBot extends Command {
      * This command is the only one that also takes the commandsArray
      */
     public WhoTheBestBot() {
-        setKey(KEY);
         setDescription(String.format("`%s %s` - surprise feature.", GenericUtils.COMMAND_TRIGGER, getKey()));
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
     }
 
     @Override
