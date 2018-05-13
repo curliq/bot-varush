@@ -1,4 +1,4 @@
-package app;
+package app.commands.core;
 
 import app.commands.About;
 import app.commands.Rank;

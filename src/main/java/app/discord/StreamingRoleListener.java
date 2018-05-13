@@ -1,4 +1,4 @@
-package app;
+package app.discord;
 
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
@@ -26,7 +26,7 @@ public class StreamingRoleListener extends ListenerAdapter {
     private Role streamerRole;
 
     /** Constructor, check every member of every guild for to add the Streaming role */
-    StreamingRoleListener(JDA jda) {
+    public StreamingRoleListener(JDA jda) {
         try {
             for (Guild guild : jda.getGuilds())
                 for (Member m : guild.getMembers())

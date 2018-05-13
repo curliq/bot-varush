@@ -6,7 +6,16 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Game.GameType;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import javax.security.auth.login.LoginException;
+
+import app.discord.MessageListener;
+import app.discord.StreamingRoleListener;
+import app.tasks.TasksManager;
+
 
 public class App {
 
@@ -31,6 +40,8 @@ public class App {
             // set the Bot's game in discord to "Watching out for !br welp"
             jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
 
+            // schedule tasks
+            TasksManager.init();
         } catch (InterruptedException | LoginException exception) {
             exception.printStackTrace();
         }

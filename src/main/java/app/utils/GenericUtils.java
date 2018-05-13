@@ -7,17 +7,18 @@ import java.text.DecimalFormat;
 public class GenericUtils {
 
     /** Just used as a reference for version control */
-    protected final static String BOT_VERSION = "4.0.4";
+    protected final static String BOT_VERSION = "4.1.0";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
-    public final static String ERROR_TITLE = "Sorry...";
+    public final static String ERROR_TITLE = "Errori...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String STREAMING_ROLE_NAME = "Streaming";
     public final static String PROBATION_ROLE_NAME = "Under Probation";
-    public final static String ASSETS_URL = "https://raw.githubusercontent.com/joaosardinha/assets/master/";
+    public final static String ASSETS_URL = "https://raw.githubusercontent.com/joaosardinha/assets/master/championIcons/";
     public final static String ASSETS_PROFILE_URL = "https://raw.githubusercontent" +
             ".com/joaosardinha/assets/master/playerIcons/";
+    public final static int DISCORD_MESSAGE_MAX_CHAR = 1024;
 
     /** Shortcut to log something on the console */
     public static void log(Object o) {

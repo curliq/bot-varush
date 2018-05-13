@@ -26,8 +26,9 @@ public class DbRequests {
      * Here we create the sql request dynamically by creating a JSONObject with all the player's data and mapping the
      * json keys to the database's column names. This is to avoid hardcoding thousands of values.
      */
-    public static void savePlayer(PlayerPOJO.Attributes attrs, PlayerPOJO.Data data) {
+    public static void savePlayer(PlayerPOJO.Data data) {
         // make a JSONObject of all the player's Stats, the keys will be the values in @SerializedName in PlayerPOJO
+        PlayerPOJO.Attributes attrs = data.getAttributes();
         JSONObject json = new JSONObject(new Gson().toJson(attrs.getStats()));
 
         // remove the picture and title because these are not the names in our database
@@ -240,16 +241,37 @@ public class DbRequests {
      *
      * @param champion the champion
      */
-    public static ArrayList<Player> getChampionRank(String champion) {
-        int limit = 15;
+    public static ArrayList<Player> getChampionRank(String champion, int limit) {
         String championWins = MappingUtils.getDatabaseField("CharacterWins", champion);
         String championLosses = MappingUtils.getDatabaseField("CharacterLosses", champion);
-        String[] fieldsArray = {Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses};
+        String[] fieldsArray = {Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, DbUtils
+                .ROW_NUMBER};
 
-        return getPlayers(String.format("SELECT %1$s, %2$s, %3$s, %4$s FROM %5$s WHERE %3$s IS NOT NULL ORDER BY %3$s" +
-                        " DESC LIMIT %6$s;",
-                Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, Player.TABLE_NAME, limit),
+        return getPlayers(String.format("SELECT s.%1$s, s.%2$s, s.%3$s, s.%4$s, s.%5$s FROM (SELECT t.*, ROW_NUMBER()" +
+                        " OVER(ORDER BY t.%3$s DESC) AS %5$s FROM %6$s t WHERE %3$s IS NOT NULL) s WHERE %3$s IS NOT" +
+                        " NULL ORDER BY %3$s DESC LIMIT %7$s;",
+                Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, DbUtils.ROW_NUMBER,
+                Player.TABLE_NAME, limit),
                 fieldsArray);
+    }
+
+    public static Player getSinglePlayerStats(String champion, String playerName) {
+        String championWins = MappingUtils.getDatabaseField("CharacterWins", champion);
+        String championLosses = MappingUtils.getDatabaseField("CharacterLosses", champion);
+        String[] fieldsArray = {Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, DbUtils
+                .ROW_NUMBER};
+
+        ArrayList<Player> result = getPlayers(String.format(
+                "SELECT s.%1$s, s.%2$s, s.%3$s, s.%4$s, s.%5$s FROM (SELECT t.*, ROW_NUMBER() OVER(ORDER BY t.%3$s " +
+                        "DESC) AS %5$s FROM %6$s t WHERE %3$s IS NOT NULL) s WHERE LOWER(name)=LOWER('%7$s');",
+                Player.Fields.ID.val, Player.Fields.NAME.val, championWins, championLosses, DbUtils.ROW_NUMBER,
+                Player.TABLE_NAME, playerName),
+                fieldsArray);
+        try {
+            return result.get(0);
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
+            return null;
+        }
     }
 
 }

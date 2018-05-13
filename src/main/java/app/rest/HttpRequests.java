@@ -8,6 +8,7 @@ import app.rest.pojos.TeamStatsPOJO;
 import app.utils.BattleriteUtils;
 import app.utils.NetworkUtils;
 import app.utils.TextUtils;
+import retrofit2.Call;
 import retrofit2.Response;
 
 public class HttpRequests {
@@ -22,7 +23,7 @@ public class HttpRequests {
      */
     public static Response<PlayerPOJO> getPlayerByName(String playerName) {
         try {
-            return battleriteInterface.getPlayerID(TextUtils.urlEncode(playerName)).execute();
+            return battleriteInterface.getPlayerByName(TextUtils.urlEncode(playerName)).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -41,6 +42,16 @@ public class HttpRequests {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * (Async)
+     * Get a list of players by passing their IDs
+     *
+     * @param ids the ids of the players we want, comma separated, i.e. "123,43,5234,123"
+     */
+    public static Call<PlayerPOJO> getPlayersByIdsAsync(String ids) {
+        return battleriteInterface.getPlayersByID(ids);
     }
 
     /**

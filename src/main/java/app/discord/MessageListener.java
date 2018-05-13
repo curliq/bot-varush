@@ -1,14 +1,4 @@
-package app;
-
-import java.awt.Color;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-
-import app.utils.BattleriteUtils;
-import app.utils.GenericUtils;
-import app.utils.TextUtils;
+package app.discord;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -18,6 +8,19 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.requests.restaction.MessageAction;
+
+import java.awt.Color;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+import app.commands.core.Command;
+import app.commands.core.CommandsManager;
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
+import app.utils.TextUtils;
 
 /**
  * Object that listens for every message send on the discord server
@@ -27,7 +30,7 @@ public class MessageListener extends ListenerAdapter {
 
     private HashMap<String, String> commandsShortcuts;
 
-    MessageListener() {
+    public MessageListener() {
         commandsShortcuts = new HashMap<>();
         commandsShortcuts.put("!c", "!br stats curlicue");
         commandsShortcuts.put("!ex", "!br stats ExBlack");
@@ -107,32 +110,56 @@ public class MessageListener extends ListenerAdapter {
                 // sends the params to the command object to be used
                 command.setParams(params);
                 // calculate the response from the command (getReply()) and send it
-                sendMessage(author, channel, command.getReply());
+                sendMessage(author, channel, command.getReply()).queue(message1 -> {
+                    command.setDiscordMessageId(message1.getId());
+                });
+                command.setOnCommandEventsListener((discordMessageId, eb) -> {
+                    editMessage(discordMessageId, author, channel, eb).queue();
+                });
             }
         }
     }
 
     /**
-     * send a message to the current channel the user is typing in.
-     * pass event received from the messages listener and the EmbedBuilder with the message data
+     * Send a message to the current channel the user is typing in.
+     *
+     * @param author       the discord user who triggered the message
+     * @param channel      the channel the user triggered the message in
+     * @param embedBuilder the embedBuilder to build the discord embed message
      */
-    private void sendMessage(User author, MessageChannel channel, EmbedBuilder messageBuilder) {
-        channel.sendMessage(baseMessage(author, messageBuilder)).queue();
+    private MessageAction sendMessage(User author, MessageChannel channel, EmbedBuilder embedBuilder) {
+        return channel.sendMessage(baseMessage(author, embedBuilder));
     }
 
     /**
-     * base message for every message send, basically just set color and footer
+     * Edit a message given it's ID
+     *
+     * @param discordMessageId id of the message
+     * @param author           discord user who triggered the message
+     * @param channel          the channel the user triggered the message in
+     * @param embedBuilder     the embedBuilder to build the discord embed message
      */
-    private MessageEmbed baseMessage(User author, EmbedBuilder messageBuilder) {
+    private MessageAction editMessage(String discordMessageId, User author, MessageChannel channel,
+                                      EmbedBuilder embedBuilder) {
+        return channel.editMessageById(discordMessageId, baseMessage(author, embedBuilder));
+    }
+
+    /**
+     * Base message for every message send, basically just set color and footer
+     *
+     * @param author       discord user who triggered the message
+     * @param embedBuilder the embedBuilder to build the discord embed message
+     */
+    private MessageEmbed baseMessage(User author, EmbedBuilder embedBuilder) {
 
         // set embed message color
-        messageBuilder.setColor(new Color(BattleriteUtils.BATTLERITE_COLOR_PRIMARY));
+        embedBuilder.setColor(new Color(BattleriteUtils.BATTLERITE_COLOR_PRIMARY));
         // set embed message footer
-        messageBuilder.setFooter("Requested by " + author.getName() + " " + TextUtils.pipeSymbol() +
+        embedBuilder.setFooter("Requested by " + author.getName() + " " + TextUtils.pipeSymbol() +
                         " !br welp for more",
                 author.getAvatarUrl());
 
-        return messageBuilder.build();
+        return embedBuilder.build();
     }
 
 }

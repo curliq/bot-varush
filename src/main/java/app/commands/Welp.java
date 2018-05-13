@@ -4,7 +4,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.util.ArrayList;
 
-import app.Command;
+import app.commands.core.Command;
 import app.utils.GenericUtils;
 
 public class Welp extends Command {

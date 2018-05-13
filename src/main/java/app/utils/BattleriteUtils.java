@@ -1,19 +1,16 @@
 package app.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-
-import app.rest.HttpRequests;
-import app.rest.pojos.PlayerPOJO;
 import app.rest.pojos.TeamStatsPOJO;
-import retrofit2.Response;
 
 public class BattleriteUtils {
 
@@ -238,47 +235,4 @@ public class BattleriteUtils {
 
     }
 
-    /**
-     * Get a list of players data from a list of Ids
-     *
-     * @param otherPlayersIds list of players' Ids as "123, 412, 144..."
-     */
-    public static ArrayList<PlayerPOJO.Data> getPlayersInTeams(String otherPlayersIds) {
-        ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
-
-        // get the ids after the 3th id, to make another request because battlerite limits the bulk player request
-        // to ~3 players max
-        String s = otherPlayersIds;
-        int nth = 0;
-        int cont = 0;
-        int i = 0;
-        for (; i < s.length(); i++) {
-            if (s.charAt(i) == ',')
-                nth++;
-            if (nth == 3 || i == s.length() - 1) {
-                if (i == s.length() - 1) { //with this if you prevent to cut the last number
-                    String subString = s.substring(cont, i + 1);
-                    if (subString.charAt(subString.length() - 1) == ',')
-                        subString = subString.substring(0, subString.length() - 1);
-                    Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(subString);
-                    GenericUtils.log("dick");
-                    GenericUtils.log(otherPlayersResponse.body().getData().size());
-                    otherPLayersList.addAll(otherPlayersResponse.body().getData());
-                }
-                else {
-                    String subString = s.substring(cont, i);
-                    if (subString.charAt(subString.length() - 1) == ',')
-                        subString = subString.substring(0, subString.length() - 1);
-                    Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(subString);
-                    GenericUtils.log("dick");
-                    GenericUtils.log(otherPlayersResponse.body().getData().size());
-                    otherPLayersList.addAll(otherPlayersResponse.body().getData());
-                }
-                nth = 0;
-                cont = i + 1;
-            }
-        }
-        GenericUtils.log(new Gson().toJson(otherPLayersList));
-        return otherPLayersList;
-    }
 }

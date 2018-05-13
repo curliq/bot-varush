@@ -1,6 +1,6 @@
 package app.commands;
 
-import app.Command;
+import app.commands.core.Command;
 import app.utils.GenericUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 

@@ -2,6 +2,11 @@ package app.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+
+import app.rest.HttpRequests;
+import app.rest.pojos.PlayerPOJO;
+import retrofit2.Response;
 
 public class TextUtils {
 
@@ -10,7 +15,7 @@ public class TextUtils {
      * We want to avoid these, because they will print crazy stuff on discord
      */
     public static String[] illegalStrings() {
-        return new String[] {"●", "̮", "̃", " ", "̯", "͡", "丨", "啊", "浅", "风", "境", "过"};
+        return new String[] {"●", "̮", "̃", " ", "̯", "͡", "丨", "啊", "浅", "风", "境", "过", "⚜", "☭", "٩", "۶"};
     }
 
     /**
@@ -69,6 +74,42 @@ public class TextUtils {
             }
         }
         return String.valueOf(chars);
+    }
+
+    /**
+     * Divide a string into multiple strings between each n commas.
+     * Example:
+     * "123, 456, 678, 890, 123, 645" becomes ["123, 456, 890", "123, 645"]
+     *
+     * @param string   list of values, ex: "123, 412, 144, 5512, 6234"
+     * @param howOften between how many commas do we want to split. For battlerite player ID requests use 3
+     */
+    public static ArrayList<String> splitStringInCommas(String string, int howOften) {
+        ArrayList<String> strings = new ArrayList<>();
+        int nth = 0;
+        int cont = 0;
+        int i = 0;
+        for (; i < string.length(); i++) {
+            if (string.charAt(i) == ',')
+                nth++;
+            if (nth == 3 || i == string.length() - 1) {
+                if (i == string.length() - 1) { //with this if you prevent to cut the last number
+                    String subString = string.substring(cont, i + 1);
+                    if (subString.charAt(subString.length() - 1) == ',')
+                        subString = subString.substring(0, subString.length() - 1);
+                    strings.add(subString);
+                    Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(subString);
+                } else {
+                    String subString = string.substring(cont, i);
+                    if (subString.charAt(subString.length() - 1) == ',')
+                        subString = subString.substring(0, subString.length() - 1);
+                    strings.add(subString);
+                }
+                nth = 0;
+                cont = i + 1;
+            }
+        }
+        return strings;
     }
 
 }

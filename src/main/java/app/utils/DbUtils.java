@@ -14,12 +14,14 @@ import app.Secrets;
 
 public class DbUtils {
 
-    private final static int DB_KEEP_OPEN_DURATION = 10 * 1000;
 
+    private final static int DB_KEEP_OPEN_DURATION = 10 * 60 * 1000; // 10 minutes
     private static Connection connection;
     private static Statement statement;
     private static ArrayList<ResultSet> resultSets = new ArrayList<>();
     private static Timer closeConnectionTimer;
+
+    public static String ROW_NUMBER = "position";
 
     /**
      * Base method to perform a database request, taking the raw sql query as a parameter

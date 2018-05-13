@@ -3,7 +3,7 @@ package app.commands;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import app.App;
-import app.Command;
+import app.commands.core.Command;
 import app.utils.GenericUtils;
 
 public class About extends Command {

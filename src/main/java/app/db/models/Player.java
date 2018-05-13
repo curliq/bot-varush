@@ -18,8 +18,17 @@ public class Player {
     }
 
     private PlayerPOJO.Data playerPojo = new PlayerPOJO().new Data();
+    private Integer position;
 
     public PlayerPOJO.Data getPlayerPojo() {
         return playerPojo;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import app.Command;
+import app.commands.core.Command;
 import app.db.DbRequests;
 import app.db.models.Team;
 import app.rest.HttpRequests;
@@ -18,6 +18,7 @@ import app.rest.pojos.TeamStatsPOJO;
 import app.rest.pojos.TeamStatsPOJO.Data;
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
+import app.utils.NetworkUtils;
 import retrofit2.Response;
 
 public class Stats extends Command {
@@ -69,7 +70,7 @@ public class Stats extends Command {
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, GenericUtils.ERROR_MESSAGE);
 
             playerData = playerResponse.body().getData().get(0);
-            DbRequests.savePlayer(playerData.getAttributes(), playerData);
+            DbRequests.savePlayer(playerData);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,7 +134,7 @@ public class Stats extends Command {
         // get the ids of the players that are in the teams
         String otherPlayersIds = getPlayersInTeamsString(teamsArray);
 
-        ArrayList<PlayerPOJO.Data> otherPlayersList = BattleriteUtils.getPlayersInTeams(otherPlayersIds);
+        ArrayList<PlayerPOJO.Data> otherPlayersList = NetworkUtils.getPlayersFromIds(otherPlayersIds);
 
         // build view for each team
         for (TeamStatsPOJO.Data team : teamsArray) {

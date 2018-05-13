@@ -3831,6 +3831,8 @@ public class PlayerPOJO {
 
     public class Data {
 
+        private String position;
+
         @SerializedName("type")
         private String type;
         @SerializedName("id")
@@ -3890,6 +3892,13 @@ public class PlayerPOJO {
             return MappingUtils.getPlayerStatsValue("CharacterLosses", champion, getAttributes().getStats());
         }
 
+        public String getPosition() {
+            return position;
+        }
+
+        public void setPosition(String position) {
+            this.position = position;
+        }
     }
 
     public class Links {
