@@ -98,7 +98,6 @@ public class TextUtils {
                     if (subString.charAt(subString.length() - 1) == ',')
                         subString = subString.substring(0, subString.length() - 1);
                     strings.add(subString);
-                    Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(subString);
                 } else {
                     String subString = string.substring(cont, i);
                     if (subString.charAt(subString.length() - 1) == ',')

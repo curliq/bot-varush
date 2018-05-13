@@ -26,15 +26,16 @@ public class Rank extends Command {
     private String playerName;
 
     final int maxColumnSize = 16;
-    int biggestRankLength = 2;
-    int biggestNameLength = "Name".length();
-    int biggestWinsLength = "Wins".length();
-    int biggestLossesLength = "Losses".length();
-    int padding = 2; //the tables' padding in space characters
+    private int biggestRankLength = 2;
+    private int biggestNameLength = "Name".length();
+    private int biggestWinsLength = "Wins".length();
+    private int biggestLossesLength = "Losses".length();
+    private int padding = 2; //the tables' padding in space characters
 
     public Rank() {
         setDescription(
-                String.format("`%s %s championName` - Display the players with the most wins with the given champion.",
+                String.format("`%1$s %2$s championName` - Display the players with the most wins with the given champion." +
+                                "\n`%1$s %2$s championName playerName` - also show your own position.",
                         GenericUtils.COMMAND_TRIGGER, getKey()));
     }
 
@@ -109,7 +110,7 @@ public class Rank extends Command {
         championName = TextUtils.capitalizeString(getParams().get(0));
 
         // check if it's ruh kaan
-        if (championName.toLowerCase().equals("ruh")) {
+        if (championName.equalsIgnoreCase("ruh")) {
             championName = championName + " " + TextUtils.capitalizeString(getParams().get(1));
         }
 
@@ -136,7 +137,6 @@ public class Rank extends Command {
 
         // do this before we make the main table to get the sizes for the table so they're all align
         calculateTableSpace(players);
-        Field playerField = null;
         List<PlayerPOJO.Data> playerInList = new ArrayList<>();
         if (player != null) {
             playerInList.add(player.getPlayerPojo());

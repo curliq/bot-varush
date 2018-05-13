@@ -1,20 +1,14 @@
 package app.commands.core;
 
-import java.util.ArrayList;
-
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.MessageChannel;
+
+import java.util.ArrayList;
 
 /**
  * Base class for every command
  */
 
 public abstract class Command {
-
-    public interface CommandEventsListener {
-        void onMessageUpdated(String discordMessageId, EmbedBuilder eb);
-    }
 
     /** Key is the first keyword after the trigger and is what defines a command, i.e. "stats" */
     public abstract String getKey();
@@ -27,12 +21,6 @@ public abstract class Command {
 
     /** Each Command object will yield a discord message, this is the ID of that message, null before it's sent */
     private String discordMessageId;
-
-    /**
-     * Each Command object will yield a discord message, this is the id of the channel where it's sent,
-     * null before it's sent
-     */
-    private String discordChannelId;
 
     /** Method used to return the reply message, must be implemented */
     public abstract EmbedBuilder getReply();
@@ -91,5 +79,8 @@ public abstract class Command {
         this.discordMessageId = discordMessageId;
     }
 
+    public interface CommandEventsListener {
+        void onMessageUpdated(String discordMessageId, EmbedBuilder eb);
+    }
 }
 

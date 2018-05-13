@@ -16,7 +16,6 @@ import app.rest.pojos.MatchPOJO;
 import app.rest.pojos.PlayerPOJO;
 import app.utils.DbUtils;
 import app.utils.GenericUtils;
-import app.utils.TextUtils;
 import retrofit2.Response;
 
 /** Class with scripts that might want to be ran occasionally */
