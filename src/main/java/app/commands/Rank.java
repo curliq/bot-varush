@@ -115,7 +115,7 @@ public class Rank extends Command {
         }
 
         try {
-            if (championName.toLowerCase().equals("ruh"))
+            if (championName.toLowerCase().contains("ruh"))
                 playerName = getParams().get(2);
             else
                 playerName = getParams().get(1);
