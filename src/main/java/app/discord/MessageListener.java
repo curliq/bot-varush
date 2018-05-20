@@ -45,6 +45,8 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts.put("!ND", "!br stats NeloDante");
         commandsShortcuts.put("!s", "!br stats SlapMachine");
         commandsShortcuts.put("!l", "!br stats lokkut");
+        commandsShortcuts.put("!queentaru", "!br rank jamila queentaru");
+        commandsShortcuts.put("!q", "!br stats queentaru");
     }
 
     @Override
