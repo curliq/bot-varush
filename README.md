@@ -25,8 +25,7 @@ Dynamic Streaming role:
 - [ ] get live match data
 - [ ] player's match history
 
-To suggest a feature contact me on Discord (@Curlicue#0002) or create an Issue here on Github.
-
+To suggest a feature join the discord on https://discord.gg/5ZZDsXv.
 # Setup
 
 ### Your private keys
