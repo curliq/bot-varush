@@ -663,5 +663,96 @@
         "stackableId": 60090,
         "localizedText": "c73850e8a889418aa205329acaba8e19",
         "text": "Message Deleted"
+    },
+    {
+        "StackableId": 60091,
+        "LocalizedText": "77fbc98050204fbc862d42c66a4bc6c3",
+        "Text": "Ultimate Partner"
+    },
+    {
+        "StackableId": 60092,
+        "LocalizedText": "d7e0a6a330354b2f823d48743b49ecc5",
+        "Text": "The Warrior"
+    },
+    {
+        "StackableId": 60093,
+        "LocalizedText": "b8fcc64c7a6a495e9005a93c2cfb7aaf",
+        "Text": "Pathfinder"
+    },
+    {
+        "StackableId": 60094,
+        "LocalizedText": "cac574efb02c49f8ab07e7c690f3800a",
+        "Text": "Season 1 Solo #1"
+    },
+    {
+        "StackableId": 60095,
+        "LocalizedText": "e609495c0d154c488194f4135a3d8690",
+        "Text": "Season 1 Solo #2"
+    },
+    {
+        "StackableId": 60096,
+        "LocalizedText": "2a108ce6db10456cb3af4cc5c24d50fb",
+        "Text": "Season 1 Solo #3"
+    },
+    {
+        "StackableId": 60097,
+        "LocalizedText": "b3c23c7daa7143e7b10b6e157f8c19c4",
+        "Text": "Season 1 Solo #4"
+    },
+    {
+        "StackableId": 60098,
+        "LocalizedText": "46ef8ae695724e689bbffc925f9b055a",
+        "Text": "Season 1 Solo #5"
+    },
+    {
+        "StackableId": 60099,
+        "LocalizedText": "971877a4a8d5448e956d65904333ad06",
+        "Text": "Season 1 2v2 #1"
+    },
+    {
+        "StackableId": 60100,
+        "LocalizedText": "8c98a698b9f84cdf9f684425470e0a01",
+        "Text": "Season 1 2v2 #2"
+    },
+    {
+        "StackableId": 60101,
+        "LocalizedText": "4c670e8f1caf44a09b90f5a2bde3ec75",
+        "Text": "Season 1 2v2 #3"
+    },
+    {
+        "StackableId": 60102,
+        "LocalizedText": "e33bf1a2aaf9483fbb558ebf757f6777",
+        "Text": "Season 1 2v2 #4"
+    },
+    {
+        "StackableId": 60103,
+        "LocalizedText": "f520ad1e02254c19bf0fba9394b0d963",
+        "Text": "Season 1 2v2 #5"
+    },
+    {
+        "StackableId": 60104,
+        "LocalizedText": "fd70533a33c047c7ab813835e0ac5abb",
+        "Text": "Season 1 3v3 #1"
+    },
+    {
+        "StackableId": 60105,
+        "LocalizedText": "fbf22a825c884a02beb1c479a827c8ff",
+        "Text": "Season 1 3v3 #2"
+    },
+    {
+        "StackableId": 60106,
+        "LocalizedText": "1da94fa8803944a794fd24c7e0c52c34",
+        "Text": "Season 1 3v3 #3"
+    },
+    {
+        "StackableId": 60107,
+        "LocalizedText": "7abcf36aa2194a7b98405e8c00a88fff",
+        "Text": "Season 1 3v3 #4"
+    },
+    {
+        "StackableId": 60108,
+        "LocalizedText": "3a9582ecdc954aa9b262828c1ec5e0f2",
+        "Text": "Season 1 3v3 #5"
     }
+
 ]
