@@ -143,7 +143,8 @@ public class Rank extends Command {
             calculateTableSpace(playerInList);
         }
 
-        eb.addField(new Field("", getTable(players, true), false));
+        eb.addField("", getTable(players, true), false);
+        eb.addField("", "", true);
 
         if (player != null) {
             eb.addField(new Field("", getTable(playerInList, false), false));
@@ -165,7 +166,7 @@ public class Rank extends Command {
      * Set message title
      */
     private void makeTitle(EmbedBuilder eb, boolean isUpdatingPlayers) {
-        eb.setAuthor(championName + " leaderboard", "https://brstats.tk",
+        eb.setAuthor(championName + " leaderboard", "https://battlerite-stats.com/",
                 GenericUtils.ASSETS_URL + championName.replace(" ", "") + ".png");
 
         StringBuilder description = new StringBuilder();

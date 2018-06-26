@@ -60,7 +60,7 @@ public class NetworkUtils {
      * Get a list of players data from a list of Ids as a String
      * "123, 456, 678, 890, 123, 645" becomes "123, 456, 890" (make call) and "123, 645" (make another call)
      *
-     * @param playersIds list of players POJOs
+     * @param playersIds list of players' ids as a string, i.e. "123, 345, 512, 5425, 123"
      */
     public static ArrayList<PlayerPOJO.Data> getPlayersFromIds(String playersIds) {
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
@@ -81,7 +81,7 @@ public class NetworkUtils {
      * Converts the array into a string and then splits it like:
      * ["123, 456, 678, 890, 123, 645"] becomes "123, 456, 890" (make call) and "123, 645" (make another call)
      *
-     * @param playersIds array of players POJOs
+     * @param playersIds array of players' ids
      */
     public static ArrayList<PlayerPOJO.Data> getPlayersFromIds(ArrayList<String> playersIds) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -89,16 +89,6 @@ public class NetworkUtils {
             stringBuilder.append(id).append(",");
         stringBuilder.setLength(stringBuilder.length() - 1);
 
-        ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
-
-        // get the ids after the 3th id, to make another request because battlerite limits the bulk player request
-        // to ~3 players max
-        ArrayList<String> splitIds = TextUtils.splitStringInCommas(stringBuilder.toString(), 3);
-        for (String ids : splitIds) {
-            Response<PlayerPOJO> otherPlayersResponse = HttpRequests.getPlayersByIds(ids);
-            otherPLayersList.addAll(otherPlayersResponse.body().getData());
-        }
-
-        return otherPLayersList;
+        return getPlayersFromIds(stringBuilder.toString());
     }
 }

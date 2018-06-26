@@ -50,6 +50,7 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts.put("!fat", "!br stats fatez");
         commandsShortcuts.put("!fap", "!br stats faplarp");
         commandsShortcuts.put("!9", "!br stats 9gag");
+        commandsShortcuts.put("!hulk", "!br stats fredHulk");
     }
 
     @Override
@@ -120,7 +121,9 @@ public class MessageListener extends ListenerAdapter {
                     command.setDiscordMessageId(message1.getId());
                 });
                 command.setOnCommandEventsListener((discordMessageId, eb) -> {
-                    editMessage(discordMessageId, author, channel, eb).queue();
+                    MessageAction messageAction = editMessage(discordMessageId, author, channel, eb);
+                    if (messageAction != null)
+                        messageAction.queue();
                 });
             }
         }
@@ -147,7 +150,11 @@ public class MessageListener extends ListenerAdapter {
      */
     private MessageAction editMessage(String discordMessageId, User author, MessageChannel channel,
                                       EmbedBuilder embedBuilder) {
-        return channel.editMessageById(discordMessageId, baseMessage(author, embedBuilder));
+        try {
+            return channel.editMessageById(discordMessageId, baseMessage(author, embedBuilder));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**
