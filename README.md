@@ -78,5 +78,5 @@ This is the followed git workflow: https://goo.gl/images/Su7k5k
 --
 
 ###### Mention worthy
-- @Bohnenkrautsaft#4768 - Help with Battlerite's API integration and deployment.
+- @Bohnenkrautsaft#4768 - Assisted with Battlerite's API integration and deployment.
 - @Moxian#8121 - Idea for dynamic Streaming role.

@@ -11,6 +11,7 @@ public class GenericUtils {
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
+    public final static String VARUSH_DISCORD_SERVER = "https://discord.gg/5ZZDsXv";
     public final static String ERROR_TITLE = "Errori...";
     public final static String ERROR_MESSAGE = "Oops, something wrong is not right";
     public final static String STREAMING_ROLE_NAME = "Streaming";

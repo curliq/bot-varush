@@ -2,7 +2,6 @@ package app.commands;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 
-import app.App;
 import app.commands.core.Command;
 import app.utils.GenericUtils;
 
@@ -30,9 +29,8 @@ public class About extends Command {
         eb.addBlankField(false);
         eb.addField("Contribute & feature request", String.format(
                 "The bot is open source and everyone is welcome to contribute: github.com/joaosardinha/bot-varush, "
-                        + "to request a " + "feature click on Issues and create a new one describing what you'd like "
-                        + "to see, or ping %s",
-                App.jda.getUserById(GenericUtils.OWNER_DISCORD_USER_ID).getAsMention()), false);
+                        + "to request a " + "feature please join the server on %s and post on the suggestions channel",
+                GenericUtils.VARUSH_DISCORD_SERVER), false);
         eb.addBlankField(false);
         return eb;
     }

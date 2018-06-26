@@ -37,7 +37,6 @@ public class Welp extends Command {
         commandsArray.add(new Rank());
         commandsArray.add(new About());
         commandsArray.add(new Welp());
-        commandsArray.add(new WhoTheBestBot());
 
         for (Command command : commandsArray) {
             String title = command.getKey().equals(Live.KEY) ? Live.KEY + "  (coming soon)" : command.getKey();

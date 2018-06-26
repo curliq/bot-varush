@@ -60,7 +60,7 @@ public class NetworkUtils {
      * Get a list of players data from a list of Ids as a String
      * "123, 456, 678, 890, 123, 645" becomes "123, 456, 890" (make call) and "123, 645" (make another call)
      *
-     * @param playersIds list of players' Ids as "123, 412, 144, 09093"
+     * @param playersIds list of players POJOs
      */
     public static ArrayList<PlayerPOJO.Data> getPlayersFromIds(String playersIds) {
         ArrayList<PlayerPOJO.Data> otherPLayersList = new ArrayList<>();
@@ -79,9 +79,9 @@ public class NetworkUtils {
     /**
      * Get a list of players data from a list of Ids as an ArrayList
      * Converts the array into a string and then splits it like:
-     * "123, 456, 678, 890, 123, 645" becomes "123, 456, 890" (make call) and "123, 645" (make another call)
+     * ["123, 456, 678, 890, 123, 645"] becomes "123, 456, 890" (make call) and "123, 645" (make another call)
      *
-     * @param playersIds array of players' Ids as "123, 412, 144, 09093"
+     * @param playersIds array of players POJOs
      */
     public static ArrayList<PlayerPOJO.Data> getPlayersFromIds(ArrayList<String> playersIds) {
         StringBuilder stringBuilder = new StringBuilder();
