@@ -11,18 +11,17 @@ apply plugin: 'distribution'
 apply plugin: 'java'
 
 // Define the main class for the application
-mainClassName = 'App'
+mainClassName = 'app.App'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
-    compile 'net.dv8tion:JDA:3.5.0_338'
+    compile 'net.dv8tion:JDA:3.6.0_358'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
+    compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
 }
 
 task buildZip(type: Zip) {
@@ -44,12 +43,13 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'App'
+        attributes 'Main-Class': 'app.App'
     } 
     doFirst {
         from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
     }
-    from('src/main/java/app/utils') {
+    from('src/main/java/app/utils/mapping') {
         include 'playerTitles.json'
+        include 'playerStats.json'
     }
 }

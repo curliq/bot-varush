@@ -2,13 +2,11 @@ package app.rest.pojos;
 
 import java.util.ArrayList;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class TeamStatsPOJO {
 
     @SerializedName("data")
-    @Expose
     private ArrayList<Data> data;
 
     public ArrayList<Data> getData() {
@@ -22,13 +20,10 @@ public class TeamStatsPOJO {
     public class Data {
 
         @SerializedName("type")
-        @Expose
         private String type;
         @SerializedName("id")
-        @Expose
         private String id;
         @SerializedName("attributes")
-        @Expose
         private Attributes attributes;
 
         public String getType() {
@@ -60,16 +55,12 @@ public class TeamStatsPOJO {
     public class Attributes {
 
         @SerializedName("name")
-        @Expose
         private String name;
         @SerializedName("shardId")
-        @Expose
         private String shardId;
         @SerializedName("stats")
-        @Expose
         private Stats stats;
         @SerializedName("titleId")
-        @Expose
         private String titleId;
 
         public String getName() {
@@ -109,44 +100,33 @@ public class TeamStatsPOJO {
     public class Stats {
 
         @SerializedName("avatar")
-        @Expose
-        private Integer avatar;
+        private String avatar;
         @SerializedName("division")
-        @Expose
         private Integer division;
         @SerializedName("divisionRating")
-        @Expose
         private Integer divisionRating;
         @SerializedName("league")
-        @Expose
         private Integer league;
         @SerializedName("losses")
-        @Expose
         private Integer losses;
         @SerializedName("members")
-        @Expose
-        private ArrayList<Long> members = null;
+        private ArrayList<String> members = null;
         @SerializedName("placementGamesLeft")
-        @Expose
         private Integer placementGamesLeft;
         @SerializedName("topDivision")
-        @Expose
         private Integer topDivision;
         @SerializedName("topDivisionRating")
-        @Expose
         private Integer topDivisionRating;
         @SerializedName("topLeague")
-        @Expose
         private Integer topLeague;
         @SerializedName("wins")
-        @Expose
         private Integer wins;
 
-        public Integer getAvatar() {
+        public String getAvatar() {
             return avatar;
         }
 
-        public void setAvatar(Integer avatar) {
+        public void setAvatar(String avatar) {
             this.avatar = avatar;
         }
 
@@ -182,11 +162,11 @@ public class TeamStatsPOJO {
             this.losses = losses;
         }
 
-        public ArrayList<Long> getMembers() {
+        public ArrayList<String> getMembers() {
             return members;
         }
 
-        public void setMembers(ArrayList<Long> members) {
+        public void setMembers(ArrayList<String> members) {
             this.members = members;
         }
 
