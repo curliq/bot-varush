@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 public class GenericUtils {
 
     /** Just used as a reference for version control */
-    protected final static String BOT_VERSION = "4.2.0";
+    protected final static String BOT_VERSION = "4.2.1";
 
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
