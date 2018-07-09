@@ -62,10 +62,10 @@ public class Scripts {
 
                 GenericUtils.log("last match created at " + lastMatchCreated);
 
-                // update out createdAfter object, add 1 second to void staying in a loop if 5 matches have the same
-                // exact start time
+                // update out createdAfter object, add 5 second to void staying in a loop if 5 matches have the same
+                // exact start time (and skip it up a bit, i.e. skip some matches)
                 createdAfter = LocalDateTime.ofInstant(
-                        Instant.parse(lastMatchCreated), ZoneId.of(ZoneOffset.UTC.getId())).plusSeconds(1);
+                        Instant.parse(lastMatchCreated), ZoneId.of(ZoneOffset.UTC.getId())).plusSeconds(5);
                 // prevent parsing issues
                 if (createdAfter.getSecond() == 0)
                     createdAfter = createdAfter.withSecond(1);
@@ -124,11 +124,11 @@ public class Scripts {
 
     }
 
-    /** Thread.sleep() when we run out of requests in the quota */
+    /** Thread.sleep() when request quote goes below 50 */
     private static void refreshRpm(Response response) {
         try {
             // sleep if requests is approaching the max
-            if (Long.valueOf(response.headers().get("x-ratelimit-remaining")) < 10) {
+            if (Long.valueOf(response.headers().get("x-ratelimit-remaining")) < 50) {
                 long resetInMillis = (Long.valueOf(response.headers().get("x-ratelimit-reset")) / 10000000) + 1000;
                 GenericUtils.log(resetInMillis);
                 GenericUtils.log("sleeps");

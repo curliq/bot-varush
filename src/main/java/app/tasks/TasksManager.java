@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TasksManager {
 
-    private final int RUN_SCRIPTS_HOUR = 11; //10 AM
+    private final int RUN_SCRIPTS_HOUR = 8; //10 AM
 
     public static void init() {
         new TasksManager().scheduleTask();
@@ -28,10 +28,11 @@ public class TasksManager {
             getTopPlayers();
             getMatches();
         }).start(), startInHours, 24, TimeUnit.HOURS);
+        getMatches();
     }
 
     private void getTopPlayers() {
-
+        //todo
     }
 
     private void getMatches() {
