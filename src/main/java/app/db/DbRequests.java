@@ -81,9 +81,9 @@ public class DbRequests {
         values.setLength(values.length() - 1);
         updateFields.setLength(updateFields.length() - 1);
 
-        GenericUtils.log("lists");
-        GenericUtils.log(fields.toString());
-        GenericUtils.log(values.toString());
+//        GenericUtils.log("lists");
+//        GenericUtils.log(fields.toString());
+//        GenericUtils.log(values.toString());
 
 
         DbUtils.makeRequest(String.format(

@@ -34,7 +34,7 @@ public class NetworkUtils {
     private static Retrofit getRetrofit(String baseUrl, HashMap<String, String> headersMap) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
         httpClient.addInterceptor(loggingInterceptor);
         httpClient.addInterceptor(chain -> {

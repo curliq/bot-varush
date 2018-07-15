@@ -50,7 +50,7 @@ public class Stats extends Command {
             String playerName = getParams().get(0);
             // fetches the player ID from the player name
             Response<PlayerPOJO> playerResponse = HttpRequests.getPlayerByName(playerName);
-            GenericUtils.log(new Gson().toJson(playerResponse.body()));
+//            GenericUtils.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
             if (playerResponse.body().getData().isEmpty()) {
@@ -59,7 +59,7 @@ public class Stats extends Command {
 
             // fetches the team data from the player ID
             teamStatsResponse = HttpRequests.getTeams(playerResponse.body().getData().get(0).getId());
-            GenericUtils.log(new Gson().toJson(teamStatsResponse.body()));
+//            GenericUtils.log(new Gson().toJson(teamStatsResponse.body()));
 
             // return error message if something went wrong
             if (playerResponse.isSuccessful() && !teamStatsResponse.isSuccessful())

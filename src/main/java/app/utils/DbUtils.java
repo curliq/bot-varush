@@ -28,7 +28,8 @@ public class DbUtils {
      * Opens a connection if not already opened, and stars a timer to close the connection
      */
     public static ResultSet makeRequest(String sqlQuery) {
-        GenericUtils.log(sqlQuery);
+//        GenericUtils.log(sqlQuery);
+        GenericUtils.log("make requests");
         try {
             openConnection();
             try {
