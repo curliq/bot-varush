@@ -28,7 +28,6 @@ public class TasksManager {
             getTopPlayers();
             getMatches();
         }).start(), startInHours, 24, TimeUnit.HOURS);
-        getMatches();
     }
 
     private void getTopPlayers() {

@@ -106,7 +106,7 @@ public class MessageListener extends ListenerAdapter {
             scanner.close();
 
             // Get the command object that matches the command key sent by the player (eg "stats")
-            Command command = CommandsManager.getCommand(commandKey);
+            Command command = CommandsManager.getCommand(commandKey, message.getAuthor().getIdLong());
 
             if (command == null) {
                 // The command doesn't exist, send message saying suggesting !br welp
