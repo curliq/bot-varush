@@ -22,27 +22,27 @@ public class App {
     }
 
     private void setUpBot() {
-        // Initiate the Discord object
         initiateJda();
-
-        // set the messages listener and pass the initiated commandsManager
-        // and the user's game listener for Streaming role, more info at StreamingRoleListener.java
-        jda.addEventListener(new MessageListener(), new StreamingRoleListener(jda));
-
-        // set user game listener for Streamer role, more info at StreamingRoleListener.java
-        jda.addEventListener(new StreamingRoleListener(jda));
-
-        // set the Bot's game in discord to "Watching out for !br welp"
-        jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
 
         // schedule tasks
         TasksManager.init();
-
     }
 
     public static void initiateJda() {
         try {
+            // Initiate the Discord object
             jda = new JDABuilder(AccountType.BOT).setToken(Secrets.BOT_TOKEN).buildBlocking();
+
+            // set the messages listener and pass the initiated commandsManager
+            // and the user's game listener for Streaming role, more info at StreamingRoleListener.java
+            jda.addEventListener(new MessageListener(), new StreamingRoleListener(jda));
+
+            // set user game listener for Streamer role, more info at StreamingRoleListener.java
+            jda.addEventListener(new StreamingRoleListener(jda));
+
+            // set the Bot's game in discord to "Watching out for !br welp"
+            jda.getPresence().setGame(Game.of(GameType.WATCHING, " out for !br welp"));
+
         } catch (InterruptedException | LoginException exception) {
             exception.printStackTrace();
         }
