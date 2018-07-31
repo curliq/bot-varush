@@ -75,9 +75,10 @@ This is the followed git workflow: https://goo.gl/images/Su7k5k
 3. PR to `develop`
 
 ###### Contributors
---
+-- 
 
 ###### Mention worthy
+- @Kotaru#0001 - Designed Varush's logo
 - @Bohnenkrautsaft#4768 - Assisted with Battlerite's API integration and deployment.
 - @Moxian#8121 - Idea & specs for dynamic Streaming role.
 - @MTJ#9949 - Idea & specs for the rank command.
