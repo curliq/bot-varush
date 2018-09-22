@@ -12,6 +12,8 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateGameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * This class listens for changes in Game presence on every user in the server.
  * <p>
@@ -68,7 +70,6 @@ public class StreamingRoleListener extends ListenerAdapter {
     }
 
     private void runChecks(Guild guild, Member member, Game currentGame) {
-        // GenericUtils.log(member.getEffectiveName() + ": running checks");
         try {
             GenericUtils.log(member.getEffectiveName() + " " + currentGame.asRichPresence().getDetails());
         } catch (NullPointerException e) {
@@ -78,9 +79,9 @@ public class StreamingRoleListener extends ListenerAdapter {
         if (!userHasAtLeastOneRole(member))
             return;
 
-        // stop if there is no role called GenericUtils.SREAMING_ROLE_NAME
+        // stop if there is no role called GenericUtils.STREAMING_ROLE_NAME
         try {
-            //TODO: stop intiating the streamer role everytime
+            //TODO: stop initiating the streamer role every time
             streamerRole = guild.getRolesByName(GenericUtils.STREAMING_ROLE_NAME, true).get(0);
         } catch (Exception e) {
             GenericUtils.log("no streamer role found");
@@ -96,7 +97,7 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /**  Checks if the user is streaming on twitch */
+    /** Checks if the user is streaming on twitch */
     private boolean isStreaming(Game currentGame) {
         if (currentGame == null || currentGame.getUrl() == null)
             return false;
@@ -124,7 +125,9 @@ public class StreamingRoleListener extends ListenerAdapter {
     private void removeStreamerRole(Guild guild, Member member) {
         if (member.getRoles().contains(streamerRole)) {
             GenericUtils.log("remove role from " + member);
-            guild.getController().removeSingleRoleFromMember(member, streamerRole).queue();
+            // delay removal for 30 seconds in case some people have their rich presence switching between Streaming
+            // and Playing for some reason
+            guild.getController().removeSingleRoleFromMember(member, streamerRole).queueAfter(30, TimeUnit.SECONDS);
         }
     }
 
