@@ -1,6 +1,6 @@
 # Bot Varush
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/db01059ea82a4c7d92d4ae7c25438fef)](https://app.codacy.com/app/joaosardinha9898/bot-varush?utm_source=github.com&utm_medium=referral&utm_content=joaosardinha/bot-varush&utm_campaign=badger)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/db01059ea82a4c7d92d4ae7c25438fef)](https://app.codacy.com/app/curliq9898/bot-varush?utm_source=github.com&utm_medium=referral&utm_content=curliq/bot-varush&utm_campaign=badger)
 
 A Discord bot to display Battlerite player data and other cool things. Everyone is welcome to integrate it on their servers, or if you don't want to host it just ask me for the discord integration link!
 
@@ -21,7 +21,6 @@ Dynamic Streaming role:
 - [x] Rank players by most games played on a specific champion (`!br rank Varesh`)
 - [ ] 3 best champions on (on `!br stats playername`)
 - [ ] player's all champions data
-- [ ] randomizer for inhouses - select 2/4/6 random champions, with random rites, and 1 random skill
 - [ ] get live match data
 - [ ] player's match history
 

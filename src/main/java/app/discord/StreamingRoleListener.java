@@ -107,7 +107,9 @@ public class StreamingRoleListener extends ListenerAdapter {
     /** Checks if the game from Discord rich presence is Battlerite */
     private boolean isStreamingBattlerite(Game currentGame) {
         try {
-            return currentGame.asRichPresence().getDetails().equals(BattleriteUtils.BATTLERITE_RICHPRESENCE_NAME);
+            String game = currentGame.asRichPresence().getDetails();
+            return BattleriteUtils.BATTLERITE_RICHPRESENCE_NAME.equalsIgnoreCase(game) ||
+                    BattleriteUtils.BATTLERITE_ROYALE_RICHPRESENCE_NAME.equalsIgnoreCase(game);
         } catch (NullPointerException e) {
             return false;
         }

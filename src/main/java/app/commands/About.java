@@ -28,7 +28,7 @@ public class About extends Command {
         eb.addField("Some info", "A Battlerite bot kek.", false);
         eb.addBlankField(false);
         eb.addField("Contribute & feature request", String.format(
-                "The bot is open source and everyone is welcome to contribute: github.com/joaosardinha/bot-varush, "
+                "The bot is open source and everyone is welcome to contribute: github.com/curliq/bot-varush, "
                         + "to request a " + "feature please join the server on %s and post on the suggestions channel",
                 GenericUtils.VARUSH_DISCORD_SERVER), false);
         eb.addBlankField(false);

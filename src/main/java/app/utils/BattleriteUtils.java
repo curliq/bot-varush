@@ -20,6 +20,7 @@ public class BattleriteUtils {
     public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";
     public final static String STATS_3V3_IMAGE = "https://i.imgur.com/igCOlpX.png";
     public final static String BATTLERITE_RICHPRESENCE_NAME = "Battlerite";
+    public final static String BATTLERITE_ROYALE_RICHPRESENCE_NAME = "Battlerite Royale";
     public final static String ALYSIA = "Alysia";
     public final static String ASHKA = "Ashka";
     public final static String BAKKO = "Bakko";
