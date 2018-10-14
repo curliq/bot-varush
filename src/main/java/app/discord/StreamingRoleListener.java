@@ -146,7 +146,7 @@ public class StreamingRoleListener extends ListenerAdapter {
                 GenericUtils.log("Something wrong trying to remove the streaming role on ScheduledExecutorService.");
                 e.printStackTrace();
             }
-        };=
+        };
         executor.schedule(r, 30L, TimeUnit.SECONDS);
     }
 
