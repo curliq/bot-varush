@@ -128,27 +128,26 @@ public class StreamingRoleListener extends ListenerAdapter {
         }
     }
 
-    /** Check if user has the role and remove it */
+    /**
+     * Check if user has the role and remove it
+     * Delay by 30s in case the user goes from "Streaming" to "Playing" and then back in a 30s window. This might happen
+     * probably because of a glitch on discord or some miss configuration on the user's end.
+     */
     private void removeStreamerRole(Guild guild, Member member) {
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool ( 1 );
-
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         Runnable r = () -> {
-            try {  // Always wrap your Runnable with a try-catch as any uncaught Exception causes the ScheduledExecutorService to silently terminate.
-                System.out.println ( "Now: " + Instant.now () );  // Our task at hand in this example: Capturing the current moment in UTC.
+            try {
                 if (member.getRoles().contains(streamerRole)) {
                     GenericUtils.log("remove role from " + member);
                     guild.getController().removeSingleRoleFromMember(member, streamerRole)
                             .queue(aVoid -> executor.shutdown());
                 }
-
-            } catch ( Exception e ) {
-                System.out.println ( "Oops, uncaught Exception surfaced at Runnable in ScheduledExecutorService." );
+            } catch (Exception e) {
+                GenericUtils.log("Something wrong trying to remove the streaming role on ScheduledExecutorService.");
+                e.printStackTrace();
             }
-        };
-
-        executor.schedule ( r , 30L , TimeUnit.SECONDS );
-
+        };=
+        executor.schedule(r, 30L, TimeUnit.SECONDS);
     }
 
     /** Check if the user as at least one role, which will normally be the region role */

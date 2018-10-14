@@ -29,7 +29,6 @@ public class GenericUtils {
      */
     public static void log(Object o) {
         System.out.println(o);
-        System.out.println(" ");
     }
 
     /** Build a basic embed message with just one field */
