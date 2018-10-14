@@ -1,5 +1,6 @@
 package app.discord;
 
+import app.App;
 import app.utils.BattleriteUtils;
 import app.utils.GenericUtils;
 
@@ -12,7 +13,12 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateGameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import java.time.Instant;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class listens for changes in Game presence on every user in the server.
@@ -85,7 +91,6 @@ public class StreamingRoleListener extends ListenerAdapter {
             streamerRole = guild.getRolesByName(GenericUtils.STREAMING_ROLE_NAME, true).get(0);
         } catch (Exception e) {
             GenericUtils.log("no streamer role found");
-            e.printStackTrace();
             return;
         }
 
@@ -125,12 +130,25 @@ public class StreamingRoleListener extends ListenerAdapter {
 
     /** Check if user has the role and remove it */
     private void removeStreamerRole(Guild guild, Member member) {
-        if (member.getRoles().contains(streamerRole)) {
-            GenericUtils.log("remove role from " + member);
-            // delay removal for 30 seconds in case some people have their rich presence switching between Streaming
-            // and Playing for some reason
-            guild.getController().removeSingleRoleFromMember(member, streamerRole).queueAfter(30, TimeUnit.SECONDS);
-        }
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool ( 1 );
+
+        Runnable r = () -> {
+            try {  // Always wrap your Runnable with a try-catch as any uncaught Exception causes the ScheduledExecutorService to silently terminate.
+                System.out.println ( "Now: " + Instant.now () );  // Our task at hand in this example: Capturing the current moment in UTC.
+                if (member.getRoles().contains(streamerRole)) {
+                    GenericUtils.log("remove role from " + member);
+                    guild.getController().removeSingleRoleFromMember(member, streamerRole)
+                            .queue(aVoid -> executor.shutdown());
+                }
+
+            } catch ( Exception e ) {
+                System.out.println ( "Oops, uncaught Exception surfaced at Runnable in ScheduledExecutorService." );
+            }
+        };
+
+        executor.schedule ( r , 30L , TimeUnit.SECONDS );
+
     }
 
     /** Check if the user as at least one role, which will normally be the region role */
@@ -145,7 +163,6 @@ public class StreamingRoleListener extends ListenerAdapter {
             return member.getRoles().contains(probationRole);
         } catch (IndexOutOfBoundsException e) {
             GenericUtils.log("no probation role found");
-            e.printStackTrace();
             return false;
         }
     }
