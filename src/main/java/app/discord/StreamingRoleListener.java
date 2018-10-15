@@ -134,20 +134,25 @@ public class StreamingRoleListener extends ListenerAdapter {
      * probably because of a glitch on discord or some miss configuration on the user's end.
      */
     private void removeStreamerRole(Guild guild, Member member) {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        Runnable r = () -> {
-            try {
-                if (member.getRoles().contains(streamerRole)) {
-                    GenericUtils.log("remove role from " + member);
-                    guild.getController().removeSingleRoleFromMember(member, streamerRole)
-                            .queue(aVoid -> executor.shutdown());
+        if (member.getRoles().contains(streamerRole)) {
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+            Runnable r = () -> {
+                try {
+                    // Check again if user contains the role
+                    if (member.getRoles().contains(streamerRole)) {
+                        GenericUtils.log("remove role from " + member);
+                        guild.getController().removeSingleRoleFromMember(member, streamerRole)
+                                .queue(aVoid -> executor.shutdown());
+                    }
+                } catch (Exception e) {
+                    GenericUtils.log("Something wrong trying to remove the streaming role on ScheduledExecutorService" +
+                            ".");
+
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                GenericUtils.log("Something wrong trying to remove the streaming role on ScheduledExecutorService.");
-                e.printStackTrace();
-            }
-        };
-        executor.schedule(r, 30L, TimeUnit.SECONDS);
+            };
+            executor.schedule(r, 30L, TimeUnit.SECONDS);
+        }
     }
 
     /** Check if the user as at least one role, which will normally be the region role */
