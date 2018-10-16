@@ -52,6 +52,10 @@ public class StreamingRoleListener extends ListenerAdapter {
         // probation role while streaming
         if (userHasProbationRole(event.getGuild(), event.getMember()))
             return;
+	
+        GenericUtils.log(event.getUser().getName());
+        if (event.getUser().getName().equalsIgnoreCase("shinyknight"))
+            return;
 
         runChecks(event.getGuild(), event.getMember(), event.getNewGame());
     }
