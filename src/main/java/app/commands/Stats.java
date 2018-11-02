@@ -56,7 +56,11 @@ public class Stats extends Command {
             if (playerResponse.body().getData().isEmpty())
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, "That's not a player I'm afraid");
 
-            GenericUtils.log(Long.valueOf(playerResponse.headers().get("x-ratelimit-remaining")));
+            Long rateLeft = (Long.valueOf(playerResponse.headers().get("X-Ratelimit-Remaining")));
+            Long rateRefreshInSecs = (Long.valueOf(playerResponse.headers().get("X-Ratelimit-Reset"))) / 10000000;
+            if (rateLeft == 0)
+                return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE,
+                        "Requests quota ran out, refreshing in " + rateRefreshInSecs + " seconds.");
 
             // fetches the team data from the player ID
             teamStatsResponse = HttpRequests.getTeams(playerResponse.body().getData().get(0).getId());
