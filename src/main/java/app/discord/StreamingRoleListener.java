@@ -151,7 +151,7 @@ public class StreamingRoleListener extends ListenerAdapter {
                     e.printStackTrace();
                 }
             };
-            executor.schedule(r, 30L, TimeUnit.SECONDS);
+            executor.schedule(r, 60L, TimeUnit.SECONDS);
         }
     }
 
