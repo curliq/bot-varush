@@ -1,9 +1,5 @@
 package app.discord;
 
-import app.App;
-import app.utils.BattleriteUtils;
-import app.utils.GenericUtils;
-
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -13,12 +9,12 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateGameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import app.utils.BattleriteUtils;
+import app.utils.GenericUtils;
 
 /**
  * This class listens for changes in Game presence on every user in the server.

@@ -53,9 +53,10 @@ public class Stats extends Command {
 //            GenericUtils.log(new Gson().toJson(playerResponse.body()));
 
             // checks if player exists
-            if (playerResponse.body().getData().isEmpty()) {
+            if (playerResponse.body().getData().isEmpty())
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, "That's not a player I'm afraid");
-            }
+
+            GenericUtils.log(Long.valueOf(playerResponse.headers().get("x-ratelimit-remaining")));
 
             // fetches the team data from the player ID
             teamStatsResponse = HttpRequests.getTeams(playerResponse.body().getData().get(0).getId());
