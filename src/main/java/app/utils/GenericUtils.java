@@ -6,9 +6,6 @@ import java.text.DecimalFormat;
 
 public class GenericUtils {
 
-    /** Just used as a reference for version control */
-    protected final static String BOT_VERSION = "4.3.6";
-
     public final static String COMMAND_TRIGGER = "!br";
     public final static long OWNER_DISCORD_USER_ID = 233347968378339328L;
     public final static String VARUSH_DISCORD_SERVER = "https://discord.gg/5ZZDsXv";

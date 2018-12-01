@@ -35,7 +35,7 @@ public class TasksManager {
     }
 
     private void getMatches() {
-        Scripts.getNewPlayersFromMatches(LocalDateTime.now().minusDays(1));
+        new Thread(Scripts::getNewPlayersFromMatches).start();
     }
 
 }

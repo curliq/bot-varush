@@ -22,14 +22,14 @@ import retrofit2.Response;
 public class Scripts {
 
     /**
-     * Query matches endpoint on a loop, and save all the players
+     * Query matches endpoint for the last 24h hours on a loop, and save all the players
      *
      * @param initialStartDate the initial date we start getting the matches from
      */
-    public static void getNewPlayersFromMatches(LocalDateTime initialStartDate) {
+    public static void getNewPlayersFromMatches() {
 
         Set<String> playersIds = new HashSet<>();
-        LocalDateTime createdAfter = initialStartDate;
+        LocalDateTime createdAfter = LocalDateTime.now().minusDays(1);
 
         // Get matches while our date is before now, and update this date every request,
         // to the last match's creation datetime
@@ -128,7 +128,7 @@ public class Scripts {
     private static void refreshRpm(Response response) {
         try {
             // sleep if requests is approaching the max
-            if (Long.valueOf(response.headers().get("x-ratelimit-remaining")) < 50) {
+            if ((Long.valueOf(response.headers().get("X-Ratelimit-Remaining"))) < 50) {
                 long resetInMillis = (Long.valueOf(response.headers().get("x-ratelimit-reset")) / 10000000) + 1000;
                 GenericUtils.log(resetInMillis);
                 GenericUtils.log("sleeps");

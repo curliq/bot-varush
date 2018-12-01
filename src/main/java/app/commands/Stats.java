@@ -57,7 +57,7 @@ public class Stats extends Command {
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE, "That's not a player I'm afraid");
 
             Long rateLeft = (Long.valueOf(playerResponse.headers().get("X-Ratelimit-Remaining")));
-            Long rateRefreshInSecs = (Long.valueOf(playerResponse.headers().get("X-Ratelimit-Reset"))) / 10000000;
+            Long rateRefreshInSecs = (Long.valueOf(playerResponse.headers().get("X-Ratelimit-Reset"))) / 1000000000;
             if (rateLeft == 0)
                 return GenericUtils.getBasicEmbedMessage(GenericUtils.ERROR_TITLE,
                         "Requests quota ran out, refreshing in " + rateRefreshInSecs + " seconds.");
