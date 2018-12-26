@@ -48,9 +48,10 @@ public class BattleriteUtils {
     public final static String ULRIC = "Ulric";
     public final static String VARESH = "Varesh";
     public final static String ZANDER = "Zander";
+    public final static String SHEN_RAO = "Shen Rao";
     public final static String[] CHAMPIONS = {ALYSIA, ASHKA, BAKKO, BLOSSOM, CROAK, DESTINY, EZMO, FREYA, IVA, JADE,
             JAMILA, JUMONG, LUCIE, OLDUR, PEARL, PESTILUS, POLOMA, RAIGON, ROOK, RUH_KAAN, SHIFU, SIRIUS, TAYA, THORN,
-            ULRIC, VARESH, ZANDER};
+            ULRIC, VARESH, ZANDER, SHEN_RAO};
 
 
     /**

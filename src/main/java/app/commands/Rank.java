@@ -110,12 +110,12 @@ public class Rank extends Command {
         championName = TextUtils.capitalizeString(getParams().get(0));
 
         // check if it's ruh kaan
-        if (championName.equalsIgnoreCase("ruh")) {
+        if (championName.equalsIgnoreCase("ruh") ||  championName.equalsIgnoreCase("shen")) {
             championName = championName + " " + TextUtils.capitalizeString(getParams().get(1));
         }
 
         try {
-            if (championName.toLowerCase().contains("ruh"))
+            if (championName.toLowerCase().contains("ruh") || championName.toLowerCase().contains("shen"))
                 playerName = getParams().get(2);
             else
                 playerName = getParams().get(1);

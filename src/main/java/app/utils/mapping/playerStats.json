@@ -11200,5 +11200,259 @@
         "DevName": "FFABakko",
         "StackableRangeName": "Characters",
         "StackableId": 10045
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "XP",
+        "StackableId": 11044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "XP",
+        "StackableId": 11077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterWins",
+        "StackableId": 12044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterWins",
+        "StackableId": 12077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterLosses",
+        "StackableId": 13044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterLosses",
+        "StackableId": 13077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterKills",
+        "StackableId": 14044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterKills",
+        "StackableId": 14077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterDeaths",
+        "StackableId": 15044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterDeaths",
+        "StackableId": 15077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "Level",
+        "StackableId": 40044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "Level",
+        "StackableId": 40077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterTimePlayed",
+        "StackableId": 16044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterTimePlayed",
+        "StackableId": 16077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterRanked2v2Wins",
+        "StackableId": 17044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterRanked2v2Wins",
+        "StackableId": 17077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterRanked2v2Losses",
+        "StackableId": 18044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterRanked2v2Losses",
+        "StackableId": 18077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterRanked3v3Wins",
+        "StackableId": 19044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterRanked3v3Wins",
+        "StackableId": 19077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterRanked3v3Losses",
+        "StackableId": 20044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterRanked3v3Losses",
+        "StackableId": 20077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterUnranked2v2Wins",
+        "StackableId": 21044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterUnranked2v2Wins",
+        "StackableId": 21077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterUnranked2v2Losses",
+        "StackableId": 22044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterUnranked2v2Losses",
+        "StackableId": 22077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterUnranked3v3Losses",
+        "StackableId": 24044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterUnranked3v3Losses",
+        "StackableId": 24077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterUnranked3v3Wins",
+        "StackableId": 23044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterUnranked3v3Wins",
+        "StackableId": 23077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "NexonDragonLordChampionBundle",
+        "StackableRangeName": "Bundles",
+        "StackableId": 50165,
+        "typeID": 855654795
+    },
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterBrawlLosses",
+        "StackableId": 26044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterBrawlLosses",
+        "StackableId": 26077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterBrawlWins",
+        "StackableId": 25044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterBrawlWins",
+        "StackableId": 25077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterBattlegroundsWins",
+        "StackableId": 27044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterBattlegroundsWins",
+        "StackableId": 27077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "CharacterBattlegroundsLosses",
+        "StackableId": 28044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "CharacterBattlegroundsLosses",
+        "StackableId": 28077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "RoyaleChampionXP",
+        "StackableId": 1001044
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLordFFA",
+        "StackableRangeName": "RoyaleChampionXP",
+        "StackableId": 1001077
+    },
+    {
+        "EnglishLocalizedName": "Shen Rao",
+        "DevName": "DragonLord",
+        "StackableRangeName": "RoyaleChampionLevel",
+        "StackableId": 1002044
     }
 ]

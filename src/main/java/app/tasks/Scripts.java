@@ -23,8 +23,6 @@ public class Scripts {
 
     /**
      * Query matches endpoint for the last 24h hours on a loop, and save all the players
-     *
-     * @param initialStartDate the initial date we start getting the matches from
      */
     public static void getNewPlayersFromMatches() {
 
@@ -129,7 +127,7 @@ public class Scripts {
         try {
             // sleep if requests is approaching the max
             if ((Long.valueOf(response.headers().get("X-Ratelimit-Remaining"))) < 50) {
-                long resetInMillis = (Long.valueOf(response.headers().get("x-ratelimit-reset")) / 10000000) + 1000;
+                Long resetInMillis = (Long.valueOf(response.headers().get("X-Ratelimit-Reset"))) / 1000000000;
                 GenericUtils.log(resetInMillis);
                 GenericUtils.log("sleeps");
                 try {

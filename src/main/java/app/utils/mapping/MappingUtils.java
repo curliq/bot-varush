@@ -31,7 +31,7 @@ public class MappingUtils {
 
     /**
      * Smart mapping from the /playerStats.json file.
-     * Get the right stat object from the player stats using reflection, by sending the "stackableRangeName" and the
+     * Get the right stat object from the player stats through reflection, by sending the "stackableRangeName" and the
      * "englishLocalizedName".
      *
      * @param stackableRangeName   the "stackableRangeName" of the object, e.g.: "CharacterWins"
