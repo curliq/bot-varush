@@ -90,7 +90,7 @@ public class StreamingRoleListener extends ListenerAdapter {
             //TODO: stop initiating the streamer role every time
             streamerRole = guild.getRolesByName(GenericUtils.STREAMING_ROLE_NAME, true).get(0);
         } catch (Exception e) {
-            GenericUtils.log("no streamer role found");
+//            GenericUtils.log("no streamer role found");
             return;
         }
 
@@ -166,7 +166,7 @@ public class StreamingRoleListener extends ListenerAdapter {
             Role probationRole = guild.getRolesByName(GenericUtils.PROBATION_ROLE_NAME, true).get(0);
             return member.getRoles().contains(probationRole);
         } catch (IndexOutOfBoundsException e) {
-            GenericUtils.log("no probation role found");
+//            GenericUtils.log("no probation role found");
             return false;
         }
     }
