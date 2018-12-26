@@ -168,7 +168,7 @@ public class Rank extends Command {
     private void makeTitle(EmbedBuilder eb, boolean isUpdatingPlayers) {
         eb.setAuthor(championName + " leaderboard", "https://battlerite-stats.com/",
                 GenericUtils.ASSETS_URL + championName.replace(" ", "") + ".png");
-
+        GenericUtils.log(GenericUtils.ASSETS_URL + championName.replace(" ", "") + ".png");
         StringBuilder description = new StringBuilder();
         description.append("Players with the most wins on ").append(championName);
         if (isUpdatingPlayers)

@@ -188,8 +188,13 @@ public class DbRequests {
 
                 // loop through all the fields and set it to a player object through reflection
                 for (String fieldName : fields) {
-                    String fieldValue = resultSet.getString(fieldName).trim();
-
+                    String fieldValue;
+                    try {
+                        // This happens if one of the fields (wins or loses) is 0 and so it isn't return in the api
+                        fieldValue = resultSet.getString(fieldName).trim();
+                    } catch (NullPointerException e) {
+                        fieldValue = 0 + "";
+                    }
                     try {
                         // add the fields in the Player.Attributes, i.e. name
                         Field field = player.getPlayerPojo().getAttributes().getClass().getDeclaredField(fieldName);
@@ -222,14 +227,14 @@ public class DbRequests {
                             e1.printStackTrace();
                             GenericUtils.log("error setting field in PlayerPOJO.Data");
                         }
-                    } catch (IllegalAccessException | NullPointerException e) {
+                    } catch (IllegalAccessException e) {
                         e.printStackTrace();
                         GenericUtils.log("error setting field in PlayerPOJO.Attributes");
                     }
                 }
                 playerArray.add(player);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e ) {
             e.printStackTrace();
         }
 

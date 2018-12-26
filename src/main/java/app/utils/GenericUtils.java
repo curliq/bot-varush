@@ -36,9 +36,9 @@ public class GenericUtils {
     }
 
     /** Round decimal to 2 cases */
-    public static Double roundTwoDecimals(double d) {
+    public static String roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
+        return String.format("%.2f", Double.valueOf(twoDForm.format(d)));
     }
 
 }

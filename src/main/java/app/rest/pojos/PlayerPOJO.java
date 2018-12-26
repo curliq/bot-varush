@@ -3819,6 +3819,90 @@ public class PlayerPOJO {
         public Integer c10043;
         @SerializedName("10045")
         public Integer c10045;
+        @SerializedName("11044")
+        public Integer c11044;
+        @SerializedName("11077")
+        public Integer c11077;
+        @SerializedName("12044")
+        public Integer c12044;
+        @SerializedName("12077")
+        public Integer c12077;
+        @SerializedName("13044")
+        public Integer c13044;
+        @SerializedName("13077")
+        public Integer c13077;
+        @SerializedName("14044")
+        public Integer c14044;
+        @SerializedName("14077")
+        public Integer c14077;
+        @SerializedName("15044")
+        public Integer c15044;
+        @SerializedName("15077")
+        public Integer c15077;
+        @SerializedName("40044")
+        public Integer c40044;
+        @SerializedName("40077")
+        public Integer c40077;
+        @SerializedName("16044")
+        public Integer c16044;
+        @SerializedName("16077")
+        public Integer c16077;
+        @SerializedName("17044")
+        public Integer c17044;
+        @SerializedName("17077")
+        public Integer c17077;
+        @SerializedName("18044")
+        public Integer c18044;
+        @SerializedName("18077")
+        public Integer c18077;
+        @SerializedName("19044")
+        public Integer c19044;
+        @SerializedName("19077")
+        public Integer c19077;
+        @SerializedName("20044")
+        public Integer c20044;
+        @SerializedName("20077")
+        public Integer c20077;
+        @SerializedName("21044")
+        public Integer c21044;
+        @SerializedName("21077")
+        public Integer c21077;
+        @SerializedName("22044")
+        public Integer c22044;
+        @SerializedName("22077")
+        public Integer c22077;
+        @SerializedName("24044")
+        public Integer c24044;
+        @SerializedName("24077")
+        public Integer c24077;
+        @SerializedName("23044")
+        public Integer c23044;
+        @SerializedName("23077")
+        public Integer c23077;
+        @SerializedName("50165")
+        public Integer c50165;
+        @SerializedName("26044")
+        public Integer c26044;
+        @SerializedName("26077")
+        public Integer c26077;
+        @SerializedName("25044")
+        public Integer c25044;
+        @SerializedName("25077")
+        public Integer c25077;
+        @SerializedName("27044")
+        public Integer c27044;
+        @SerializedName("27077")
+        public Integer c27077;
+        @SerializedName("28044")
+        public Integer c28044;
+        @SerializedName("28077")
+        public Integer c28077;
+        @SerializedName("1001044")
+        public Integer c1001044;
+        @SerializedName("1001077")
+        public Integer c1001077;
+        @SerializedName("1002044")
+        public Integer c1002044;
 
         public String getTitleId() {
             return titleId;
