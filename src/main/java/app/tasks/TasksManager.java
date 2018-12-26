@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TasksManager {
 
-    private final int RUN_SCRIPTS_HOUR = 8; //10 AM
+    private final int RUN_SCRIPTS_HOUR = 10; //10 AM
 
     public static void init() {
         new TasksManager().scheduleTask();
@@ -31,7 +31,7 @@ public class TasksManager {
     }
 
     private void getTopPlayers() {
-        //todo
+        //todo: get the top 50 players of every champion
     }
 
     private void getMatches() {

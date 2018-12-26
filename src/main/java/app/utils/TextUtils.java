@@ -11,7 +11,8 @@ public class TextUtils {
      * We want to avoid these, because they will print crazy stuff on discord
      */
     public static String[] illegalStrings() {
-        return new String[] {"●", "̮", "̃", " ", "̯", "͡", "丨", "啊", "浅", "风", "境", "过", "⚜", "☭", "٩", "۶", "❤"};
+        return new String[] {"●", "̮", "̃", " ", "̯", "͡", "丨", "啊", "浅", "风", "境", "过", "⚜", "☭", "٩", "۶", "❤",
+                "・"};
     }
 
     /**
