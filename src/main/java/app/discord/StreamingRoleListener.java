@@ -49,7 +49,7 @@ public class StreamingRoleListener extends ListenerAdapter {
         if (userHasProbationRole(event.getGuild(), event.getMember()))
             return;
 	
-        GenericUtils.log(event.getUser().getName());
+//        GenericUtils.log(event.getUser().getName());
         if (event.getUser().getName().equalsIgnoreCase("shinyknight"))
             return;
 
@@ -76,11 +76,11 @@ public class StreamingRoleListener extends ListenerAdapter {
     }
 
     private void runChecks(Guild guild, Member member, Game currentGame) {
-        try {
-            GenericUtils.log(member.getEffectiveName() + " " + currentGame.asRichPresence().getDetails());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            GenericUtils.log(member.getEffectiveName() + " " + currentGame.asRichPresence().getDetails());
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//        }
 
         if (!userHasAtLeastOneRole(member))
             return;
