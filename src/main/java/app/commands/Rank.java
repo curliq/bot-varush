@@ -25,7 +25,7 @@ public class Rank extends Command {
     private String championName;
     private String playerName;
 
-    final int maxColumnSize = 16;
+    private final int maxColumnSize = 16;
     private int biggestRankLength = 2;
     private int biggestNameLength = "Name".length();
     private int biggestWinsLength = "Wins".length();
