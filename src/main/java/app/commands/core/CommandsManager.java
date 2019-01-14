@@ -32,8 +32,9 @@ public final class CommandsManager {
                 return new Rank();
             case Restart.KEY:
                 return new Restart(authorId);
+            default:
+                return null;
         }
-        return null;
     }
 
 }

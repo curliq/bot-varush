@@ -10,9 +10,6 @@ import java.util.ArrayList;
 
 public abstract class Command {
 
-    /** Key is the first keyword after the trigger and is what defines a command, i.e. "stats" */
-    public abstract String getKey();
-
     /** Description of the command, how to use and what it does */
     private String description;
 
@@ -22,11 +19,14 @@ public abstract class Command {
     /** Each Command object will yield a discord message, this is the ID of that message, null before it's sent */
     private String discordMessageId;
 
-    /** Method used to return the reply message, must be implemented */
-    public abstract EmbedBuilder getReply();
+    /** Key is the first keyword after the trigger and is what defines a command, i.e. "stats" */
+    public abstract String getKey();
 
     /** instance of our CommandEventsListener */
-    public CommandEventsListener eventsListener;
+    protected CommandEventsListener eventsListener;
+
+    /** Method used to return the reply message, must be implemented */
+    public abstract EmbedBuilder getReply();
 
     /**
      * set our CommandEventsListener instance
