@@ -52,7 +52,7 @@ public class MessageListener extends ListenerAdapter {
         commandsShortcuts.put("!9", "!br stats 9gag");
         commandsShortcuts.put("!hulk", "!br stats fredHulk");
         commandsShortcuts.put("!wuz", "!br stats wuzzle");
-        commandsShortcuts.put("!turbo", "!br stats Bobby!");
+        commandsShortcuts.put("!turbo", "!br stats TurboYSIV");
         commandsShortcuts.put("!t", "!br stats tomiy");
         commandsShortcuts.put("!n", "!br stats nero_sable");
     }

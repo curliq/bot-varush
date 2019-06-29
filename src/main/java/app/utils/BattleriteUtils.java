@@ -14,7 +14,7 @@ import app.rest.pojos.TeamStatsPOJO;
 
 public class BattleriteUtils {
 
-    public final static int SEASON = 11; // current battlerite season to default in every request
+    public final static int SEASON = 13; // current battlerite season to default in every request
     public final static int BATTLERITE_COLOR_PRIMARY = 0xEF7326;
     public final static String STATS_SOLO_IMAGE = "https://i.imgur.com/ohoiNqZ.png";
     public final static String STATS_2V2_IMAGE = "https://i.imgur.com/BEYAZRz.png";

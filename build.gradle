@@ -12,7 +12,7 @@ apply plugin: 'java'
 
 // Define the main class for the application
 mainClassName = 'app.App'
-version = '4.3.8'
+version = '4.3.9'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
